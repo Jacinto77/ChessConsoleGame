@@ -96,10 +96,8 @@ internal static class Program
         {
             for (int col = 7; col > -1; col--)
             {
-                Space.Position tempPos = new Space.Position(inRow: row, inCol: col);
-                inBoard.BoardSpaces[row, col].Piece = 
-                    blackPieces[blackPieceCounter];
-                blackPieces[blackPieceCounter].SetPosition(tempPos);
+                Space tempSpace = inBoard.BoardSpaces[row, col];
+                tempSpace.PlacePiece(blackPieces[blackPieceCounter]);
                 blackPieceCounter++;
             }
         }
@@ -109,26 +107,15 @@ internal static class Program
         {
             for (int col = 7; col > -1; col--)
             {
-                Space.Position tempPos = new Space.Position(inRow: row, inCol: col);
-                inBoard.BoardSpaces[row, col].Piece = 
-                    whitePieces[whitePieceCounter];
-                whitePieces[whitePieceCounter].SetPosition(tempPos);
+                Space tempSpace = inBoard.BoardSpaces[row, col];
+                tempSpace.PlacePiece(whitePieces[whitePieceCounter]);
                 whitePieceCounter++;
             }
-        }
-
-        for (int i = 0; i < blackPieces.Length; i++)
-        {
-            //blackPieces[i].GenerateValidMoves(inBoard);
-        }
-
-        for (int i = 0; i < whitePieces.Length; i++)
-        {
-            //whitePieces[i].GenerateValidMoves(inBoard);
         }
     }
 
     // TODO finish this function and test
+    // TODO: function should take the board, startSpace, and destSpace as arguments
     // needs to reset the space's Piece reference to default icon and 
     // set destPosition space to inputPosition space.Piece so that the
     // icon is updated and piece is now referenced by a new position
@@ -140,15 +127,30 @@ internal static class Program
             if (input != null)
             {
                 Tuple<string, string> positions = ParseInput(input);
-                Space.Position inputPosition = ConvertPosToIndices(positions.Item1);
+                
+                Space.Position startPosition = ConvertPosToIndices(positions.Item1);
                 Space.Position destPosition = ConvertPosToIndices(positions.Item2);
-
-                inBoard.BoardSpaces[destPosition.Row, destPosition.Col].Piece =
-                    inBoard.BoardSpaces[inputPosition.Row, inputPosition.Col].Piece;
-
-                inBoard.BoardSpaces[inputPosition.Row, inputPosition.Col].Piece =
-                    null;
-                return;
+                Space startSpace = inBoard.BoardSpaces[startPosition.Row, startPosition.Col];
+                Space destSpace = inBoard.BoardSpaces[destPosition.Row, destPosition.Col];
+                
+                // TODO: move this check somehwere else
+                if (startSpace.HasPiece == false)
+                {
+                    Console.WriteLine("That space doesn't have a piece on it!");
+                }
+                
+                else
+                {
+                    foreach (Space space in startSpace.Piece.ValidMoves)
+                    {
+                        if (destSpace == space)
+                        {
+                            destSpace.PlacePiece(startSpace.Piece);
+                            startSpace.ClearSpace();
+                            return;
+                        }
+                    }
+                }
             }
             else
             {
@@ -279,9 +281,15 @@ internal static class Program
             Console.WriteLine(blackPieces[i].Name + blackPieces[i].Icon);
         }
         
-        
-        board.BoardSpaces[7, 1].Piece.GenerateValidMoves(board);
-        board.BoardSpaces[7, 1].Piece.PrintValidMoves();
+        // clearing space to test generation of rook's valid moves
+        board.BoardSpaces[6, 0].ClearSpace(); // clearing rook's pawn
+        board.OutputBoard();
+        board.BoardSpaces[7, 0].ClearSpace();
+        board.OutputBoard();
+        board.BoardSpaces[4, 4].PlacePiece(new Rook(color: "white", type: "rook", icon: whiteIcons["RookIcon"], name: "test"));
+        board.OutputBoard();
+        board.BoardSpaces[4, 4].Piece.GenerateValidMoves(board);
+        //board.BoardSpaces[7, 1].Piece.PrintValidMoves();
         
         //board.BoardSpaces[6, 2].Piece.PrintValidMoves();
         //MovePiece(board);

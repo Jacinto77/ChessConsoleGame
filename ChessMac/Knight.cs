@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace ChessMac;
 using static ChessMac.Program;
 // knight movement is in an L shape and is the only piece that can "jump" or "move through" other pieces
@@ -23,6 +25,13 @@ public class Knight : Piece
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);
+        /* Gen possible moves
+         * check if move is out of bounds
+         * check if move is to a piece with the same color
+         * update valid moves with remaining moves
+         */
+        
+        
         int currentCol = this.GetPosition().Col;
         int currentRow = this.GetPosition().Row;
         
@@ -41,63 +50,27 @@ public class Knight : Piece
             new Space.Position(currentRow - 1, currentCol - 2)
         };
 
-        Console.WriteLine("Before removing invalid moves");
-        int counter3 = 1;
-        foreach (var pos in validPositions)
-        {
-            Console.WriteLine(counter3);
-            Console.WriteLine(ConvertIndicesToPos(inRow: pos.Row, inCol: pos.Col));
-            Console.WriteLine();
-            counter3 += 1;
-        }
-
-
-        List<int> invalidMoves = new List<int>();
-
-        // check if generated move is out of bounds
-        int counter = 0;
-        foreach (var move in validPositions)
-        {
-            if (move.Row is > 7 or < 0)
-                invalidMoves.Add(counter);
-            if (move.Col is > 7 or < 0)
-                invalidMoves.Add(counter);
-            counter++;
-        }
-
         // check if generated move's destination contains a piece of the same color
         int counter1 = 0;
         foreach (var move in validPositions)
         {
-            Space destSpace = inBoard.BoardSpaces[move.Row, move.Col];
-            
-            if (destSpace.HasPiece == false) continue;
-            if (destSpace.Piece?.Color == Color)
+            if (Space.IsValidPosition(move) == false)
             {
-                invalidMoves.Add(counter1);
-            }
-
-            counter1++;
-        }
-
-        for (int i = 0; i < invalidMoves.Count; i++)
-        {
-            validPositions[invalidMoves[i]] = new Space.Position(-1, -1);
-        }
-
-        
-        foreach (var move in validPositions)
-        {
-            if (move.Row == -1 || move.Col == -1)
                 continue;
-            ValidMoves.Add(inBoard.BoardSpaces[move.Row, move.Col]);
-        }
-        
-        Console.WriteLine("After removing invalid moves");
-        foreach (var pos in ValidMoves)
-        {
-            Console.WriteLine("Col: " + pos.Col);
-            Console.WriteLine("Row: " + pos.Row);
+            }
+            
+            // check if move's dest space has a piece of the same color
+            Space destSpace = inBoard.BoardSpaces[move.Row, move.Col];
+            // Console.WriteLine(destSpace.HasPiece);
+            if (destSpace.HasPiece == true)
+            {
+                if (destSpace.Piece?.Color == Color)
+                {
+                    continue;
+                }
+            }
+            
+            ValidMoves.Add(destSpace);
         }
     }
 }

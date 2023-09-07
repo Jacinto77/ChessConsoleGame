@@ -13,4 +13,88 @@ public class Rook : Piece
     {
         this.Type = type;
     }
+
+    public override void GenerateValidMoves(ChessBoard inBoard)
+    {
+        base.GenerateValidMoves(inBoard);
+        // scan spaces between startSpace and possible destinations
+        // walk spaces from start to edges of board
+        // if space.HasPiece == True, stop
+
+        int currentCol = GetPosition().Col;
+        int currentRow = GetPosition().Row;
+
+        // subtract current position from 7 (last index of board array) to find boundaries
+        int rangeLeft = currentCol;
+        int rangeRight = 7 - currentCol;
+        int rangeUp = currentRow;
+        int rangeDown = 7 - currentRow;
+
+        //scan up
+        for (int i = 1; i < rangeUp; i++)
+        {
+            Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol];
+            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+                break;
+            if (tempSpace.HasPiece == true)
+            {
+                ValidMoves.Add(tempSpace);
+                break;
+            }
+            if (tempSpace.HasPiece == false)
+                ValidMoves.Add(tempSpace);
+        }
+        
+        //scan down
+        for (int i = 1; i < rangeDown; i++)
+        {
+            Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol];
+            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+                break;
+            if (tempSpace.HasPiece == true)
+            {
+                ValidMoves.Add(tempSpace);
+                break;
+            }
+            if (tempSpace.HasPiece == false)
+                ValidMoves.Add(tempSpace);
+        }
+        
+        //scan left
+        for (int i = 1; i < rangeLeft; i++)
+        {
+            Space tempSpace = inBoard.BoardSpaces[currentRow, currentCol - i];
+            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+                break;
+            if (tempSpace.HasPiece == true)
+            {
+                ValidMoves.Add(tempSpace);
+                break;
+            }
+            if (tempSpace.HasPiece == false)
+                ValidMoves.Add(tempSpace);
+        }
+        //scan right
+        for (int i = 1; i < rangeRight; i++)
+        {
+            Space tempSpace = inBoard.BoardSpaces[currentRow, currentCol + i];
+            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+                break;
+            if (tempSpace.HasPiece == true)
+            {
+                ValidMoves.Add(tempSpace);
+                break;
+            }
+            if (tempSpace.HasPiece == false)
+                ValidMoves.Add(tempSpace);
+        }
+
+        int counter = 1;
+        foreach (var move in ValidMoves)
+        {
+            Console.WriteLine(counter);
+            Console.WriteLine(move.Col + move.Row.ToString());
+            counter++;
+        }
+    }
 }

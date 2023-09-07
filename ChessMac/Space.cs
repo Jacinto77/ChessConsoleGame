@@ -109,4 +109,19 @@ public class Space
             _ => Row
         };
     }
+
+    public static bool IsValidPosition(Position pos)
+    {
+        if (pos.Col is > 7 or < 0)
+        {
+            return false;
+        }
+
+        if (pos.Row is > 7 or < 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

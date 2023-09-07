@@ -1,5 +1,5 @@
 using static ChessMac.Program;
-
+using static ChessMac.Space;
 namespace ChessMac;
 
 public class Piece
@@ -22,6 +22,7 @@ public class Piece
     public string? Name { get; set; }
     // icon to display the piece in console
     public char? Icon { get; set; }
+    
     // human readable position of piece
     public string? Pos { get; set; }
     
@@ -47,7 +48,7 @@ public class Piece
     }
     
     
-    public void SetPosition(Space.Position inPosition)
+    public void SetPosition(Position inPosition)
     {
         PiecePosition.Row = inPosition.Row;
         PiecePosition.Col = inPosition.Col;
@@ -55,12 +56,22 @@ public class Piece
         Pos = ConvertIndicesToPos(inPosition.Row, inPosition.Col);
     }
 
-    public Space.Position GetPosition()
+    public Position GetPosition()
     {
-        return new Space.Position()
+        return new Position()
         {
             Row = PiecePosition.Row,
             Col = PiecePosition.Col
         };
+    }
+
+    public void ScanHorizVert(Space currentSpace, int boundary)
+    {
+        
+    }
+
+    public void ScanDiagonal(Space currentSpace)
+    {
+        
     }
 }
