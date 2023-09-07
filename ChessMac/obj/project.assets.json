@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/maxholt/RiderProjects/ChessMac/ChessMac/ChessMac.csproj",
+      "projectUniqueName": "/Users/maxholt/Projects/ChessMac/ChessMac/ChessMac.csproj",
       "projectName": "ChessMac",
-      "projectPath": "/Users/maxholt/RiderProjects/ChessMac/ChessMac/ChessMac.csproj",
+      "projectPath": "/Users/maxholt/Projects/ChessMac/ChessMac/ChessMac.csproj",
       "packagesPath": "/Users/maxholt/.nuget/packages/",
-      "outputPath": "/Users/maxholt/RiderProjects/ChessMac/ChessMac/obj/",
+      "outputPath": "/Users/maxholt/Projects/ChessMac/ChessMac/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/maxholt/.nuget/NuGet/NuGet.Config"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kiKQFhVRIK5qPoltkJjwJxERH9lAzJ/tKsyL3rP93rpE1WAjuomke1bCvWy+43U7CZvMbFbZUju+w5GCN+6oCA==",
+  "dgSpecHash": "c4/64pcGyoePh0Q2W8SIyjc/fGoTnZSWkSiBLoQAAhz1zbBW2EgE22UnfuXlLv0x6vnUm0RuKwUE1BkW6Qup1w==",
   "success": true,
-  "projectFilePath": "/Users/maxholt/RiderProjects/ChessMac/ChessMac/ChessMac.csproj",
+  "projectFilePath": "/Users/maxholt/Projects/ChessMac/ChessMac/ChessMac.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

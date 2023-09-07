@@ -15,6 +15,7 @@ public class ChessBoard
     }
     
     // collection of all spaces in 8x8 array
+    // first index is the row, second index is the column
     public Space[,] BoardSpaces = new Space[8, 8];
     
     // Sets each space to a default Space object
@@ -57,6 +58,7 @@ public class ChessBoard
         // column letter labels
         Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH");
         Console.WriteLine(@"      ______________________________________________________________");
+        //TODO: change i and j to row and column
         for (int i = 0; i < 8; i++)
         {
             // row number labels

@@ -96,8 +96,10 @@ internal static class Program
         {
             for (int col = 7; col > -1; col--)
             {
+                Space.Position tempPos = new Space.Position(inRow: row, inCol: col);
                 inBoard.BoardSpaces[row, col].Piece = 
                     blackPieces[blackPieceCounter];
+                blackPieces[blackPieceCounter].SetPosition(tempPos);
                 blackPieceCounter++;
             }
         }
@@ -107,20 +109,22 @@ internal static class Program
         {
             for (int col = 7; col > -1; col--)
             {
+                Space.Position tempPos = new Space.Position(inRow: row, inCol: col);
                 inBoard.BoardSpaces[row, col].Piece = 
                     whitePieces[whitePieceCounter];
+                whitePieces[whitePieceCounter].SetPosition(tempPos);
                 whitePieceCounter++;
             }
         }
 
         for (int i = 0; i < blackPieces.Length; i++)
         {
-            blackPieces[i].GenerateValidMoves();
+            //blackPieces[i].GenerateValidMoves(inBoard);
         }
 
         for (int i = 0; i < whitePieces.Length; i++)
         {
-            whitePieces[i].GenerateValidMoves();
+            //whitePieces[i].GenerateValidMoves(inBoard);
         }
     }
 
@@ -167,7 +171,40 @@ internal static class Program
         else return new Tuple<string, string>("A1", "A8");
         return new Tuple<string, string>(piece, dest);
     }
-    
+
+    public static string ConvertIndicesToPos(int inRow, int inCol)
+    {
+        string column = "";
+        string row = "";
+
+        column = inCol switch
+        {
+            0 => "A",
+            1 => "B",
+            2 => "C",
+            3 => "D",
+            4 => "E",
+            5 => "F",
+            6 => "G",
+            7 => "H",
+            _ => column
+        };
+
+        row = inRow switch
+        {
+            0 => "8",
+            1 => "7",
+            2 => "6",
+            3 => "5",
+            4 => "4",
+            5 => "3",
+            6 => "2",
+            7 => "1",
+            _ => row
+        };
+        
+        return column + row;
+    }
     static Space.Position ConvertPosToIndices(string input)
     {
         var column = input[0];
@@ -243,9 +280,12 @@ internal static class Program
         }
         
         
-        board.BoardSpaces[6, 2].Piece.PrintValidMoves();
-        MovePiece(board);
-        board.OutputBoard();
+        board.BoardSpaces[7, 1].Piece.GenerateValidMoves(board);
+        board.BoardSpaces[7, 1].Piece.PrintValidMoves();
+        
+        //board.BoardSpaces[6, 2].Piece.PrintValidMoves();
+        //MovePiece(board);
+        //board.OutputBoard();
         
         
         /*

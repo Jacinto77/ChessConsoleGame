@@ -25,7 +25,7 @@ public class Space
     {
         public int Row;
         public int Col;
-
+        
         public Position(int inRow, int inCol)
         {
             Row = inRow;
@@ -35,8 +35,8 @@ public class Space
     
     // indices of space's position, set during InitBoard, readonly and should not be changed
     private Position _position = new();
-    private readonly int _rowIndex;
-    private readonly int _colIndex;
+    public readonly int _rowIndex;
+    public readonly int _colIndex;
 
     // human readable (ie A3, G8, etc), set during initialization, readonly and should not be changed
     public int Row { get; set; }
@@ -74,10 +74,14 @@ public class Space
     {
         Name = Col + Row.ToString();
     }
-    
+
+    public string Get_Readable_Pos()
+    {
+        return Col + Row.ToString();
+    }
     
     // convert index to readable position
-    private void ConvertIndexToPosition(Position inPosition)
+    void ConvertIndexToPosition(Position inPosition)
     {
         Col = inPosition.Col switch
         {
