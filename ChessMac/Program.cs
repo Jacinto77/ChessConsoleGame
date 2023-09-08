@@ -282,11 +282,8 @@ internal static class Program
         }
         
         // clearing space to test generation of rook's valid moves
-        board.BoardSpaces[6, 0].ClearSpace(); // clearing rook's pawn
-        board.OutputBoard();
-        board.BoardSpaces[7, 0].ClearSpace();
-        board.OutputBoard();
-        board.BoardSpaces[4, 4].PlacePiece(new Rook(color: "white", type: "rook", icon: whiteIcons["RookIcon"], name: "test"));
+        
+        board.BoardSpaces[4, 4].PlacePiece(new Bishop(color: "white", type: "bishop", icon: whiteIcons["BishopIcon"], name: "test"));
         board.OutputBoard();
         board.BoardSpaces[4, 4].Piece.GenerateValidMoves(board);
         //board.BoardSpaces[7, 1].Piece.PrintValidMoves();
