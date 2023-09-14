@@ -67,7 +67,7 @@ public class ChessBoard
             for (int j = 0; j < 8; j++)
             {
                 if (BoardSpaces[i, j].Piece == null)
-                    Console.Write(emptySpace);
+                    Console.Write(BoardSpaces[i, j].Icon);
                 else
                     Console.Write(BoardSpaces[i, j].Piece.Icon);
                 

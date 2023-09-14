@@ -3,6 +3,13 @@ using static ChessMac.Space;
 using static ChessMac.Methods;
 namespace ChessMac;
 
+/*
+ * TODO: create move generation functionality work to identify and tag pieces as being threatened, as well as what piece is threatening
+ * TODO: implement pinned piece recognition, for when king would be threatened if a piece wasn't in the way
+ * TODO: implement piece blocking checking for when King is in check
+ * TODO: add secondary move generation method that scans all possible movements as if there were no other pieces, tags them and assigns a score based on how many pieces are in the way
+ */
+
 public class Piece
 {
     protected Piece(string color, string name, char icon)

@@ -20,7 +20,7 @@ public class Space
         SetName();
         HasPiece = false;
         Piece = null;
-        
+        Icon = IconDefault;
     }
     
     public struct Position
@@ -51,8 +51,10 @@ public class Space
     
     // Icon to display on board, set to [] by default, if haspiece=true icon= piece.icon
     // if space chosen to move to, 
+    public char? IconDefault = '\u2610';
     public char? Icon { get; set; }
     public char? IconStore { get; set; }
+    public char? HighlightIcon = '\u25C9';
     
     public void PlacePiece(Piece inPiece)
     {
@@ -67,20 +69,21 @@ public class Space
     {
         Piece = null;
         HasPiece = false;
-        Icon = null;
+        // square symbol in unicode
+        Icon = IconDefault;
         
     }
 
     public void SetIconHighlight()
     {
         IconStore = Icon;
-        Icon = '\u25C9';
+        Icon = HighlightIcon;
     }
 
     public void UnsetIconHighlight()
     {
         Icon = IconStore;
-        IconStore = '\u25C9';
+        IconStore = null;
     }
     
     private void SetName()

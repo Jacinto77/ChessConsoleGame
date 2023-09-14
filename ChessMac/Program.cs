@@ -58,6 +58,7 @@ internal static class Program
         
         // TODO: this dont work yet
         board.DisplayMoves(board.GetSpace(4, 4).Piece);
+        Console.WriteLine(board.BoardSpaces[5, 5].Icon);
         board.OutputBoard();
         //board.BoardSpaces[7, 1].Piece.PrintValidMoves();
         
