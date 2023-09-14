@@ -10,4 +10,10 @@ public class Queen : Piece
     {
         this.Type = type;
     }
+
+    public override void GenerateValidMoves(ChessBoard inBoard)
+    {
+        base.GenerateRookMoves(inBoard);
+        base.GenerateBishopMoves(inBoard);
+    }
 }

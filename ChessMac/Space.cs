@@ -18,6 +18,8 @@ public class Space
         
         ConvertIndexToPosition(_position);
         SetName();
+        HasPiece = false;
+        Piece = null;
         
     }
     
@@ -33,43 +35,54 @@ public class Space
         }
     }
     
-    // indices of space's position, set during InitBoard, readonly and should not be changed
     private Position _position = new();
     public readonly int _rowIndex;
     public readonly int _colIndex;
 
-    // human readable (ie A3, G8, etc), set during initialization, readonly and should not be changed
     public int Row { get; set; }
     public char Col { get; set; }
     
-    // full name of space, ie A3, G7, etc
+    // ie A3, G7, etc
     public string? Name { get; set; }
     
-    // holds reference to pieces in game, is changed by methods to move pieces
     public Piece? Piece { get; set; }
     
-    // bool property to quickly tell if there is a piece at this location
     public bool HasPiece { get; set; }
     
     // Icon to display on board, set to [] by default, if haspiece=true icon= piece.icon
     // if space chosen to move to, 
-    public char Icon { get; set; }
+    public char? Icon { get; set; }
+    public char? IconStore { get; set; }
     
-    // assign piece to space and set HasPiece
     public void PlacePiece(Piece inPiece)
     {
         Piece = inPiece;
         HasPiece = true;
         Piece.SetPosition(_position);
+        Icon = Piece.Icon;
+        
     }
 
-    // clear space and set to empty
     public void ClearSpace()
     {
         Piece = null;
         HasPiece = false;
+        Icon = null;
+        
     }
 
+    public void SetIconHighlight()
+    {
+        IconStore = Icon;
+        Icon = '\u25C9';
+    }
+
+    public void UnsetIconHighlight()
+    {
+        Icon = IconStore;
+        IconStore = '\u25C9';
+    }
+    
     private void SetName()
     {
         Name = Col + Row.ToString();

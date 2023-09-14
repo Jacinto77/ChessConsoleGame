@@ -231,4 +231,29 @@ public class ChessBoard
 
         return new Tuple<int, int>(colIndex, rowIndex);
     }
+
+    public Space GetSpace(int inRow, int inCol)
+    {
+        if (inRow > 7 || inRow < 0 || inCol > 7 || inCol < 0)
+        {
+            return new Space(-1, -1);
+        }
+        return BoardSpaces[inRow, inCol];
+    }
+
+    public void DisplayMoves(Piece inPiece)
+    {
+        for (int i = 0; i < inPiece.ValidMoves.Count; i++)
+        {
+            inPiece.ValidMoves[i].SetIconHighlight();
+        }
+    }
+
+    public void RemoveDisplayMoves(Piece inPiece)
+    {
+        for (int i = 0; i < inPiece.ValidMoves.Count; i++)
+        {
+            inPiece.ValidMoves[i].UnsetIconHighlight();
+        }
+    }
 }
