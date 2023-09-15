@@ -1,10 +1,6 @@
 ﻿
 namespace ChessMac;
 using static Methods;
-// Program
-// Create instance of board
-// Create all pieces
-// game flow control
 
 internal static class Program
 {
@@ -14,27 +10,60 @@ internal static class Program
         ChessBoard board = new ChessBoard();
 
         board.OutputBoard();
+
+        const int numberOfPieces = 16;
         
         // generate pieces and initialize them
-        Piece[] whitePieces = new Piece[16];
-        Piece pawnA = whitePieces[0];
-        Piece pawnB = whitePieces[1];
+        Piece[] whitePieces = new Piece[numberOfPieces];
+        //Piece pawnA = whitePieces[0];
+        //Piece pawnB = whitePieces[1];
         //...
-        Piece[] blackPieces = new Piece[16];
-        InitializePieces(inPieces: whitePieces, color: "white", inIcons: WhiteIcons);
-        InitializePieces(inPieces: blackPieces, color: "black", inIcons: BlackIcons);
+        Piece[] blackPieces = new Piece[numberOfPieces];
+        InitPieces(whitePieces, "white");
+        InitPieces(blackPieces, "black");
+        // foreach (Piece piece in whitePieces)
+        // {
+        //     Console.WriteLine(piece.Name);
+        // }
+        // foreach (Piece piece in blackPieces)
+        // {
+        //     Console.WriteLine(piece.Name);
+        // }
+        
+        //InitializePieces(inPieces: whitePieces, color: "white", inIcons: WhiteIcons);
+        //InitializePieces(inPieces: blackPieces, color: "black", inIcons: BlackIcons);
         
         //PlacePieces(whitePieces, blackPieces, board);
-
-        Piece? testPiece = Piece.CreatePiece("black", "bishop");
-        testPiece?.PlacePiece(board.GetSpace("D5"));
-        board.OutputBoard();
+        PlacePieces(whitePieces, board);
+        PlacePieces(blackPieces, board);
+        GeneratePieceMoves(whitePieces, board);
+        GeneratePieceMoves(blackPieces, board);
+        board.DisplayMoves(whitePieces[9]);
+        board.DisplayMoves(whitePieces[1]);
         
-        testPiece?.GenerateValidMoves(board);
-        testPiece?.PrintValidMoves();
-        
-        board.DisplayMoves(testPiece);
         board.OutputBoard();
+        whitePieces[1].PrintValidMoves();
+        whitePieces[1].PrintValidMovesIndex();
+        
+        
+        // Piece? testPiece = Piece.CreatePiece("black", "bishop");
+        // Piece? testPiece2 = Piece.CreatePiece("black", "rook");
+        // testPiece?.PlacePiece(board.GetSpace("D5"));
+        // testPiece2?.PlacePiece(board.GetSpace("F2"));
+        // board.OutputBoard();
+        //
+        // testPiece?.GenerateValidMoves(board);
+        // testPiece?.AddThreats();
+        // testPiece?.PrintValidMoves();
+        //
+        // testPiece2?.GenerateValidMoves(board);
+        // testPiece2?.AddThreats();
+        // testPiece2?.PrintValidMoves();
+        //
+        // board.GetSpace("F3").PrintThreats();
+        // board.DisplayMoves(testPiece2);
+        // board.DisplayMoves(testPiece);
+        // board.OutputBoard();
         
         
         /*

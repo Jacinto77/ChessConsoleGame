@@ -35,7 +35,8 @@ public class Space
         }
     }
     
-    const char emptySpaceIcon = '\u2610';
+    private const char EmptySpaceIcon = '\u2610';
+    private const char HighlightedIcon = '\u25C9';
     
     // indices
     public readonly Position Pos = new();
@@ -51,10 +52,33 @@ public class Space
     public Piece? Piece { get; set; }
     public bool HasPiece { get; set; }
     
-    public char? IconDefault = '\u2610';
+    public char? IconDefault = EmptySpaceIcon;
     public char? Icon { get; set; }
+    
     public char? IconBuffer { get; set; }
-    public char? HighlightIcon = '\u25C9';
+    public char? HighlightIcon = HighlightedIcon;
+    
+    public List<Piece> Threats = new List<Piece>();
+
+    
+    public void AddPieceToThreats(Piece inPiece)
+    {
+        Threats.Add(inPiece);
+    }
+
+    public void ResetThreats()
+    {
+        Threats.Clear();
+    }
+
+    public void PrintThreats()
+    {
+        Console.WriteLine(this.GetReadablePos());
+        foreach (var threat in Threats)
+        {
+            Console.WriteLine(threat.Name);
+        }
+    }
     
     public void PlacePiece(Piece inPiece)
     {
@@ -64,7 +88,14 @@ public class Space
         Icon = Piece.Icon;
     }
 
-    public void ClearSpace()
+    public void SetPieceInfo(Piece inPiece)
+    {
+        Piece = inPiece;
+        HasPiece = true;
+        Icon = inPiece.Icon;
+    }
+    
+    public void ClearPieceInfo()
     {
         Piece = null;
         HasPiece = false;

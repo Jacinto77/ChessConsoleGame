@@ -1,3 +1,5 @@
+using System.Net.NetworkInformation;
+
 namespace ChessMac;
 
 // TODO: get rid of magic numbers
@@ -23,8 +25,66 @@ public static class Methods
         { "QueenIcon", '\u265B' },
         { "KingIcon", '\u265A' },
     };
-    
+
+    public static readonly Dictionary<string, string> DefWhiteStart = new()
+    {
+        {"whiteROOK_16", "H1"},
+        {"whiteKNIGHT_15", "G1"},
+        {"whiteBISHOP_14", "F1"},
+        {"whiteKING_13", "E1"},
+        {"whiteQUEEN_12", "D1"},
+        {"whiteBISHOP_11", "C1"},
+        {"whiteKNIGHT_10", "B1"},
+        {"whiteROOK_9", "A1"},
+        {"whitePAWN_8", "H2"},
+        {"whitePAWN_7", "G2"},
+        {"whitePAWN_6", "F2"},
+        {"whitePAWN_5", "E2"},
+        {"whitePAWN_4", "D2"},
+        {"whitePAWN_3", "C2"},
+        {"whitePAWN_2", "B2"},
+        {"whitePAWN_1", "A2"}
+        
+    };
+
+    public static readonly Dictionary<string, string> DefBlackStart = new()
+    {
+        {"blackROOK_16", "H8"},
+        {"blackKNIGHT_15", "G8"},
+        {"blackBISHOP_14", "F8"},
+        {"blackKING_13", "E8"},
+        {"blackQUEEN_12", "D8"},
+        {"blackBISHOP_11", "C8"},
+        {"blackKNIGHT_10", "B8"},
+        {"blackROOK_9", "A8"},
+        {"blackPAWN_8", "H7"},
+        {"blackPAWN_7", "G7"},
+        {"blackPAWN_6", "F7"},
+        {"blackPAWN_5", "E7"},
+        {"blackPAWN_4", "D7"},
+        {"blackPAWN_3", "C7"},
+        {"blackPAWN_2", "B7"},
+        {"blackPAWN_1", "A7"}
+    };
+
     const char emptySpaceIcon = '\u2610';
+
+    public static void InitPieces(Piece[] inPieces, string color)
+    {
+        inPieces[0] = Piece.CreatePiece(color, "rook");
+        inPieces[1] = Piece.CreatePiece(color, "knight");
+        inPieces[2] = Piece.CreatePiece(color, "bishop");
+        inPieces[3] = Piece.CreatePiece(color, "king");
+        inPieces[4] = Piece.CreatePiece(color, "queen");
+        inPieces[5] = Piece.CreatePiece(color, "bishop");
+        inPieces[6] = Piece.CreatePiece(color, "knight");
+        inPieces[7] = Piece.CreatePiece(color, "rook");
+        for (int i = 8; i < 16; i++)
+        {
+            inPieces[i] = Piece.CreatePiece(color, "pawn");
+        }
+        Piece.ResetPieceCounter();
+    }
     
     public static void InitializePieces(Piece[] inPieces, string color, Dictionary<string, char> inIcons)
     {
@@ -81,80 +141,26 @@ public static class Methods
         }
     }
 
-    public static void PlacePieces
-        (Piece[] whitePieces, Piece[] blackPieces, ChessBoard inBoard)
+    public static void PlacePieces(Piece[] pieces, ChessBoard inBoard)
     {
-        int whitePieceCounter = 0;
-        int blackPieceCounter = 0;
-        
-        // black pieces
-        for (int row = 0; row < 2; row++)
+        foreach (var piece in pieces)
         {
-            for (int col = 7; col > -1; col--)
+            string? name = piece.Name;
+            Space? space = null;
+            if (name is null) return;
+
+            if (piece.Color == "white")
+                space = inBoard.GetSpace(DefWhiteStart[name]);
+            if (piece.Color == "black")
+                space = inBoard.GetSpace(DefBlackStart[name]);
+            if (space is null)
             {
-                Space tempSpace = inBoard.BoardSpaces[row, col];
-                tempSpace.PlacePiece(blackPieces[blackPieceCounter]);
-                blackPieceCounter++;
+                return;
             }
-        }
-        
-        // white pieces
-        for (int row = 7; row > 5; row--)
-        {
-            for (int col = 7; col > -1; col--)
-            {
-                Space tempSpace = inBoard.BoardSpaces[row, col];
-                tempSpace.PlacePiece(whitePieces[whitePieceCounter]);
-                whitePieceCounter++;
-            }
+            piece.PlacePiece(space, inBoard);
         }
     }
-
-    // TODO finish this function and test
-    // TODO: function should take the board, startSpace, and destSpace as arguments
-    // needs to reset the space's Piece reference to default icon and 
-    // set destPosition space to inputPosition space.Piece so that the
-    // icon is updated and piece is now referenced by a new position
-    public static void MovePiece(ChessBoard inBoard)
-    {
-        while (true)
-        {
-            string? input = Console.ReadLine();
-            if (input != null)
-            {
-                Tuple<string, string> positions = ParseInput(input);
-                
-                Space.Position startPosition = ConvertPosToIndex(positions.Item1);
-                Space.Position destPosition = ConvertPosToIndex(positions.Item2);
-                Space startSpace = inBoard.BoardSpaces[startPosition.RowIndex, startPosition.ColIndex];
-                Space destSpace = inBoard.BoardSpaces[destPosition.RowIndex, destPosition.ColIndex];
-                
-                // TODO: move this check somehwere else
-                if (startSpace.HasPiece == false)
-                {
-                    Console.WriteLine("That space doesn't have a piece on it!");
-                }
-                
-                else
-                {
-                    foreach (Space space in startSpace.Piece.ValidMoves)
-                    {
-                        if (destSpace == space)
-                        {
-                            destSpace.PlacePiece(startSpace.Piece);
-                            startSpace.ClearSpace();
-                            return;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("invalid input");
-            }
-        }
-    }
-
+    
     // TODO: check input w/ regex and known words instead
     public static Tuple<string, string> ParseInput(string input)
     {
@@ -272,5 +278,14 @@ public static class Methods
         };
 
         return position;
+    }
+
+    public static void GeneratePieceMoves(Piece[] pieces, ChessBoard inBoard)
+    {
+        foreach (var piece in pieces)
+        {
+            piece.GenerateValidMoves(inBoard);
+            piece.AddPieceToSpaceThreats();
+        }
     }
 }

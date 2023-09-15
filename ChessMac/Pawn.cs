@@ -50,17 +50,25 @@ public class Pawn : Piece
                 ValidMoves.Add(inBoard.GetSpace(forwTwo));
             }
         }
-
+        // diagonal take
         if (IsWithinBoard(forwPos) && inBoard.GetPiece(forwPos)?.Color != Color 
                                    && inBoard.GetSpace(forwPos).HasPiece)
         {
             ValidMoves.Add(inBoard.GetSpace(forwPos));
         }
-
+        else
+        {
+            inBoard.GetSpace(forwPos).AddPieceToThreats(this);
+        }
+        // diagonal take
         if (IsWithinBoard(forwNeg) && inBoard.GetPiece(forwNeg)?.Color != Color 
                                    && inBoard.GetSpace(forwPos).HasPiece)
         {
             ValidMoves.Add(inBoard.GetSpace(forwNeg));
+        }
+        else
+        {
+            inBoard.GetSpace(forwNeg).AddPieceToThreats(this);
         }
     }
 }

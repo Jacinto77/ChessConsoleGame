@@ -58,7 +58,7 @@ public class ChessBoard
         // column letter labels
         Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH");
         Console.WriteLine(@"      ______________________________________________________________");
-        //TODO: change i and j to row and column
+        
         for (int row = 0; row < 8; row++)
         {
             // row number labels
@@ -227,7 +227,8 @@ public class ChessBoard
         }
         return BoardSpaces[inRow, inCol];
     }
-
+    
+    // add console output for if the passed values are out of bounds 
     public Space GetSpace(Space.Position inPosition)
     {
         if (inPosition.RowIndex > 7 

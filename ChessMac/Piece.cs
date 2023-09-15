@@ -11,7 +11,7 @@ namespace ChessMac;
  * TODO: add move counter
  */
 
-public class Piece
+public abstract class Piece
 {
     public Piece(string color, string name, char icon)
     {
@@ -29,19 +29,39 @@ public class Piece
         SetupPiece(color, type);
     }
 
-    public static Piece? CreatePiece(string color, string type)
+    private static int PieceCounter = 16;
+    
+    public static Piece CreatePiece(string color, string type)
     {
+        Piece? tempPiece;
         switch (type)
         {
-            case "pawn": return new Pawn(color, type);
-            case "knight": return new Knight(color, type);
-            case "bishop": return new Bishop(color, type);
-            case "rook": return new Rook(color, type);
-            case "queen": return new Queen(color, type);
-            case "king": return new King(color, type);
-            
-            default: return new Piece(color, type);
+            case "pawn": tempPiece = new Pawn(color, type);
+                break;
+            case "knight": tempPiece = new Knight(color, type);
+                break;
+            case "bishop": tempPiece = new Bishop(color, type);
+                break;
+            case "rook": tempPiece = new Rook(color, type);
+                break;
+            case "queen": tempPiece = new Queen(color, type);
+                break;
+            case "king": tempPiece = new King(color, type);
+                break;
+
+            default:
+            {
+                Console.WriteLine("PieceGenError");
+                return new Pawn("red", "queen_error");
+            }
         }
+        PieceCounter -= 1;
+        return tempPiece;
+    }
+
+    public static void ResetPieceCounter()
+    {
+        PieceCounter = 16;
     }
     
     public static readonly Dictionary<string, char> BlackIcons = new()
@@ -64,6 +84,8 @@ public class Piece
     };
   
     public Space.Position PiecePosition = new();
+
+    public Space CurrentSpace;
     // human readable position of piece
     public string? Pos { get; set; }
     
@@ -74,15 +96,15 @@ public class Piece
     
     public bool HasMoved { get; set; }
 
+    public int MoveCounter = 0;
     // all valid moves for the piece
     public List<Space> ValidMoves = new();
     
     // generates all valid moves
-    public virtual void GenerateValidMoves(ChessBoard inBoard)
-    {
-    }
+    public abstract void GenerateValidMoves(ChessBoard inBoard);
+    
 
-    public void SetupPiece(string color, string type)
+        public void SetupPiece(string color, string type)
     {
         switch (color)
         {
@@ -96,7 +118,7 @@ public class Piece
 
     public void SetName(string color, string type)
     {
-        Name = color + type;
+        Name = color + type.ToUpper() + "_" + PieceCounter.ToString();
     }
     
     public void PrintValidMoves()
@@ -104,6 +126,14 @@ public class Piece
         foreach (Space position in ValidMoves)
         {
             Console.Write($"{position.Col}{position.Row}\n");
+        }
+    }
+
+    public void PrintValidMovesIndex()
+    {
+        foreach (var move in ValidMoves)
+        {
+            Console.WriteLine($"{move.RowIndex} {move.ColIndex}");
         }
     }
     
@@ -159,7 +189,10 @@ public class Piece
         {
             Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol];
             if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+            {  
                 break;
+            }
+
             if (tempSpace.HasPiece == true)
             {
                 ValidMoves.Add(tempSpace);
@@ -198,13 +231,13 @@ public class Piece
                 ValidMoves.Add(tempSpace);
         }
 
-        int counter = 1;
-        foreach (var move in ValidMoves)
-        {
-            Console.WriteLine(counter);
-            Console.WriteLine(move.Col + move.Row.ToString());
-            counter++;
-        }
+        // int counter = 1;
+        // foreach (var move in ValidMoves)
+        // {
+        //     Console.WriteLine(counter);
+        //     Console.WriteLine(move.Col + move.Row.ToString());
+        //     counter++;
+        // }
     }
 
     public void GenerateBishopMoves(ChessBoard inBoard)
@@ -278,14 +311,14 @@ public class Piece
         }
     }
 
-    public void PlacePiece(Space inSpace)
+    public void PlacePiece(Space inSpace, ChessBoard inBoard)
     {
-        inSpace.Piece = this;
-        inSpace.HasPiece = true;
-        inSpace.Icon = this.Icon;
-        this.SetPosition(inSpace.Pos);
+        inSpace.SetPieceInfo(this);
+        CurrentSpace = inSpace;
+        SetPosition(inSpace.Pos);
     }
 
+    // prob won't use this
     public void PlacePiece(int inRow, int inCol, ChessBoard inBoard)
     {
         Position tempPos = new Position(inRow, inCol);
@@ -301,18 +334,36 @@ public class Piece
         }
     }
 
-    public void MovePiece(Space destSpace)
+    public bool IsMoveValid(Space destSpace)
+    {
+        foreach (var space in ValidMoves)
+        {
+            if (destSpace == space)
+                return true;
+        }
+
+        return false;
+    }
+    
+    public void MovePiece(Space destSpace, ChessBoard inBoard)
+    {
+        Space startSpace = this.CurrentSpace;
+        PlacePiece(destSpace, inBoard);
+        startSpace.ClearPieceInfo();
+    }
+
+    //
+    public void AddPieceToSpaceThreats()
+    {
+        foreach (var space in ValidMoves)
+        {
+            space.AddPieceToThreats(this);
+        }
+    }
+
+    public void PrintThreats()
     {
         
     }
     
-    public void ScanHorizVert(Space currentSpace, int boundary)
-    {
-        
-    }
-
-    public void ScanDiagonal(Space currentSpace)
-    {
-        
-    }
 }
