@@ -14,76 +14,82 @@ public class Bishop : Piece
         this.Type = type;
     }
 
+    public Bishop(string color, string type) : base(color, type)
+    {
+    }
+    
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);
-        int currentCol = GetPosition().ColIndex;
-        int currentRow = GetPosition().RowIndex;
-
-        int rangeUp = currentRow + 1;
-        int rangeDown = 8 - currentRow;
-        int rangeLeft = currentCol + 1;
-        int rangeRight = 8 - currentCol;
-
-        // scan up-left
-        for (int i = 1; i < rangeUp && i < rangeLeft; i++)
-        {
-            Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol - i];
-            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
-                break;
-            if (tempSpace.HasPiece == true)
-            {
-                ValidMoves.Add(tempSpace);
-                break;
-            }
-            if (tempSpace.HasPiece == false)
-                ValidMoves.Add(tempSpace);
-        }
+        base.GenerateBishopMoves(inBoard);
         
-        // scan up-right
-        for (int i = 1; i < rangeUp && i < rangeRight; i++)
-        {
-            Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol + i];
-            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
-                break;
-            if (tempSpace.HasPiece == true)
-            {
-                ValidMoves.Add(tempSpace);
-                break;
-            }
-            if (tempSpace.HasPiece == false)
-                ValidMoves.Add(tempSpace);
-        }
-        
-        // scan down-right
-        for (int i = 1; i < rangeDown && i < rangeRight; i++)
-        {
-            Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol + i];
-            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
-                break;
-            if (tempSpace.HasPiece == true)
-            {
-                ValidMoves.Add(tempSpace);
-                break;
-            }
-            if (tempSpace.HasPiece == false)
-                ValidMoves.Add(tempSpace);
-        }
-        
-        // scan down-left
-        for (int i = 1; i < rangeDown && i < rangeLeft; i++)
-        {
-            Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol - i];
-            if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
-                break;
-            if (tempSpace.HasPiece == true)
-            {
-                ValidMoves.Add(tempSpace);
-                break;
-            }
-            if (tempSpace.HasPiece == false)
-                ValidMoves.Add(tempSpace);
-        }
+        // int currentCol = GetPosition().ColIndex;
+        // int currentRow = GetPosition().RowIndex;
+        //
+        // int rangeUp = currentRow + 1;
+        // int rangeDown = 8 - currentRow;
+        // int rangeLeft = currentCol + 1;
+        // int rangeRight = 8 - currentCol;
+        //
+        // // scan up-left
+        // for (int i = 1; i < rangeUp && i < rangeLeft; i++)
+        // {
+        //     Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol - i];
+        //     if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+        //         break;
+        //     if (tempSpace.HasPiece == true)
+        //     {
+        //         ValidMoves.Add(tempSpace);
+        //         break;
+        //     }
+        //     if (tempSpace.HasPiece == false)
+        //         ValidMoves.Add(tempSpace);
+        // }
+        //
+        // // scan up-right
+        // for (int i = 1; i < rangeUp && i < rangeRight; i++)
+        // {
+        //     Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol + i];
+        //     if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+        //         break;
+        //     if (tempSpace.HasPiece == true)
+        //     {
+        //         ValidMoves.Add(tempSpace);
+        //         break;
+        //     }
+        //     if (tempSpace.HasPiece == false)
+        //         ValidMoves.Add(tempSpace);
+        // }
+        //
+        // // scan down-right
+        // for (int i = 1; i < rangeDown && i < rangeRight; i++)
+        // {
+        //     Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol + i];
+        //     if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+        //         break;
+        //     if (tempSpace.HasPiece == true)
+        //     {
+        //         ValidMoves.Add(tempSpace);
+        //         break;
+        //     }
+        //     if (tempSpace.HasPiece == false)
+        //         ValidMoves.Add(tempSpace);
+        // }
+        //
+        // // scan down-left
+        // for (int i = 1; i < rangeDown && i < rangeLeft; i++)
+        // {
+        //     Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol - i];
+        //     if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
+        //         break;
+        //     if (tempSpace.HasPiece == true)
+        //     {
+        //         ValidMoves.Add(tempSpace);
+        //         break;
+        //     }
+        //     if (tempSpace.HasPiece == false)
+        //         ValidMoves.Add(tempSpace);
+        // }
         
         // int counter = 1;
         // foreach (var move in ValidMoves)

@@ -8,11 +8,12 @@ namespace ChessMac;
  * TODO: implement pinned piece recognition, for when king would be threatened if a piece wasn't in the way
  * TODO: implement piece blocking checking for when King is in check
  * TODO: add secondary move generation method that scans all possible movements as if there were no other pieces, tags them and assigns a score based on how many pieces are in the way
+ * TODO: add move counter
  */
 
 public class Piece
 {
-    protected Piece(string color, string name, char icon)
+    public Piece(string color, string name, char icon)
     {
         Color = color;
         Name = name;
@@ -20,7 +21,47 @@ public class Piece
         HasMoved = false;
         
     }
+
+    public Piece(string color, string type)
+    {
+        Color = color;
+        Type = type;
+        SetupPiece(color, type);
+    }
+
+    public static Piece? CreatePiece(string color, string type)
+    {
+        switch (type)
+        {
+            case "pawn": return new Pawn(color, type);
+            case "knight": return new Knight(color, type);
+            case "bishop": return new Bishop(color, type);
+            case "rook": return new Rook(color, type);
+            case "queen": return new Queen(color, type);
+            case "king": return new King(color, type);
+            
+            default: return new Piece(color, type);
+        }
+    }
     
+    public static readonly Dictionary<string, char> BlackIcons = new()
+    {
+        { "pawn", '\u2659' },
+        { "rook", '\u2656' },
+        { "knight", '\u2658' },
+        { "bishop",'\u2657' },
+        { "queen", '\u2655' },
+        { "king", '\u2654' },
+    };
+    public static readonly Dictionary<string, char> WhiteIcons = new()
+    {
+        { "pawn", '\u265F' },
+        { "rook", '\u265C' },
+        { "knight", '\u265E' },
+        { "bishop", '\u265D' },
+        { "queen", '\u265B' },
+        { "king", '\u265A' },
+    };
   
     public Space.Position PiecePosition = new();
     // human readable position of piece
@@ -39,6 +80,23 @@ public class Piece
     // generates all valid moves
     public virtual void GenerateValidMoves(ChessBoard inBoard)
     {
+    }
+
+    public void SetupPiece(string color, string type)
+    {
+        switch (color)
+        {
+            case "white": Icon = WhiteIcons[type];
+                break;
+            case "black": Icon = BlackIcons[type];
+                break;
+        }
+        SetName(color, type);
+    }
+
+    public void SetName(string color, string type)
+    {
+        Name = color + type;
     }
     
     public void PrintValidMoves()
@@ -218,6 +276,34 @@ public class Piece
             if (tempSpace.HasPiece == false)
                 ValidMoves.Add(tempSpace);
         }
+    }
+
+    public void PlacePiece(Space inSpace)
+    {
+        inSpace.Piece = this;
+        inSpace.HasPiece = true;
+        inSpace.Icon = this.Icon;
+        this.SetPosition(inSpace.Pos);
+    }
+
+    public void PlacePiece(int inRow, int inCol, ChessBoard inBoard)
+    {
+        Position tempPos = new Position(inRow, inCol);
+        if (IsWithinBoard(tempPos) == false)
+            return;
+        else
+        {
+            Space tempSpace = inBoard.GetSpace(inRow, inCol);
+            tempSpace.Piece = this;
+            tempSpace.HasPiece = true;
+            tempSpace.Icon = this.Icon;
+            this.SetPosition(tempSpace.Pos);
+        }
+    }
+
+    public void MovePiece(Space destSpace)
+    {
+        
     }
     
     public void ScanHorizVert(Space currentSpace, int boundary)

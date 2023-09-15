@@ -26,43 +26,15 @@ internal static class Program
         
         //PlacePieces(whitePieces, blackPieces, board);
 
-        //string colorToMove = "white";
-
-        for (int i = 0; i < whitePieces.Length; i++)
-        {
-            Console.WriteLine(whitePieces[i].Name + whitePieces[i].Icon);
-        }
+        Piece? testPiece = Piece.CreatePiece("black", "bishop");
+        testPiece?.PlacePiece(board.GetSpace("D5"));
+        board.OutputBoard();
         
-        for (int i = 0; i < blackPieces.Length; i++)
-        {
-            Console.WriteLine(blackPieces[i].Name + blackPieces[i].Icon);
-        }
-
-
-        Space.Position tempPos = new Space.Position(4, 4); 
+        testPiece?.GenerateValidMoves(board);
+        testPiece?.PrintValidMoves();
         
-        board.BoardSpaces[tempPos.RowIndex, tempPos.ColIndex].PlacePiece(new Pawn(
-            color: "black", 
-            type: "bishop", 
-            icon: WhiteIcons["QueenIcon"], 
-            name: "test"));
-        
-        Space tempSpace = board.GetSpace(tempPos.RowIndex, tempPos.ColIndex);
-        if (tempSpace.Piece != null)
-        {
-            tempSpace.Piece.HasMoved = true;
-            board.OutputBoard();
-            tempSpace.Piece?.GenerateValidMoves(board);
-            board.DisplayMoves(tempSpace.Piece);
-            board.OutputBoard();
-            //board.RemoveDisplayMoves(tempSpace.Piece);
-            //board.OutputBoard();
-            tempSpace.Piece?.PrintValidMoves();
-        }
-
-        //board.BoardSpaces[6, 2].Piece.PrintValidMoves();
-        //MovePiece(board);
-        //board.OutputBoard();
+        board.DisplayMoves(testPiece);
+        board.OutputBoard();
         
         
         /*

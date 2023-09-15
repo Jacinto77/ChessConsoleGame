@@ -1,6 +1,8 @@
 namespace ChessMac;
 using static Space;
 
+// TODO: implement en passant
+
 public class Pawn : Piece
 {
     public Pawn(string color, string name, char icon, string type) 
@@ -9,81 +11,56 @@ public class Pawn : Piece
         this.Type = type;
     }
 
+    public Pawn(string color, string type) : base(color, type)
+    {
+    }
+
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         int currentCol = this.GetPosition().ColIndex;
         int currentRow = this.GetPosition().RowIndex;
 
-        Space.Position forwOne = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol);
-        Space.Position forwTwo = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol);
-        Space.Position forwPos = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol + 1);
-        Space.Position forwNeg = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol - 1);
-
-
-        if (Color == "white")
+        int offsetOne = 0;
+        int offsetTwo = 0;
+        
+        switch (Color)
         {
-            //TODO: choose between ChessBoard.GetSpace() or using Space.IsWithinBounds() for validation
-            //TODO: actually ya know what, Space.Is... is way better
+            case "white":
+                offsetOne = -1;
+                offsetTwo = -2;
+                break;
+            case "black":
+                offsetOne = 1;
+                offsetTwo = 2;
+                break;
+        }
+        
+        Position forwOne = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol);
+        Position forwTwo = new Position(inRowIndex: currentRow + offsetTwo, inColIndex: currentCol);
+        Position forwPos = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol + 1);
+        Position forwNeg = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol - 1);
 
-            int offsetOne = -1;
-            int offsetTwo = -2;
+        if (IsWithinBoard(forwOne) && inBoard.GetPiece(forwOne) == null)
+        {
+            ValidMoves.Add(inBoard.GetSpace(forwOne));
 
-            forwOne.RowIndex += offsetOne;
-            forwTwo.RowIndex += offsetTwo;
-            forwPos.RowIndex += offsetOne;
-            forwNeg.RowIndex += offsetOne;
-
-            if (IsWithinBoard(forwOne) && inBoard.GetPiece(forwOne) == null)
+            if (IsWithinBoard(forwTwo) && inBoard.GetSpace(forwTwo).HasPiece == false
+                                       && this.HasMoved == false)
             {
-                ValidMoves.Add(inBoard.GetSpace(forwOne));
-
-                if (IsWithinBoard(forwTwo) && inBoard.GetSpace(forwTwo).HasPiece == false
-                                           && this.HasMoved == false)
-                {
-                    ValidMoves.Add(inBoard.GetSpace(forwTwo));
-                }
-            }
-
-            if (IsWithinBoard(forwPos) && inBoard.GetPiece(forwPos).Color != Color)
-            {
-                ValidMoves.Add(inBoard.GetSpace(forwPos));
-            }
-
-            if (IsWithinBoard(forwNeg) && inBoard.GetPiece(forwNeg).Color != Color)
-            {
-                ValidMoves.Add(inBoard.GetSpace(forwNeg));
+                ValidMoves.Add(inBoard.GetSpace(forwTwo));
             }
         }
-        else if (Color == "black") // TODO: finish new pawn implementation and test
-        {
-            Space forwardOne = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol);
-            Space forwardTwo = inBoard.GetSpace(inRow: currentRow + 2, inCol: currentCol);
-            Space forwardPos = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol + 1);
-            Space forwardNeg = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol - 1);
 
-            if (forwardOne.RowIndex != -1 && forwardOne.ColIndex != -1 
-                                           && forwardOne.HasPiece == false)
-            {
-                ValidMoves.Add(forwardOne);
-            }
-            if (forwardTwo.RowIndex != -1 && forwardTwo.ColIndex != -1
-                                           && forwardOne.HasPiece == false 
-                                           && forwardTwo is { HasPiece: false, Piece.HasMoved: false })
-            {
-                ValidMoves.Add(forwardTwo);
-            }
-            if (forwardPos.RowIndex != -1 && forwardPos.ColIndex != -1 
-                                           && forwardPos.HasPiece == true 
-                                           && forwardPos.Piece?.Color != this.Color )
-            {
-                ValidMoves.Add(forwardPos);
-            }
-            if (forwardNeg.RowIndex != -1 && forwardNeg.ColIndex != -1
-                                           && forwardNeg.HasPiece == true 
-                                           && forwardNeg.Piece?.Color != this.Color)
-            {
-                ValidMoves.Add(forwardNeg);
-            }
+        if (IsWithinBoard(forwPos) && inBoard.GetPiece(forwPos)?.Color != Color 
+                                   && inBoard.GetSpace(forwPos).HasPiece)
+        {
+            ValidMoves.Add(inBoard.GetSpace(forwPos));
+        }
+
+        if (IsWithinBoard(forwNeg) && inBoard.GetPiece(forwNeg)?.Color != Color 
+                                   && inBoard.GetSpace(forwPos).HasPiece)
+        {
+            ValidMoves.Add(inBoard.GetSpace(forwNeg));
         }
     }
 }

@@ -204,6 +204,41 @@ public static class Methods
         
         return column + row;
     }
+    
+    public static string ConvertIndexToPos(Space.Position inPosition)
+    {
+        string column = "";
+        string row = "";
+
+        column = inPosition.ColIndex switch
+        {
+            0 => "A",
+            1 => "B",
+            2 => "C",
+            3 => "D",
+            4 => "E",
+            5 => "F",
+            6 => "G",
+            7 => "H",
+            _ => column
+        };
+
+        row = inPosition.RowIndex switch
+        {
+            0 => "8",
+            1 => "7",
+            2 => "6",
+            3 => "5",
+            4 => "4",
+            5 => "3",
+            6 => "2",
+            7 => "1",
+            _ => row
+        };
+        
+        return column + row;
+    }
+    
     public static Space.Position ConvertPosToIndex(string input)
     {
         var column = input[0];

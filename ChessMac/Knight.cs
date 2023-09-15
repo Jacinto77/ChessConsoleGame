@@ -22,6 +22,10 @@ public class Knight : Piece
         this.Type = type;
     }
 
+    public Knight(string color, string type) : base(color, type)
+    {
+    }
+    
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);

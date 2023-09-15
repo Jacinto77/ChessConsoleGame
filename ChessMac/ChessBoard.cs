@@ -59,28 +59,29 @@ public class ChessBoard
         Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH");
         Console.WriteLine(@"      ______________________________________________________________");
         //TODO: change i and j to row and column
-        for (int i = 0; i < 8; i++)
+        for (int row = 0; row < 8; row++)
         {
             // row number labels
-            Console.Write(rowNums[i] + @"     |" + "\t");
+            Console.Write(rowNums[row] + @"     |" + "\t");
             
-            for (int j = 0; j < 8; j++)
+            for (int col = 0; col < 8; col++)
             {
-                if (BoardSpaces[i, j].Piece == null)
-                    Console.Write(BoardSpaces[i, j].Icon);
-                else
-                    Console.Write(BoardSpaces[i, j].Piece.Icon);
+                Console.Write(GetSpace(row, col).Icon);
+                // if (BoardSpaces[row, col].Piece == null)
+                //     Console.Write(BoardSpaces[row, col].Icon);
+                // else
+                //     Console.Write(BoardSpaces[row, col].Piece.Icon);
                 
-                if (j < 7) Console.Write("\t");
+                if (col < 7) Console.Write("\t");
                 
                 // skip to next line after reaching last item in row
-                if (j == 7)
+                if (col == 7)
                 {
                     // row number labels
                     Console.Write(@"  |" + "\t");
-                    Console.Write(rowNums[i]);
+                    Console.Write(rowNums[row]);
                     Console.WriteLine();
-                    if (i < 7)
+                    if (row < 7)
                     {
                         Console.Write(@"      |" + "\t\t\t\t\t\t\t\t" + @"   |");
                         Console.WriteLine();
@@ -97,21 +98,7 @@ public class ChessBoard
         // White side label
         Console.WriteLine("\t\t\t\t WHITE");
     }
-    
-    // struct of two values: 1st index, 2nd index, for use with BoardSpaces array
-    // public struct Position
-    // {
-    //     public int Row;
-    //     public int Col;
-    //
-    //     public Position(int inRow, int inCol)
-    //     {
-    //         Row = inRow;
-    //         Col = inCol;
-    //     }
-    // }
 
-    
     // array of numbers 1-8 to be used by OutputBoard()
     private int[] rowNums =
     {
@@ -257,6 +244,15 @@ public class ChessBoard
         return BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
     }
 
+    public Space GetSpace(string position)
+    {
+        Space.Position pos = Methods.ConvertPosToIndex(position);
+        if (Space.IsWithinBoard(pos))
+            return GetSpace(pos);
+
+        return new Space(-1, -1);
+    }
+    
     public Piece? GetPiece(Space.Position inPosition)
     {
         Space tempSpace = BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
