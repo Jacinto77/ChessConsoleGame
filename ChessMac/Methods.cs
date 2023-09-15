@@ -1,5 +1,7 @@
 namespace ChessMac;
 
+// TODO: get rid of magic numbers
+
 public static class Methods
 {
     public static readonly Dictionary<string, char> BlackIcons = new()
@@ -122,10 +124,10 @@ public static class Methods
             {
                 Tuple<string, string> positions = ParseInput(input);
                 
-                Space.Position startPosition = ConvertPosToIndices(positions.Item1);
-                Space.Position destPosition = ConvertPosToIndices(positions.Item2);
-                Space startSpace = inBoard.BoardSpaces[startPosition.Row, startPosition.Col];
-                Space destSpace = inBoard.BoardSpaces[destPosition.Row, destPosition.Col];
+                Space.Position startPosition = ConvertPosToIndex(positions.Item1);
+                Space.Position destPosition = ConvertPosToIndex(positions.Item2);
+                Space startSpace = inBoard.BoardSpaces[startPosition.RowIndex, startPosition.ColIndex];
+                Space destSpace = inBoard.BoardSpaces[destPosition.RowIndex, destPosition.ColIndex];
                 
                 // TODO: move this check somehwere else
                 if (startSpace.HasPiece == false)
@@ -153,6 +155,7 @@ public static class Methods
         }
     }
 
+    // TODO: check input w/ regex and known words instead
     public static Tuple<string, string> ParseInput(string input)
     {
         string piece;
@@ -168,7 +171,7 @@ public static class Methods
         return new Tuple<string, string>(piece, dest);
     }
 
-    public static string ConvertIndicesToPos(int inRow, int inCol)
+    public static string ConvertIndexToPos(int inRow, int inCol)
     {
         string column = "";
         string row = "";
@@ -201,13 +204,13 @@ public static class Methods
         
         return column + row;
     }
-    public static Space.Position ConvertPosToIndices(string input)
+    public static Space.Position ConvertPosToIndex(string input)
     {
         var column = input[0];
         var row = input[1];
 
         Space.Position position = new Space.Position();
-        position.Col = column switch
+        position.ColIndex = column switch
         {
             'A' => 0,
             'B' => 1,
@@ -217,10 +220,10 @@ public static class Methods
             'F' => 5,
             'G' => 6,
             'H' => 7,
-            _ => position.Col
+            _ => position.ColIndex
         };
 
-        position.Row = row switch
+        position.RowIndex = row switch
         {
             '1' => 7,
             '2' => 6,
@@ -230,7 +233,7 @@ public static class Methods
             '6' => 2,
             '7' => 1,
             '8' => 0,
-            _ => position.Row
+            _ => position.RowIndex
         };
 
         return position;

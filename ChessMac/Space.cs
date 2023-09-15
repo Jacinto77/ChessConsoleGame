@@ -10,11 +10,11 @@ public class Space
 {
     public Space(int inRowIndex, int inColIndex)
     {
-        _rowIndex = inRowIndex;
-        _colIndex = inColIndex;
+        RowIndex = inRowIndex;
+        ColIndex = inColIndex;
 
-        _position.Row = inRowIndex;
-        _position.Col = inColIndex;
+        _position.RowIndex = inRowIndex;
+        _position.ColIndex = inColIndex;
         
         ConvertIndexToPosition(_position);
         SetName();
@@ -25,19 +25,19 @@ public class Space
     
     public struct Position
     {
-        public int Row;
-        public int Col;
+        public int RowIndex;
+        public int ColIndex;
         
-        public Position(int inRow, int inCol)
+        public Position(int inRowIndex, int inColIndex)
         {
-            Row = inRow;
-            Col = inCol;
+            RowIndex = inRowIndex;
+            ColIndex = inColIndex;
         }
     }
     
     private Position _position = new();
-    public readonly int _rowIndex;
-    public readonly int _colIndex;
+    public readonly int RowIndex;
+    public readonly int ColIndex;
 
     public int Row { get; set; }
     public char Col { get; set; }
@@ -99,7 +99,7 @@ public class Space
     // convert index to readable position
     void ConvertIndexToPosition(Position inPosition)
     {
-        Col = inPosition.Col switch
+        Col = inPosition.ColIndex switch
         {
             0 => 'A',
             1 => 'B',
@@ -112,7 +112,7 @@ public class Space
             _ => Col
         };
 
-        Row = inPosition.Row switch
+        Row = inPosition.RowIndex switch
         {
             0 => 8,
             1 => 7,
@@ -126,14 +126,14 @@ public class Space
         };
     }
 
-    public static bool IsValidPosition(Position pos)
+    public static bool IsWithinBoard(Position pos)
     {
-        if (pos.Col is > 7 or < 0)
+        if (pos.ColIndex is > 7 or < 0)
         {
             return false;
         }
 
-        if (pos.Row is > 7 or < 0)
+        if (pos.RowIndex is > 7 or < 0)
         {
             return false;
         }

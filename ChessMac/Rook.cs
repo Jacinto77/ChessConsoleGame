@@ -21,14 +21,14 @@ public class Rook : Piece
         // walk spaces from start to edges of board
         // if space.HasPiece == True, stop
 
-        int currentCol = GetPosition().Col;
-        int currentRow = GetPosition().Row;
+        int currentCol = GetPosition().ColIndex;
+        int currentRow = GetPosition().RowIndex;
 
         // subtract current position from 7 (last index of board array) to find boundaries
-        int rangeLeft = currentCol;
-        int rangeRight = 7 - currentCol;
-        int rangeUp = currentRow;
-        int rangeDown = 7 - currentRow;
+        int rangeLeft = currentCol + 1;
+        int rangeRight = 7 - currentCol + 1;
+        int rangeUp = currentRow + 1;
+        int rangeDown = 7 - currentRow + 1;
 
         //scan up
         for (int i = 1; i < rangeUp; i++)

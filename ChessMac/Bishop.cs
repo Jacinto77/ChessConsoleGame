@@ -17,16 +17,16 @@ public class Bishop : Piece
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);
-        int currentCol = GetPosition().Col;
-        int currentRow = GetPosition().Row;
+        int currentCol = GetPosition().ColIndex;
+        int currentRow = GetPosition().RowIndex;
 
-        Tuple<int, int> rangeUpLeft = new Tuple<int, int>(currentRow, currentCol);
-        Tuple<int, int> rangeDownRight = new Tuple<int, int>(7 - currentRow, 7 - currentCol);
-        Tuple<int, int> rangeUpRight = new Tuple<int, int>(currentRow, 7 - currentCol);
-        Tuple<int, int> rangeDownLeft = new Tuple<int, int>(7 - currentRow, currentCol);
-        
+        int rangeUp = currentRow + 1;
+        int rangeDown = 8 - currentRow;
+        int rangeLeft = currentCol + 1;
+        int rangeRight = 8 - currentCol;
+
         // scan up-left
-        for (int i = 1; i < rangeUpLeft.Item1 || i < rangeUpLeft.Item2; i++)
+        for (int i = 1; i < rangeUp && i < rangeLeft; i++)
         {
             Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol - i];
             if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
@@ -41,7 +41,7 @@ public class Bishop : Piece
         }
         
         // scan up-right
-        for (int i = 1; i < rangeUpRight.Item1 || i < rangeUpRight.Item2; i++)
+        for (int i = 1; i < rangeUp && i < rangeRight; i++)
         {
             Space tempSpace = inBoard.BoardSpaces[currentRow - i, currentCol + i];
             if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
@@ -56,7 +56,7 @@ public class Bishop : Piece
         }
         
         // scan down-right
-        for (int i = 1; i < rangeDownRight.Item1 || i < rangeDownRight.Item2; i++)
+        for (int i = 1; i < rangeDown && i < rangeRight; i++)
         {
             Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol + i];
             if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
@@ -71,7 +71,7 @@ public class Bishop : Piece
         }
         
         // scan down-left
-        for (int i = 1; i < rangeDownLeft.Item1 || i < rangeDownLeft.Item2; i++)
+        for (int i = 1; i < rangeDown && i < rangeLeft; i++)
         {
             Space tempSpace = inBoard.BoardSpaces[currentRow + i, currentCol - i];
             if (tempSpace.HasPiece && tempSpace.Piece.Color == Color)
@@ -85,12 +85,12 @@ public class Bishop : Piece
                 ValidMoves.Add(tempSpace);
         }
         
-        int counter = 1;
-        foreach (var move in ValidMoves)
-        {
-            Console.WriteLine(counter);
-            Console.WriteLine(move.Col + move.Row.ToString());
-            counter++;
-        }
+        // int counter = 1;
+        // foreach (var move in ValidMoves)
+        // {
+        //     Console.WriteLine(counter);
+        //     Console.WriteLine(move.Col + move.Row.ToString());
+        //     counter++;
+        // }
     }
 }

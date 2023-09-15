@@ -241,7 +241,7 @@ public class ChessBoard
         return BoardSpaces[inRow, inCol];
     }
 
-    public void DisplayMoves(Piece inPiece)
+    public void DisplayMoves(Piece? inPiece)
     {
         for (int i = 0; i < inPiece.ValidMoves.Count; i++)
         {
@@ -249,7 +249,7 @@ public class ChessBoard
         }
     }
 
-    public void RemoveDisplayMoves(Piece inPiece)
+    public void RemoveDisplayMoves(Piece? inPiece)
     {
         for (int i = 0; i < inPiece.ValidMoves.Count; i++)
         {

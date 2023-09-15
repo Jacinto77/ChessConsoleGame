@@ -24,22 +24,10 @@ internal static class Program
         InitializePieces(inPieces: whitePieces, color: "white", inIcons: WhiteIcons);
         InitializePieces(inPieces: blackPieces, color: "black", inIcons: BlackIcons);
         
-        PlacePieces(whitePieces, blackPieces, board);
-        
-        board.OutputBoard();
+        //PlacePieces(whitePieces, blackPieces, board);
 
-        string colorToMove = "white";
-        // while (true)
-        // {
-        //     // prompt color to move
-        //     // get move input
-        //     // validate that it is a proper move
-        //         // is proper color?
-        //         // is destination move in list of valid moves for source piece
-        //         // 
-        // }
-        
-        
+        //string colorToMove = "white";
+
         for (int i = 0; i < whitePieces.Length; i++)
         {
             Console.WriteLine(whitePieces[i].Name + whitePieces[i].Icon);
@@ -49,18 +37,24 @@ internal static class Program
         {
             Console.WriteLine(blackPieces[i].Name + blackPieces[i].Icon);
         }
+
+
+        Space.Position tempPos = new Space.Position(4, 4); 
         
-        // clearing space to test generation of rook's valid moves
+        board.BoardSpaces[tempPos.RowIndex, tempPos.ColIndex].PlacePiece(new Queen(
+            color: "white", 
+            type: "bishop", 
+            icon: WhiteIcons["QueenIcon"], 
+            name: "test"));
         
-        board.BoardSpaces[4, 4].PlacePiece(new Bishop(color: "white", type: "bishop", icon: WhiteIcons["BishopIcon"], name: "test"));
+        Space tempSpace = board.GetSpace(tempPos.RowIndex, tempPos.ColIndex);
         board.OutputBoard();
-        board.BoardSpaces[4, 4].Piece.GenerateValidMoves(board);
-        
-        // TODO: this dont work yet
-        board.DisplayMoves(board.GetSpace(4, 4).Piece);
-        Console.WriteLine(board.BoardSpaces[5, 5].Icon);
+        tempSpace.Piece?.GenerateValidMoves(board);
+        board.DisplayMoves(tempSpace.Piece);
         board.OutputBoard();
-        //board.BoardSpaces[7, 1].Piece.PrintValidMoves();
+        board.RemoveDisplayMoves(tempSpace.Piece);
+        board.OutputBoard();
+        tempSpace.Piece?.PrintValidMoves();
         
         //board.BoardSpaces[6, 2].Piece.PrintValidMoves();
         //MovePiece(board);

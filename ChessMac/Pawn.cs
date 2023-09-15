@@ -10,8 +10,8 @@ public class Pawn : Piece
 
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
-        int currentCol = this.GetPosition().Col;
-        int currentRow = this.GetPosition().Row;
+        int currentCol = this.GetPosition().ColIndex;
+        int currentRow = this.GetPosition().RowIndex;
 
         if (Color == "white")
         {
@@ -20,23 +20,26 @@ public class Pawn : Piece
             Space forwardPos = inBoard.GetSpace(inRow: currentRow - 1, inCol: currentCol + 1);
             Space forwardNeg = inBoard.GetSpace(inRow: currentRow - 1, inCol: currentCol - 1);
 
-            if (forwardOne._rowIndex != -1 && forwardOne._colIndex != -1 
+            if (forwardOne.RowIndex != -1 && forwardOne.ColIndex != -1 
                                            && forwardOne.HasPiece == false)
             {
                 ValidMoves.Add(forwardOne);
             }
-            if (forwardTwo._rowIndex != -1 && forwardTwo._colIndex != -1
-                && forwardOne.HasPiece == false && forwardTwo.HasPiece == false)
+            if (forwardTwo.RowIndex != -1 && forwardTwo.ColIndex != -1
+                                           && forwardOne.HasPiece == false 
+                                           && forwardTwo.HasPiece == false)
             {
                 ValidMoves.Add(forwardTwo);
             }
-            if (forwardPos._rowIndex != -1 && forwardPos._colIndex != -1 
-                                           && forwardPos.HasPiece == true )
+            if (forwardPos.RowIndex != -1 && forwardPos.ColIndex != -1 
+                                           && forwardPos.HasPiece == true 
+                                           && forwardPos.Piece?.Color != this.Color )
             {
                 ValidMoves.Add(forwardPos);
             }
-            if (forwardNeg._rowIndex != -1 && forwardNeg._colIndex != -1
-                                           && forwardNeg.HasPiece == true)
+            if (forwardNeg.RowIndex != -1 && forwardNeg.ColIndex != -1
+                                           && forwardNeg.HasPiece == true 
+                                           && forwardNeg.Piece?.Color != this.Color)
             {
                 ValidMoves.Add(forwardNeg);
             }
@@ -49,26 +52,26 @@ public class Pawn : Piece
             Space forwardPos = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol + 1);
             Space forwardNeg = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol - 1);
 
-            if (forwardOne._rowIndex != -1 && forwardOne._colIndex != -1
+            if (forwardOne.RowIndex != -1 && forwardOne.ColIndex != -1 
                                            && forwardOne.HasPiece == false)
             {
                 ValidMoves.Add(forwardOne);
             }
-
-            if (forwardTwo._rowIndex != -1 && forwardTwo._colIndex != -1
-                                           && forwardOne.HasPiece == false && forwardTwo.HasPiece == false)
+            if (forwardTwo.RowIndex != -1 && forwardTwo.ColIndex != -1
+                                           && forwardOne.HasPiece == false 
+                                           && forwardTwo.HasPiece == false)
             {
                 ValidMoves.Add(forwardTwo);
             }
-
-            if (forwardPos._rowIndex != -1 && forwardPos._colIndex != -1
-                                           && forwardPos.HasPiece == true)
+            if (forwardPos.RowIndex != -1 && forwardPos.ColIndex != -1 
+                                           && forwardPos.HasPiece == true 
+                                           && forwardPos.Piece?.Color != this.Color )
             {
                 ValidMoves.Add(forwardPos);
             }
-
-            if (forwardNeg._rowIndex != -1 && forwardNeg._colIndex != -1
-                                           && forwardNeg.HasPiece == true)
+            if (forwardNeg.RowIndex != -1 && forwardNeg.ColIndex != -1
+                                           && forwardNeg.HasPiece == true 
+                                           && forwardNeg.Piece?.Color != this.Color)
             {
                 ValidMoves.Add(forwardNeg);
             }

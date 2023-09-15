@@ -25,18 +25,12 @@ public class Knight : Piece
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);
-        /* Gen possible moves
-         * check if move is out of bounds
-         * check if move is to a piece with the same color
-         * update valid moves with remaining moves
-         */
         
+        int currentCol = this.GetPosition().ColIndex;
+        int currentRow = this.GetPosition().RowIndex;
         
-        int currentCol = this.GetPosition().Col;
-        int currentRow = this.GetPosition().Row;
-        
-        Console.WriteLine("Current Column:" + currentCol);
-        Console.WriteLine("Current Row: " + currentRow);
+        //Console.WriteLine("Current Column:" + currentCol);
+        //Console.WriteLine("Current Row: " + currentRow);
 
         List<Space.Position> validPositions = new List<Space.Position>
         {
@@ -51,23 +45,19 @@ public class Knight : Piece
         };
 
         // check if generated move's destination contains a piece of the same color
-        int counter1 = 0;
         foreach (var move in validPositions)
         {
-            if (Space.IsValidPosition(move) == false)
+            if (Space.IsWithinBoard(move) == false)
             {
                 continue;
             }
             
             // check if move's dest space has a piece of the same color
-            Space destSpace = inBoard.BoardSpaces[move.Row, move.Col];
+            Space destSpace = inBoard.BoardSpaces[move.RowIndex, move.ColIndex];
             // Console.WriteLine(destSpace.HasPiece);
-            if (destSpace.HasPiece == true)
+            if (destSpace.HasPiece == true && destSpace.Piece?.Color == Color)
             {
-                if (destSpace.Piece?.Color == Color)
-                {
-                    continue;
-                }
+                continue;
             }
             
             ValidMoves.Add(destSpace);

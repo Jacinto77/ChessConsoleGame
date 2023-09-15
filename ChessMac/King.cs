@@ -11,19 +11,38 @@ public class King : Piece
         this.Type = type;
     }
 
-    public bool IsMoveValid(Tuple<int, int> start, Tuple<int, int> destination)
+    public override void GenerateValidMoves(ChessBoard inBoard)
     {
-        // adding 1 to avoid sub/add by 0
-        int rowDiff = Math.Abs((start.Item1 + 1) - (start.Item1 + 1));
-        int colDiff = Math.Abs((start.Item2 + 1) - (destination.Item2 + 1));
-
-
-        if (rowDiff > 1 || colDiff > 1)
-        {
-            return false;
-        }
+        base.GenerateValidMoves(inBoard);
+        int currentRow = this.GetPosition().RowIndex;
+        int currentCol = this.GetPosition().ColIndex;
         
-        return false;
+        List<Space.Position> tempMoves = new List<Space.Position>
+        {
+            new(currentRow + 1, currentCol),
+            new(currentRow + 1, currentCol + 1),
+            new(currentRow + 1, currentCol - 1),
+            new(currentRow, currentCol + 1),
+            new(currentRow, currentCol - 1),
+            new(currentRow - 1, currentCol),
+            new(currentRow - 1, currentCol + 1),
+            new(currentRow - 1, currentCol - 1)
+        };
+
+        foreach (var move in tempMoves)
+        {
+            if (Space.IsWithinBoard(move) == false) continue;
+
+            Space destSpace = inBoard.GetSpace(move.RowIndex, move.ColIndex);
+            if (destSpace.HasPiece == true)
+            {
+                if (destSpace.Piece?.Color == Color)
+                {
+                    continue;
+                }
+            }
+            
+            ValidMoves.Add(destSpace);
+        }
     }
-    
 }
