@@ -241,6 +241,29 @@ public class ChessBoard
         return BoardSpaces[inRow, inCol];
     }
 
+    public Space GetSpace(Space.Position inPosition)
+    {
+        if (inPosition.RowIndex > 7 
+            || inPosition.RowIndex < 0 
+            || inPosition.ColIndex > 7 
+            || inPosition.ColIndex < 0)
+        {
+            Space tempSpace = new Space(-1, -1);
+            tempSpace.HasPiece = false;
+            tempSpace.Piece = null;
+
+            return tempSpace;
+        }
+        return BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
+    }
+
+    public Piece? GetPiece(Space.Position inPosition)
+    {
+        Space tempSpace = BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
+        if (tempSpace.HasPiece) return tempSpace.Piece;
+        else return null;
+    }
+    
     public void DisplayMoves(Piece? inPiece)
     {
         for (int i = 0; i < inPiece.ValidMoves.Count; i++)

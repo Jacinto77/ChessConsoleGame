@@ -41,21 +41,25 @@ internal static class Program
 
         Space.Position tempPos = new Space.Position(4, 4); 
         
-        board.BoardSpaces[tempPos.RowIndex, tempPos.ColIndex].PlacePiece(new Queen(
-            color: "white", 
+        board.BoardSpaces[tempPos.RowIndex, tempPos.ColIndex].PlacePiece(new Pawn(
+            color: "black", 
             type: "bishop", 
             icon: WhiteIcons["QueenIcon"], 
             name: "test"));
         
         Space tempSpace = board.GetSpace(tempPos.RowIndex, tempPos.ColIndex);
-        board.OutputBoard();
-        tempSpace.Piece?.GenerateValidMoves(board);
-        board.DisplayMoves(tempSpace.Piece);
-        board.OutputBoard();
-        board.RemoveDisplayMoves(tempSpace.Piece);
-        board.OutputBoard();
-        tempSpace.Piece?.PrintValidMoves();
-        
+        if (tempSpace.Piece != null)
+        {
+            tempSpace.Piece.HasMoved = true;
+            board.OutputBoard();
+            tempSpace.Piece?.GenerateValidMoves(board);
+            board.DisplayMoves(tempSpace.Piece);
+            board.OutputBoard();
+            //board.RemoveDisplayMoves(tempSpace.Piece);
+            //board.OutputBoard();
+            tempSpace.Piece?.PrintValidMoves();
+        }
+
         //board.BoardSpaces[6, 2].Piece.PrintValidMoves();
         //MovePiece(board);
         //board.OutputBoard();

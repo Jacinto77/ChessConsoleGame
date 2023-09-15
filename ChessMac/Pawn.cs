@@ -1,11 +1,12 @@
 namespace ChessMac;
+using static Space;
 
 public class Pawn : Piece
 {
-    public Pawn(string color, string name, char icon, string inType) 
+    public Pawn(string color, string name, char icon, string type) 
         : base(color, name, icon)
     {
-        this.Type = inType;
+        this.Type = type;
     }
 
     public override void GenerateValidMoves(ChessBoard inBoard)
@@ -13,39 +14,47 @@ public class Pawn : Piece
         int currentCol = this.GetPosition().ColIndex;
         int currentRow = this.GetPosition().RowIndex;
 
+        Space.Position forwOne = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol);
+        Space.Position forwTwo = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol);
+        Space.Position forwPos = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol + 1);
+        Space.Position forwNeg = new Space.Position(inRowIndex: currentRow, inColIndex: currentCol - 1);
+
+
         if (Color == "white")
         {
-            Space forwardOne = inBoard.GetSpace(inRow: currentRow - 1, inCol: currentCol);
-            Space forwardTwo = inBoard.GetSpace(inRow: currentRow - 2, inCol: currentCol);
-            Space forwardPos = inBoard.GetSpace(inRow: currentRow - 1, inCol: currentCol + 1);
-            Space forwardNeg = inBoard.GetSpace(inRow: currentRow - 1, inCol: currentCol - 1);
+            //TODO: choose between ChessBoard.GetSpace() or using Space.IsWithinBounds() for validation
+            //TODO: actually ya know what, Space.Is... is way better
 
-            if (forwardOne.RowIndex != -1 && forwardOne.ColIndex != -1 
-                                           && forwardOne.HasPiece == false)
+            int offsetOne = -1;
+            int offsetTwo = -2;
+
+            forwOne.RowIndex += offsetOne;
+            forwTwo.RowIndex += offsetTwo;
+            forwPos.RowIndex += offsetOne;
+            forwNeg.RowIndex += offsetOne;
+
+            if (IsWithinBoard(forwOne) && inBoard.GetPiece(forwOne) == null)
             {
-                ValidMoves.Add(forwardOne);
+                ValidMoves.Add(inBoard.GetSpace(forwOne));
+
+                if (IsWithinBoard(forwTwo) && inBoard.GetSpace(forwTwo).HasPiece == false
+                                           && this.HasMoved == false)
+                {
+                    ValidMoves.Add(inBoard.GetSpace(forwTwo));
+                }
             }
-            if (forwardTwo.RowIndex != -1 && forwardTwo.ColIndex != -1
-                                           && forwardOne.HasPiece == false 
-                                           && forwardTwo.HasPiece == false)
+
+            if (IsWithinBoard(forwPos) && inBoard.GetPiece(forwPos).Color != Color)
             {
-                ValidMoves.Add(forwardTwo);
+                ValidMoves.Add(inBoard.GetSpace(forwPos));
             }
-            if (forwardPos.RowIndex != -1 && forwardPos.ColIndex != -1 
-                                           && forwardPos.HasPiece == true 
-                                           && forwardPos.Piece?.Color != this.Color )
+
+            if (IsWithinBoard(forwNeg) && inBoard.GetPiece(forwNeg).Color != Color)
             {
-                ValidMoves.Add(forwardPos);
+                ValidMoves.Add(inBoard.GetSpace(forwNeg));
             }
-            if (forwardNeg.RowIndex != -1 && forwardNeg.ColIndex != -1
-                                           && forwardNeg.HasPiece == true 
-                                           && forwardNeg.Piece?.Color != this.Color)
-            {
-                ValidMoves.Add(forwardNeg);
-            }
-            
         }
-        else if (Color == "black")
+        else if (Color == "black") // TODO: finish new pawn implementation and test
         {
             Space forwardOne = inBoard.GetSpace(inRow: currentRow + 1, inCol: currentCol);
             Space forwardTwo = inBoard.GetSpace(inRow: currentRow + 2, inCol: currentCol);
@@ -59,7 +68,7 @@ public class Pawn : Piece
             }
             if (forwardTwo.RowIndex != -1 && forwardTwo.ColIndex != -1
                                            && forwardOne.HasPiece == false 
-                                           && forwardTwo.HasPiece == false)
+                                           && forwardTwo is { HasPiece: false, Piece.HasMoved: false })
             {
                 ValidMoves.Add(forwardTwo);
             }

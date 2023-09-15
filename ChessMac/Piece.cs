@@ -17,6 +17,8 @@ public class Piece
         Color = color;
         Name = name;
         Icon = icon;
+        HasMoved = false;
+        
     }
     
   
@@ -29,7 +31,6 @@ public class Piece
     public string? Name { get; set; }
     public char? Icon { get; set; }
     
-    public bool IsFirstMove { get; set; }
     public bool HasMoved { get; set; }
 
     // all valid moves for the piece

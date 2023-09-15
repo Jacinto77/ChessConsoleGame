@@ -77,7 +77,7 @@ public static class Methods
             (color: color, 
                 name: color + "Pawn" + (i - 7), 
                 icon: inIcons["PawnIcon"], 
-                inType: "pawn");
+                type: "pawn");
         }
     }
 
