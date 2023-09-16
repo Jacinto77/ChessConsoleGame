@@ -172,7 +172,8 @@ public abstract class Piece
             ColIndex = PiecePosition.ColIndex
         };
     }
-
+    
+    //TODO: create extension methods for these for better encapsulation
     public void GenerateRookMoves(ChessBoard inBoard)
     {
         ValidMoves.Clear();
