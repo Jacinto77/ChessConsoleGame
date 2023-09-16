@@ -27,33 +27,33 @@ internal static class Program
         PlacePieces(blackPieces, board);
 
         // testing
-        Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
-        board.GetSpace(5, 4).PlacePiece(new Pawn(Piece.PieceColor.Black, Piece.PieceType.Pawn));
-        testPiece.GenerateValidMoves(board);
-        testPiece.PrintValidMoves();
-        board.OutputBoard();
+        // Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
+        // board.GetSpace(5, 4).PlacePiece(new Pawn(Piece.PieceColor.Black, Piece.PieceType.Pawn));
+        // testPiece.GenerateValidMoves(board);
+        // testPiece.PrintValidMoves();
+        // board.OutputBoard();
         
         
-        // int moveCounter = 1;
-        // while (true)
-        // {
-        //     if(moveCounter > 100)
-        //         return;
-        //     GeneratePieceMoves(whitePieces, board);
-        //     GeneratePieceMoves(blackPieces, board);
-        //     board.OutputBoard();
-        //
-        //     string colorToMove;
-        //     if (moveCounter % 2 != 0)
-        //         colorToMove = "white";
-        //     else
-        //     {
-        //         colorToMove = "black";
-        //     }
-        //     
-        //     PlayerMove(board, colorToMove);
-        //     moveCounter++;
-        // }
+        int moveCounter = 1;
+        while (true)
+        {
+            if(moveCounter > 100)
+                return;
+            GeneratePieceMoves(whitePieces, board);
+            GeneratePieceMoves(blackPieces, board);
+            board.OutputBoard();
+        
+            Piece.PieceColor colorToMove;
+            if (moveCounter % 2 != 0)
+                colorToMove = Piece.PieceColor.White;
+            else
+            {
+                colorToMove = Piece.PieceColor.Black;
+            }
+            
+            PlayerMove(board, colorToMove);
+            moveCounter++;
+        }
         
         
         // GeneratePieceMoves(whitePieces, board);
