@@ -4,7 +4,6 @@ using static ChessMac.Methods;
 namespace ChessMac;
 
 /*
- * TODO: implement enum for piece colors
  * TODO: decompose functions further
  * 
  * TODO: create move generation functionality work to identify and tag pieces as being threatened, as well as what piece is threatening
@@ -29,7 +28,7 @@ public abstract class Piece
     {
         Color = color;
         Type = type;
-        SetupPiece(color, type);
+        SetupIconAndName(color, type);
     }
 
     public enum PieceColor
@@ -48,6 +47,23 @@ public abstract class Piece
         King
     }
 
+    public List<Piece> PieceTakes = new List<Piece>();
+    public List<Piece> PinnedPieces = new List<Piece>();
+    
+    public static PieceType ConvertIntToPieceType(int? input)
+    {
+        PieceType pieceType = input switch
+        {
+            1 => PieceType.Knight,
+            2 => PieceType.Bishop,
+            3 => PieceType.Rook,
+            4 => PieceType.Queen,
+            _ => PieceType.Pawn
+        };
+
+        return pieceType;
+    }
+    
     private static int PieceCounter = 16;
     
     public static Piece CreatePiece(PieceColor color, PieceType type)
@@ -104,7 +120,8 @@ public abstract class Piece
   
     public Space.Position PiecePosition = new();
 
-    public Space CurrentSpace;
+    public bool IsActive { get; set; }
+    public Space? CurrentSpace;
     // human readable position of piece
     public string? Pos { get; set; }
     
@@ -114,7 +131,8 @@ public abstract class Piece
     public char? Icon { get; set; }
     
     public bool HasMoved { get; set; }
-
+    public bool IsPinned { get; set; }
+    
     public int MoveCounter = 0;
     // all valid moves for the piece
     public List<Space> ValidMoves = new();
@@ -122,19 +140,22 @@ public abstract class Piece
     // generates all valid moves
     public abstract void GenerateValidMoves(ChessBoard inBoard);
     
-
-        public void SetupPiece(PieceColor color, PieceType type)
+    public void SetupIconAndName(PieceColor color, PieceType type)
     {
-        switch (color)
-        {
-            case PieceColor.White: Icon = WhiteIcons[type];
-                break;
-            case PieceColor.Black: Icon = BlackIcons[type];
-                break;
-        }
+        SetIcon(color, type);
         SetName(color, type);
     }
 
+    public void SetIcon(PieceColor inColor, PieceType inType)
+    {
+        Icon = inColor switch
+        {
+            PieceColor.White => WhiteIcons[inType],
+            PieceColor.Black => BlackIcons[inType],
+            _ => Icon
+        };
+    }
+    
     public void SetName(PieceColor color, PieceType type)
     {
         Name = color.ToString() + type.ToString() + "_" + PieceCounter.ToString();
@@ -337,6 +358,7 @@ public abstract class Piece
         inSpace.SetPieceInfo(this);
         CurrentSpace = inSpace;
         SetPosition(inSpace.Pos);
+        this.IsActive = true;
     }
 
     // prob won't use this
@@ -368,12 +390,11 @@ public abstract class Piece
     
     public void MovePiece(Space destSpace, ChessBoard inBoard)
     {
-        Space startSpace = this.CurrentSpace;
+        Space? startSpace = this.CurrentSpace;
         PlacePiece(destSpace, inBoard);
-        startSpace.ClearPieceInfo();
+        startSpace?.ClearPieceInfo();
     }
-
-    //
+    
     public void AddPieceToSpaceThreats()
     {
         foreach (var space in ValidMoves)
@@ -382,9 +403,169 @@ public abstract class Piece
         }
     }
 
+    public void PromotePawn()
+    {
+        PromptForPromotion();
+        var pieceType = ConvertIntToPieceType(GetPlayerTypeInt());
+        CreatePromotionPiece(this, pieceType);
+    }
+    
+    private void CreatePromotionPiece(Piece? inPiece, PieceType inPieceType)
+    {
+        inPiece?.CurrentSpace?.Piece?.SetType(inPieceType);
+    }
+
+    public bool IsPawnPromotionSpace()
+    {
+        return CurrentSpace is { RowIndex: (7 or 0) };
+    }
+
+    private void PromptForPromotion()
+    {
+        Console.WriteLine("Pawn is promoted! Choose a piece to promote to:");
+        Console.WriteLine("1)\tKnight");
+        Console.WriteLine("2)\tBishop");
+        Console.WriteLine("3)\tRook");
+        Console.WriteLine("4)\tQueen");
+        Console.Write(">");
+    }
+
+    private void SetType(PieceType inPieceType)
+    {
+        this.Type = inPieceType;
+        this.Icon = GetIcon(inPieceType);
+    }
+
+    private char GetIcon(PieceType inPieceType)
+    {
+        var tempDict = Color == PieceColor.White ? WhiteIcons : BlackIcons;
+        
+        var tempIcon = inPieceType switch
+        {
+            PieceType.Pawn => tempDict[inPieceType],
+            PieceType.Knight => tempDict[inPieceType],
+            PieceType.Bishop => tempDict[inPieceType],
+            PieceType.Rook => tempDict[inPieceType],
+            PieceType.Queen => tempDict[inPieceType],
+            PieceType.King => tempDict[inPieceType],
+            _ => 'x'
+        };
+
+        return tempIcon;
+    }
+    
     public void PrintThreats()
     {
         
     }
+
+    public void AddPieceTake(Piece? inPiece)
+    {
+        if (inPiece is not null)
+            PieceTakes.Add(inPiece);
+    }
+
+    public void PrintPieceTakes()
+    {
+        foreach (var take in PieceTakes)
+        {
+            
+        }
+    }
+
+    public void ScanAllDirections()
+    {
+        
+        //for (int i = 1; i < )
+    }
+
+    public Piece? ScanSpacesHorizVert(int inRowOffset, int inColOffset, int range, 
+        PieceType threatType1, PieceType threatType2, ChessBoard inBoard)
+    {
+        Piece? pieceToReturn = null;
+        
+        int currentCol = GetPosition().ColIndex;
+        int currentRow = GetPosition().RowIndex;
+        int timeToLive = 2;
+        Position tempPos = new Position();
+        for (int i = 1; i < range; i++)
+        {
+            tempPos.RowIndex = currentRow + (i * inRowOffset); 
+            tempPos.ColIndex = currentCol + (i * inColOffset);
+            Space tempSpace = inBoard.GetSpace(tempPos);
+
+            if (!tempSpace.HasPiece) continue;
+            
+            timeToLive--;
+            if (timeToLive == 0 && (tempSpace.Piece!.Type == threatType1
+                                    || tempSpace.Piece.Type == threatType2))
+                return pieceToReturn;
+            pieceToReturn = tempSpace.Piece;
+        }
+        return null;
+    }
     
+    public Piece? ScanSpacesDiagonal(int inRowOffset, int inColOffset, int range1, int range2, 
+        PieceType threatType1, PieceType threatType2, ChessBoard inBoard)
+    {
+        Piece? pieceToReturn = null;
+        
+        int currentCol = GetPosition().ColIndex;
+        int currentRow = GetPosition().RowIndex;
+        int timeToLive = 2;
+        Position tempPos = new Position();
+        for (int i = 1; i < range1 && i < range2; i++)
+        {
+            tempPos.RowIndex = currentRow + (i * inRowOffset); 
+            tempPos.ColIndex = currentCol + (i * inColOffset);
+            Space tempSpace = inBoard.GetSpace(tempPos);
+
+            if (!tempSpace.HasPiece) continue;
+            
+            timeToLive--;
+            if (timeToLive == 0 && (tempSpace.Piece!.Type == threatType1
+                                    || tempSpace.Piece.Type == threatType2))
+                return pieceToReturn;
+            pieceToReturn = tempSpace.Piece;
+        }
+        return null;
+    }
+    
+    public void ScanForPinnedPiece(ChessBoard inBoard)
+    {
+        int rangeUp = CurrentSpace!.RowIndex + 1;
+        int rangeDown = 8 - CurrentSpace.RowIndex;
+        int rangeNeg = CurrentSpace.ColIndex + 1;
+        int rangePos = 8 - CurrentSpace.ColIndex;
+
+        List<Piece?> pinnedPieces = new List<Piece?>();
+
+        // scan horiz and vert
+        pinnedPieces.Add(ScanSpacesHorizVert(-1, 0, rangeUp,
+            PieceType.Queen, PieceType.Rook, inBoard));
+        pinnedPieces.Add(ScanSpacesHorizVert(1, 0, rangeDown,
+            PieceType.Queen, PieceType.Rook, inBoard));
+        pinnedPieces.Add(ScanSpacesHorizVert(0, 1, rangePos,
+            PieceType.Queen, PieceType.Rook, inBoard));
+        pinnedPieces.Add(ScanSpacesHorizVert(0, -1, rangeNeg,
+            PieceType.Queen, PieceType.Rook, inBoard));
+        
+        // scan diagonally
+        pinnedPieces.Add(ScanSpacesDiagonal(-1, 1, rangeUp, rangePos,
+            PieceType.Queen, PieceType.Bishop, inBoard));
+        pinnedPieces.Add(ScanSpacesDiagonal(1, 1, rangeDown, rangePos,
+            PieceType.Queen, PieceType.Bishop, inBoard));
+        pinnedPieces.Add(ScanSpacesDiagonal(-1, -1, rangeUp, rangeNeg,
+            PieceType.Queen, PieceType.Bishop, inBoard));
+        pinnedPieces.Add(ScanSpacesDiagonal(1, -1, rangeDown, rangeNeg,
+            PieceType.Queen, PieceType.Bishop, inBoard));
+
+        foreach (var piece in pinnedPieces)
+        {
+            if (piece is null)
+                continue;
+            PinnedPieces.Add(piece);
+            piece.IsPinned = true;
+        }
+    }
 }

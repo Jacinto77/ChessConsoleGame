@@ -1,5 +1,6 @@
 using System.Net.NetworkInformation;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace ChessMac;
 
@@ -70,7 +71,7 @@ public static class Methods
 
     const char emptySpaceIcon = '\u2610';
 
-    public static void InitPieces(Piece[] inPieces, Piece.PieceColor color)
+    public static void InitPieces(Piece?[] inPieces, Piece.PieceColor color)
     {
         inPieces[0] = Piece.CreatePiece(color, Piece.PieceType.Rook);
         inPieces[1] = Piece.CreatePiece(color, Piece.PieceType.Knight);
@@ -142,23 +143,25 @@ public static class Methods
     //     }
     // }
 
-    public static void PlacePieces(Piece[] pieces, ChessBoard inBoard)
+    public static void PlacePieces(Piece?[] pieces, ChessBoard inBoard)
     {
         foreach (var piece in pieces)
         {
-            string? name = piece.Name;
+            string? name = piece?.Name;
             Space? space = null;
             if (name is null) return;
 
-            if (piece.Color == Piece.PieceColor.White)
-                space = inBoard.GetSpace(DefWhiteStart[name]);
-            if (piece.Color == Piece.PieceColor.Black)
-                space = inBoard.GetSpace(DefBlackStart[name]);
+            space = piece?.Color switch
+            {
+                Piece.PieceColor.White => inBoard.GetSpace(DefWhiteStart[name]),
+                Piece.PieceColor.Black => inBoard.GetSpace(DefBlackStart[name]),
+                _ => space
+            };
             if (space is null)
             {
                 return;
             }
-            piece.PlacePiece(space, inBoard);
+            piece?.PlacePiece(space, inBoard);
         }
     }
 
@@ -311,7 +314,7 @@ public static class Methods
         return position;
     }
 
-    public static void GeneratePieceMoves(Piece[] pieces, ChessBoard inBoard)
+    public static void GeneratePieceMoves(Piece?[] pieces, ChessBoard inBoard)
     {
         foreach (var piece in pieces)
         {
@@ -327,6 +330,7 @@ public static class Methods
             Console.WriteLine($"{color.ToString().ToUpper()} to move");
             string? playerInput = GetPlayerInput();
             Tuple<string, string> parsedInput = ParseInput(playerInput);
+            
             Space.Position originalPosition = ConvertPosToIndex(parsedInput.Item1);
             Space.Position destinationPosition = ConvertPosToIndex(parsedInput.Item2);
 
@@ -338,22 +342,89 @@ public static class Methods
                 Console.WriteLine("Piece is null");
                 continue;
             }
-
             if (pieceBeingMoved.Color != color)
             {
                 Console.WriteLine("That ain't your piece");
                 continue;
             }
-
-            if (pieceBeingMoved.IsMoveValid(destSpace))
-            {
-                pieceBeingMoved.MovePiece(destSpace, inBoard);
-                return;
-            }
-            else
+            if (!pieceBeingMoved.IsMoveValid(destSpace))
             {
                 Console.WriteLine("move is not valid");
-                
+                continue;
+            }
+            if (destSpace.HasPiece)
+                pieceBeingMoved.AddPieceTake(destSpace.Piece);
+            
+            pieceBeingMoved.MovePiece(destSpace, inBoard);
+            
+            if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
+                CheckAndPromotePawn(pieceBeingMoved);
+            return;
+        }
+    }
+
+    public static void CheckForCheck()
+    {
+        // need to know the pieces that put the king in check
+        // need to know if any pieces are pinned to the king
+        // if a piece is pinned to the king and the king is in check
+        //      the pinnedPiece cannot move
+        // A list of pieces threatening the king's space
+        // if pieces threatening king > 1
+        //    only the king can move
+        // else
+        //    king and any non-pinned piece can move that has the threateningPiece's space,
+        //      or a space that is on the line threatening the king
+        //
+        //      get spaces on a line in between king and each piece
+        //      check pieces that have one of those spaces in their valid moves
+        //          if a piece can get in between a piece
+        //          if none exists
+        //              king has to move
+        //              if king has no moves
+        //                  checkmate
+        
+        
+        // runs prior to prompt to move
+        // if the space the king is on is threatened,
+        //  check for mate
+        //      done by assessing all squares in validMoves, returning only the ones
+        //      that arent threatened
+        //      if list is empty and no other pieces can block
+        //          game ends and print color that wins
+        // tell player and only allow moves that get king out of check
+        // this would be a move that places the king on a non threatened square
+        // or a piece can move to the square that blocks the check, or takes 
+        // the piece threatening the king
+        
+        
+    }
+    
+    public static void CheckAndPromotePawn(Piece pieceBeingMoved)
+    {
+        if (!pieceBeingMoved.IsPawnPromotionSpace())
+            return;
+        pieceBeingMoved.PromotePawn();
+    }
+    
+    
+    public static int? GetPlayerTypeInt()
+    {
+        int choice = Console.Read();
+        if (choice is > 4 or < 1)
+        {
+            return null;
+        }
+        return choice;
+    }
+
+    public static void AssignThreatsToSpaces(IEnumerable<Piece?> inPieces, ChessBoard? inBoard)
+    {
+        foreach (var piece in inPieces)
+        {
+            foreach (var move in piece!.ValidMoves)
+            {
+                move.AddPieceToThreats(piece);
             }
         }
     }

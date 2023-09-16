@@ -3,6 +3,7 @@ namespace ChessMac;
 using static Methods;
 
 
+// TODO: make chessboard a static object
 
 internal static class Program
 {
@@ -13,8 +14,8 @@ internal static class Program
 
         const int numberOfPieces = 16;
         
-        Piece[] whitePieces = new Piece[numberOfPieces];
-        Piece[] blackPieces = new Piece[numberOfPieces];
+        Piece?[] whitePieces = new Piece?[numberOfPieces];
+        Piece?[] blackPieces = new Piece?[numberOfPieces];
         //Piece pawnA = whitePieces[0];
         //Piece pawnB = whitePieces[1];
         //...
@@ -26,7 +27,7 @@ internal static class Program
         PlacePieces(whitePieces, board);
         PlacePieces(blackPieces, board);
 
-        // testing
+        // :testing:
         // Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
         // board.GetSpace(5, 4).PlacePiece(new Pawn(Piece.PieceColor.Black, Piece.PieceType.Pawn));
         // testPiece.GenerateValidMoves(board);
@@ -37,33 +38,23 @@ internal static class Program
         int moveCounter = 1;
         while (true)
         {
-            if(moveCounter > 100)
+            if (moveCounter > 100)
+            {
+                Console.WriteLine("Move limit reached");
                 return;
+            }
+
             GeneratePieceMoves(whitePieces, board);
             GeneratePieceMoves(blackPieces, board);
             board.OutputBoard();
-        
-            Piece.PieceColor colorToMove;
-            if (moveCounter % 2 != 0)
-                colorToMove = Piece.PieceColor.White;
-            else
-            {
-                colorToMove = Piece.PieceColor.Black;
-            }
+
+            var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White 
+                                                   : Piece.PieceColor.Black;
+            Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
             
             PlayerMove(board, colorToMove);
             moveCounter++;
         }
-        
-        
-        // GeneratePieceMoves(whitePieces, board);
-        // GeneratePieceMoves(blackPieces, board);
-        // board.DisplayMoves(whitePieces[9]);
-        // board.DisplayMoves(whitePieces[1]);
-        
-        
-        // whitePieces[1].PrintValidMoves();
-        // whitePieces[1].PrintValidMovesIndex();
     }
 }
 
