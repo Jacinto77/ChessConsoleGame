@@ -2,18 +2,19 @@ namespace ChessMac;
 
 public class King : Piece
 {
-    public King(string color, string name, char icon, string type) 
+    public King(PieceColor color, string name, char icon, PieceType type) 
         : base(color,  name, icon)
     {
         this.Type = type;
     }
 
-    public King(string color, string type) : base(color, type)
+    public King(PieceColor color, PieceType type) : base(color, type)
     {
     }
 
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
+        ValidMoves.Clear();
         int currentRow = this.GetPosition().RowIndex;
         int currentCol = this.GetPosition().ColIndex;
         

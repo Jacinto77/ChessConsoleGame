@@ -4,6 +4,9 @@ using static ChessMac.Methods;
 namespace ChessMac;
 
 /*
+ * TODO: implement enum for piece colors
+ * TODO: decompose functions further
+ * 
  * TODO: create move generation functionality work to identify and tag pieces as being threatened, as well as what piece is threatening
  * TODO: implement pinned piece recognition, for when king would be threatened if a piece wasn't in the way
  * TODO: implement piece blocking checking for when King is in check
@@ -13,7 +16,7 @@ namespace ChessMac;
 
 public abstract class Piece
 {
-    public Piece(string color, string name, char icon)
+    public Piece(PieceColor color, string name, char icon)
     {
         Color = color;
         Name = name;
@@ -22,37 +25,53 @@ public abstract class Piece
         
     }
 
-    public Piece(string color, string type)
+    public Piece(PieceColor color, PieceType type)
     {
         Color = color;
         Type = type;
         SetupPiece(color, type);
     }
 
+    public enum PieceColor
+    {
+        White, 
+        Black
+    }
+
+    public enum PieceType
+    {
+        Pawn,
+        Knight,
+        Bishop,
+        Rook,
+        Queen,
+        King
+    }
+
     private static int PieceCounter = 16;
     
-    public static Piece CreatePiece(string color, string type)
+    public static Piece CreatePiece(PieceColor color, PieceType type)
     {
         Piece? tempPiece;
         switch (type)
         {
-            case "pawn": tempPiece = new Pawn(color, type);
+            case PieceType.Pawn: tempPiece = new Pawn(color, type);
                 break;
-            case "knight": tempPiece = new Knight(color, type);
+            case PieceType.Knight: tempPiece = new Knight(color, type);
                 break;
-            case "bishop": tempPiece = new Bishop(color, type);
+            case PieceType.Bishop: tempPiece = new Bishop(color, type);
                 break;
-            case "rook": tempPiece = new Rook(color, type);
+            case PieceType.Rook: tempPiece = new Rook(color, type);
                 break;
-            case "queen": tempPiece = new Queen(color, type);
+            case PieceType.Queen: tempPiece = new Queen(color, type);
                 break;
-            case "king": tempPiece = new King(color, type);
+            case PieceType.King: tempPiece = new King(color, type);
                 break;
 
             default:
             {
                 Console.WriteLine("PieceGenError");
-                return new Pawn("red", "queen_error");
+                throw new Exception("Piece generation error: CreatePiece()");
             }
         }
         PieceCounter -= 1;
@@ -64,23 +83,23 @@ public abstract class Piece
         PieceCounter = 16;
     }
     
-    public static readonly Dictionary<string, char> BlackIcons = new()
+    public static readonly Dictionary<PieceType, char> BlackIcons = new()
     {
-        { "pawn", '\u2659' },
-        { "rook", '\u2656' },
-        { "knight", '\u2658' },
-        { "bishop",'\u2657' },
-        { "queen", '\u2655' },
-        { "king", '\u2654' },
+        { PieceType.Pawn, '\u2659' },
+        { PieceType.Rook, '\u2656' },
+        { PieceType.Knight, '\u2658' },
+        { PieceType.Bishop,'\u2657' },
+        { PieceType.Queen, '\u2655' },
+        { PieceType.King, '\u2654' },
     };
-    public static readonly Dictionary<string, char> WhiteIcons = new()
+    public static readonly Dictionary<PieceType, char> WhiteIcons = new()
     {
-        { "pawn", '\u265F' },
-        { "rook", '\u265C' },
-        { "knight", '\u265E' },
-        { "bishop", '\u265D' },
-        { "queen", '\u265B' },
-        { "king", '\u265A' },
+        { PieceType.Pawn, '\u265F' },
+        { PieceType.Rook, '\u265C' },
+        { PieceType.Knight, '\u265E' },
+        { PieceType.Bishop, '\u265D' },
+        { PieceType.Queen, '\u265B' },
+        { PieceType.King, '\u265A' },
     };
   
     public Space.Position PiecePosition = new();
@@ -89,8 +108,8 @@ public abstract class Piece
     // human readable position of piece
     public string? Pos { get; set; }
     
-    public string? Type { get; set; }
-    public string? Color { get; set; }
+    public PieceType Type { get; set; }
+    public PieceColor Color { get; set; }
     public string? Name { get; set; }
     public char? Icon { get; set; }
     
@@ -104,21 +123,21 @@ public abstract class Piece
     public abstract void GenerateValidMoves(ChessBoard inBoard);
     
 
-        public void SetupPiece(string color, string type)
+        public void SetupPiece(PieceColor color, PieceType type)
     {
         switch (color)
         {
-            case "white": Icon = WhiteIcons[type];
+            case PieceColor.White: Icon = WhiteIcons[type];
                 break;
-            case "black": Icon = BlackIcons[type];
+            case PieceColor.Black: Icon = BlackIcons[type];
                 break;
         }
         SetName(color, type);
     }
 
-    public void SetName(string color, string type)
+    public void SetName(PieceColor color, PieceType type)
     {
-        Name = color + type.ToUpper() + "_" + PieceCounter.ToString();
+        Name = color.ToString() + type.ToString() + "_" + PieceCounter.ToString();
     }
     
     public void PrintValidMoves()
@@ -156,6 +175,7 @@ public abstract class Piece
 
     public void GenerateRookMoves(ChessBoard inBoard)
     {
+        ValidMoves.Clear();
         // scan spaces between startSpace and possible destinations
         // walk spaces from start to edges of board
         // if space.HasPiece == True, stop

@@ -5,13 +5,13 @@ using static ChessMac.Program;
 
 public class Knight : Piece
 {
-    public Knight(string color, string name, char icon, string type) 
+    public Knight(PieceColor color, string name, char icon, PieceType type) 
         : base(color, name, icon)
     {
         this.Type = type;
     }
 
-    public Knight(string color, string type) : base(color, type)
+    public Knight(PieceColor color, PieceType type) : base(color, type)
     {
     }
     

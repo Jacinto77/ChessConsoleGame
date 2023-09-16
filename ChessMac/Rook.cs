@@ -8,18 +8,19 @@ namespace ChessMac;
 
 public class Rook : Piece
 {
-    public Rook(string color, string name, char icon, string type) 
+    public Rook(PieceColor color, string name, char icon, PieceType type) 
         : base(color,  name, icon)
     {
         this.Type = type;
     }
 
-    public Rook(string color, string type) : base(color, type)
+    public Rook(PieceColor color, PieceType type) : base(color, type)
     {
     }
 
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
+        ValidMoves.Clear();
         base.GenerateRookMoves(inBoard);
     }
 }

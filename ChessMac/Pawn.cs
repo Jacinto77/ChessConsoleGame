@@ -2,73 +2,55 @@ namespace ChessMac;
 using static Space;
 
 // TODO: implement en passant
+// TODO: implement promotion
+// TODO: code in piece direction with private readonly int direction = 1/-1
 
 public class Pawn : Piece
 {
-    public Pawn(string color, string name, char icon, string type) 
+    public Pawn(PieceColor color, string name, char icon, PieceType type) 
         : base(color, name, icon)
     {
         this.Type = type;
     }
 
-    public Pawn(string color, string type) : base(color, type)
+    public Pawn(PieceColor color, PieceType type) : base(color, type)
     {
     }
 
+    private void CheckAndAddDiagonal(Position diagonal, ChessBoard inBoard)
+    {
+        if (IsWithinBoard(diagonal) && inBoard.GetPiece(diagonal)?.Color != Color 
+                                    && inBoard.GetSpace(diagonal).HasPiece)
+        {
+            ValidMoves.Add(inBoard.GetSpace(diagonal));
+        }
+    }
+    
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
+        ValidMoves.Clear();
         int currentCol = this.GetPosition().ColIndex;
         int currentRow = this.GetPosition().RowIndex;
 
-        int offsetOne = 0;
-        int offsetTwo = 0;
-        
-        switch (Color)
-        {
-            case "white":
-                offsetOne = -1;
-                offsetTwo = -2;
-                break;
-            case "black":
-                offsetOne = 1;
-                offsetTwo = 2;
-                break;
-        }
-        
-        Position forwOne = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol);
-        Position forwTwo = new Position(inRowIndex: currentRow + offsetTwo, inColIndex: currentCol);
-        Position forwPos = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol + 1);
-        Position forwNeg = new Position(inRowIndex: currentRow + offsetOne, inColIndex: currentCol - 1);
+        int direction = (Color == PieceColor.White) ? -1 : 1;
 
-        if (IsWithinBoard(forwOne) && inBoard.GetPiece(forwOne) == null)
-        {
-            ValidMoves.Add(inBoard.GetSpace(forwOne));
+        Position forwardOne = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol);
+        Position forwardTwo = new Position(inRowIndex: currentRow + (direction * 2), inColIndex: currentCol);
+        Position diagPos = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol + 1);
+        Position diagNeg = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol - 1);
 
-            if (IsWithinBoard(forwTwo) && inBoard.GetSpace(forwTwo).HasPiece == false
+        if (IsWithinBoard(forwardOne) && inBoard.GetSpace(forwardOne).HasPiece == false)
+        {
+            ValidMoves.Add(inBoard.GetSpace(forwardOne));
+
+            if (IsWithinBoard(forwardTwo) && inBoard.GetSpace(forwardTwo).HasPiece == false
                                        && this.HasMoved == false)
             {
-                ValidMoves.Add(inBoard.GetSpace(forwTwo));
+                ValidMoves.Add(inBoard.GetSpace(forwardTwo));
             }
         }
         // diagonal take
-        if (IsWithinBoard(forwPos) && inBoard.GetPiece(forwPos)?.Color != Color 
-                                   && inBoard.GetSpace(forwPos).HasPiece)
-        {
-            ValidMoves.Add(inBoard.GetSpace(forwPos));
-        }
-        else
-        {
-            inBoard.GetSpace(forwPos).AddPieceToThreats(this);
-        }
-        // diagonal take
-        if (IsWithinBoard(forwNeg) && inBoard.GetPiece(forwNeg)?.Color != Color 
-                                   && inBoard.GetSpace(forwPos).HasPiece)
-        {
-            ValidMoves.Add(inBoard.GetSpace(forwNeg));
-        }
-        else
-        {
-            inBoard.GetSpace(forwNeg).AddPieceToThreats(this);
-        }
+        CheckAndAddDiagonal(diagPos, inBoard);
+        CheckAndAddDiagonal(diagNeg, inBoard);
     }
 }

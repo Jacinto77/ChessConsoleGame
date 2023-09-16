@@ -5,18 +5,19 @@ namespace ChessMac;
 
 public class Queen : Piece
 {
-    public Queen(string color, string name, char icon, string type) 
+    public Queen(PieceColor color, string name, char icon, PieceType type) 
         : base(color, name, icon)
     {
         this.Type = type;
     }
 
-    public Queen(string color, string type) : base(color, type)
+    public Queen(PieceColor color, PieceType type) : base(color, type)
     {
     }
 
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
+        ValidMoves.Clear();
         base.GenerateRookMoves(inBoard);
         base.GenerateBishopMoves(inBoard);
     }
