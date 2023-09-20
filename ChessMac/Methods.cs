@@ -327,7 +327,7 @@ public static class Methods
     {
         while (true)
         {
-            Console.WriteLine($"{color.ToString().ToUpper()} to move");
+            //Console.WriteLine($"{color.ToString().ToUpper()} to move");
             string? playerInput = GetPlayerInput();
             Tuple<string, string> parsedInput = ParseInput(playerInput);
             
@@ -352,11 +352,14 @@ public static class Methods
                 Console.WriteLine("move is not valid");
                 continue;
             }
+
+            Piece? destPiece;
             if (destSpace.HasPiece)
-                pieceBeingMoved.AddPieceTake(destSpace.Piece);
-            
+                destPiece = destSpace.Piece;
+                // pieceBeingMoved.AddPieceTake(destSpace.Piece);
+
             pieceBeingMoved.MovePiece(destSpace, inBoard);
-            
+                        
             if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
                 CheckAndPromotePawn(pieceBeingMoved);
             return;

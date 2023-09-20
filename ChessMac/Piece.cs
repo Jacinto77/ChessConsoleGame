@@ -456,7 +456,7 @@ public abstract class Piece
     
     public void PrintThreats()
     {
-        
+        //
     }
 
     public void AddPieceTake(Piece? inPiece)
@@ -539,7 +539,6 @@ public abstract class Piece
         int rangePos = 8 - CurrentSpace.ColIndex;
 
         List<Piece?> pinnedPieces = new List<Piece?>();
-
         // scan horiz and vert
         pinnedPieces.Add(ScanSpacesHorizVert(-1, 0, rangeUp,
             PieceType.Queen, PieceType.Rook, inBoard));

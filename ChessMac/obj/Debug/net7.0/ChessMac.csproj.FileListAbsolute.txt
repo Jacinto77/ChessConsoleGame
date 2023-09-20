@@ -18,7 +18,6 @@
 /Users/maxholt/Projects/ChessMac/ChessMac/bin/Debug/net7.0/ChessMac.runtimeconfig.json
 /Users/maxholt/Projects/ChessMac/ChessMac/bin/Debug/net7.0/ChessMac.dll
 /Users/maxholt/Projects/ChessMac/ChessMac/bin/Debug/net7.0/ChessMac.pdb
-/Users/maxholt/Projects/ChessMac/ChessMac/obj/Debug/net7.0/ChessMac.csproj.AssemblyReference.cache
 /Users/maxholt/Projects/ChessMac/ChessMac/obj/Debug/net7.0/ChessMac.GeneratedMSBuildEditorConfig.editorconfig
 /Users/maxholt/Projects/ChessMac/ChessMac/obj/Debug/net7.0/ChessMac.AssemblyInfoInputs.cache
 /Users/maxholt/Projects/ChessMac/ChessMac/obj/Debug/net7.0/ChessMac.AssemblyInfo.cs

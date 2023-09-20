@@ -46,6 +46,10 @@ internal static class Program
 
             GeneratePieceMoves(whitePieces, board);
             GeneratePieceMoves(blackPieces, board);
+            
+            AssignThreatsToSpaces(whitePieces, board);
+            AssignThreatsToSpaces(blackPieces, board);
+            
             board.OutputBoard();
 
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White 
@@ -58,6 +62,23 @@ internal static class Program
     }
 }
 
+// have pinned pieces identified as well as which direction
+// they're blocking from so that if that piece tries to move out of that
+// direction they are disallowed
 
+// maybe alter the piece generation for rook and bishop and queen to see
+// all possible moves as if there was no board
+
+// check for if there is a piece in between that possible moves and the king
+// use the direction that the piece was found in to mark it as pinned
+// and record it's pinned direction to restrict it only to moves along that
+// direction ie. not out of pin
+
+// place pieces
+// generate moves
+// move piece
+//  check if move places own king in check
+//    if yes
+//      
 
     
