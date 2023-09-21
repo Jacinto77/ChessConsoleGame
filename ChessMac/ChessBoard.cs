@@ -14,6 +14,7 @@ public class ChessBoard
         InitBoardSpaces();
     }
     
+    
     // collection of all spaces in 8x8 array
     // first index is the row, second index is the column
     public Space[,] BoardSpaces = new Space[8, 8];
@@ -28,6 +29,21 @@ public class ChessBoard
                 BoardSpaces[row, col] = new Space(row, col);
             }
         }
+    }
+    
+    public ChessBoard DeepCopy()
+    {
+        ChessBoard newBoard = new ChessBoard();
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                newBoard.BoardSpaces[row, col] = this.BoardSpaces[row, col]?.DeepCopy();
+            }
+        }
+
+        return newBoard;
     }
     
     // debugging

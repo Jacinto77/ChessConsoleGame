@@ -27,6 +27,10 @@ internal static class Program
         PlacePieces(whitePieces, board);
         PlacePieces(blackPieces, board);
 
+        ChessBoard tempBoard = board.DeepCopy();
+        tempBoard.OutputBoard();
+        
+        
         // :testing:
         // Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
         // board.GetSpace(5, 4).PlacePiece(new Pawn(Piece.PieceColor.Black, Piece.PieceType.Pawn));
@@ -43,20 +47,28 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
-
+            
             GeneratePieceMoves(whitePieces, board);
             GeneratePieceMoves(blackPieces, board);
             
             AssignThreatsToSpaces(whitePieces, board);
             AssignThreatsToSpaces(blackPieces, board);
-            
             board.OutputBoard();
 
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White 
                                                    : Piece.PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
-            
-            PlayerMove(board, colorToMove);
+
+
+            Tuple<string, string> parsedInput = GetPlayerMove();
+            // get player move
+            // validate on tempBoard
+            // if passes all checks, goes here
+
+            if (IsValidMove(tempBoard, colorToMove, parsedInput))
+            {
+                PlayerMove(board, colorToMove, parsedInput);
+            }
             moveCounter++;
         }
     }

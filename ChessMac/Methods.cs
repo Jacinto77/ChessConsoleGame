@@ -323,14 +323,16 @@ public static class Methods
         }
     }
 
-    public static void PlayerMove(ChessBoard inBoard, Piece.PieceColor color)
+    public static Tuple<string, string> GetPlayerMove()
+    {
+        string? playerInput = GetPlayerInput();
+        return ParseInput(playerInput);
+    }
+    
+    public static void PlayerMove(ChessBoard inBoard, Piece.PieceColor color, Tuple<string, string> parsedInput)
     {
         while (true)
         {
-            //Console.WriteLine($"{color.ToString().ToUpper()} to move");
-            string? playerInput = GetPlayerInput();
-            Tuple<string, string> parsedInput = ParseInput(playerInput);
-            
             Space.Position originalPosition = ConvertPosToIndex(parsedInput.Item1);
             Space.Position destinationPosition = ConvertPosToIndex(parsedInput.Item2);
 
@@ -353,6 +355,8 @@ public static class Methods
                 continue;
             }
 
+            
+            
             Piece? destPiece;
             if (destSpace.HasPiece)
                 destPiece = destSpace.Piece;
@@ -430,5 +434,54 @@ public static class Methods
                 move.AddPieceToThreats(piece);
             }
         }
+    }
+
+    public static bool IsValidMove(ChessBoard tempBoard, Piece.PieceColor colorToMove, Tuple<string, string> playerMove)
+    {
+        Space.Position originalPosition = ConvertPosToIndex(playerMove.Item1);
+        Space.Position destinationPosition = ConvertPosToIndex(playerMove.Item2);
+
+        Piece? pieceBeingMoved = tempBoard.GetPiece(originalPosition);
+        Space destSpace = tempBoard.GetSpace(destinationPosition);
+
+        if (pieceBeingMoved is null)
+        {
+            Console.WriteLine("Piece is null");
+            return false;
+        }
+        if (pieceBeingMoved.Color != colorToMove)
+        {
+            Console.WriteLine("That ain't your piece");
+            return false;
+        }
+        if (!pieceBeingMoved.IsMoveValid(destSpace))
+        {
+            Console.WriteLine("move is not valid");
+            return false;
+        }
+        
+        Piece? destPiece;
+        if (destSpace.HasPiece)
+            destPiece = destSpace.Piece;
+        
+        pieceBeingMoved.MovePiece(destSpace, tempBoard);
+                        
+        if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
+            CheckAndPromotePawn(pieceBeingMoved);
+
+        // TODO finish this before anything else
+        GeneratePieceMoves(whitePieces, board);
+        GeneratePieceMoves(blackPieces, board);
+            
+        AssignThreatsToSpaces(whitePieces, board);
+        AssignThreatsToSpaces(blackPieces, board);
+        
+        // generate moves
+        // check for threats to king
+        // if any exist, return false
+        // also probably check for checkmate? function to simulate all possible moves
+        //  by the pieces on the other side
+
+        return true;
     }
 }

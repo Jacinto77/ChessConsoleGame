@@ -22,6 +22,17 @@ public class Space
         Piece = null;
         Icon = IconDefault;
     }
+
+    public Space()
+    {
+    }
+
+    public Space? DeepCopy()
+    {
+        Space newSpace = (Space)this.MemberwiseClone();
+        newSpace.Piece = this.Piece?.DeepCopy();
+        return newSpace;
+    }
     
     public struct Position
     {

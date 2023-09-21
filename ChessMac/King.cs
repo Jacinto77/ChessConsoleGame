@@ -46,12 +46,12 @@ public class King : Piece
             ValidMoves.Add(destSpace);
         }
 
-        // reset pinned pieces before regenerating new
-        foreach (var pinnedPiece in PinnedPieces)
-        {
-            pinnedPiece.IsPinned = false;
-        }
-        PinnedPieces.Clear();
-        ScanForPinnedPiece(inBoard);
+        // // reset pinned pieces before regenerating new
+        // foreach (var pinnedPiece in PinnedPieces)
+        // {
+        //     pinnedPiece.IsPinned = false;
+        // }
+        // PinnedPieces.Clear();
+        // ScanForPinnedPiece(inBoard);
     }
 }

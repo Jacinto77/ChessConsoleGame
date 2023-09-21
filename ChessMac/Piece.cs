@@ -31,6 +31,15 @@ public abstract class Piece
         SetupIconAndName(color, type);
     }
 
+    public Piece()
+    {
+    }
+
+    public virtual Piece DeepCopy()
+    {
+        return (Piece)MemberwiseClone();
+    }
+    
     public enum PieceColor
     {
         White, 
