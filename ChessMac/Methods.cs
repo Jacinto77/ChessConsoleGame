@@ -1,6 +1,7 @@
 using System.Net.NetworkInformation;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ChessMac;
 
@@ -151,6 +152,7 @@ public static class Methods
             Space? space = null;
             if (name is null) return;
 
+            // correlate default starting spot with color and piece name
             space = piece?.Color switch
             {
                 Piece.PieceColor.White => inBoard.GetSpace(DefWhiteStart[name]),
@@ -161,6 +163,7 @@ public static class Methods
             {
                 return;
             }
+            // place the piece and set piece and space information
             piece?.PlacePiece(space, inBoard);
         }
     }
@@ -331,43 +334,17 @@ public static class Methods
     
     public static void PlayerMove(ChessBoard inBoard, Piece.PieceColor color, Tuple<string, string> parsedInput)
     {
-        while (true)
-        {
-            Space.Position originalPosition = ConvertPosToIndex(parsedInput.Item1);
-            Space.Position destinationPosition = ConvertPosToIndex(parsedInput.Item2);
-
-            Piece? pieceBeingMoved = inBoard.GetPiece(originalPosition);
-            Space destSpace = inBoard.GetSpace(destinationPosition);
-
-            if (pieceBeingMoved is null)
-            {
-                Console.WriteLine("Piece is null");
-                continue;
-            }
-            if (pieceBeingMoved.Color != color)
-            {
-                Console.WriteLine("That ain't your piece");
-                continue;
-            }
-            if (!pieceBeingMoved.IsMoveValid(destSpace))
-            {
-                Console.WriteLine("move is not valid");
-                continue;
-            }
-
-            
-            
-            Piece? destPiece;
-            if (destSpace.HasPiece)
-                destPiece = destSpace.Piece;
-                // pieceBeingMoved.AddPieceTake(destSpace.Piece);
-
-            pieceBeingMoved.MovePiece(destSpace, inBoard);
-                        
-            if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
-                CheckAndPromotePawn(pieceBeingMoved);
-            return;
-        }
+        Space.Position originalPosition = ConvertPosToIndex(parsedInput.Item1);
+        Space.Position destinationPosition = ConvertPosToIndex(parsedInput.Item2);    
+        Piece? pieceBeingMoved = inBoard.GetPiece(originalPosition);
+        
+        Space destSpace = inBoard.GetSpace(destinationPosition);
+        Piece? destPiece = destSpace.Piece;
+        // pieceBeingMoved.AddPieceTake(destSpace.P 
+        pieceBeingMoved?.MovePiece(destSpace, inBoard);
+                    
+        if (pieceBeingMoved?.Type == Piece.PieceType.Pawn)
+            CheckAndPromotePawn(pieceBeingMoved);
     }
 
     public static void CheckForCheck()
@@ -417,26 +394,28 @@ public static class Methods
     
     public static int? GetPlayerTypeInt()
     {
-        int choice = Console.Read();
-        if (choice is > 4 or < 1)
+        while (true)
         {
-            return null;
+            int choice = Console.Read();
+            if (choice is <= 4 and >= 1) return choice;
+            
+            Console.WriteLine("Input must be 1-4");
         }
-        return choice;
     }
 
     public static void AssignThreatsToSpaces(IEnumerable<Piece?> inPieces, ChessBoard? inBoard)
     {
         foreach (var piece in inPieces)
         {
-            foreach (var move in piece!.ValidMoves)
+            foreach (var space in piece!.ValidMoves)
             {
-                move.AddPieceToThreats(piece);
+                space.AddPieceToThreats(piece);
             }
         }
     }
 
-    public static bool IsValidMove(ChessBoard tempBoard, Piece.PieceColor colorToMove, Tuple<string, string> playerMove)
+    public static bool IsValidMove(ChessBoard tempBoard, Piece.PieceColor colorToMove, 
+        Tuple<string, string> playerMove, Piece?[] whitePieces, Piece?[] blackPieces)
     {
         Space.Position originalPosition = ConvertPosToIndex(playerMove.Item1);
         Space.Position destinationPosition = ConvertPosToIndex(playerMove.Item2);
@@ -470,18 +449,35 @@ public static class Methods
             CheckAndPromotePawn(pieceBeingMoved);
 
         // TODO finish this before anything else
-        GeneratePieceMoves(whitePieces, board);
-        GeneratePieceMoves(blackPieces, board);
+        GeneratePieceMoves(whitePieces, tempBoard);
+        GeneratePieceMoves(blackPieces, tempBoard);
             
-        AssignThreatsToSpaces(whitePieces, board);
-        AssignThreatsToSpaces(blackPieces, board);
-        
-        // generate moves
-        // check for threats to king
-        // if any exist, return false
-        // also probably check for checkmate? function to simulate all possible moves
-        //  by the pieces on the other side
+        AssignThreatsToSpaces(whitePieces, tempBoard);
+        AssignThreatsToSpaces(blackPieces, tempBoard);
+
+        if (IsKingInCheck(pieceBeingMoved, tempBoard, whitePieces, blackPieces))
+        {
+            Console.WriteLine("Your KING is in check!");
+            return false;
+        }
 
         return true;
+    }
+
+    public static bool IsKingInCheck(Piece pieceBeingMoved, ChessBoard tempBoard, 
+        Piece?[] whitePieces, Piece?[] blackPieces)
+    {
+        switch (pieceBeingMoved.Color)
+        {
+            case Piece.PieceColor.White when whitePieces[3].CurrentSpace.IsThreatened:
+                Console.WriteLine("Your king is in check!");
+                return true;
+            case Piece.PieceColor.Black when blackPieces[3].CurrentSpace.IsThreatened:
+                Console.WriteLine("Your king is in check!");
+                return true;
+            
+            default:
+                return false;
+        }
     }
 }

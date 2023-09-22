@@ -21,6 +21,7 @@ public class Space
         HasPiece = false;
         Piece = null;
         Icon = IconDefault;
+        IsThreatened = false;
     }
 
     public Space()
@@ -70,7 +71,7 @@ public class Space
     public char? HighlightIcon = HighlightedIcon;
     
     public List<Piece> Threats = new List<Piece>();
-
+    public bool IsThreatened;
     
     public void AddPieceToThreats(Piece inPiece)
     {

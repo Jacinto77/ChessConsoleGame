@@ -388,9 +388,10 @@ public abstract class Piece
 
     public bool IsMoveValid(Space destSpace)
     {
-        foreach (var space in ValidMoves)
+        foreach (var validSpace in ValidMoves)
         {
-            if (destSpace == space)
+            if (destSpace.ColIndex == validSpace.ColIndex 
+                && destSpace.RowIndex == validSpace.RowIndex)
                 return true;
         }
 
@@ -409,6 +410,7 @@ public abstract class Piece
         foreach (var space in ValidMoves)
         {
             space.AddPieceToThreats(this);
+            space.IsThreatened = true;
         }
     }
 

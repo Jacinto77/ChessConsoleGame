@@ -10,34 +10,22 @@ internal static class Program
     static void Main()
     {
         ChessBoard board = new ChessBoard();
-        board.OutputBoard();
+        // board.OutputBoard();
 
         const int numberOfPieces = 16;
-        
         Piece?[] whitePieces = new Piece?[numberOfPieces];
         Piece?[] blackPieces = new Piece?[numberOfPieces];
-        //Piece pawnA = whitePieces[0];
-        //Piece pawnB = whitePieces[1];
-        //...
-        
-        
         InitPieces(whitePieces, Piece.PieceColor.White);
         InitPieces(blackPieces, Piece.PieceColor.Black);
-        
         PlacePieces(whitePieces, board);
         PlacePieces(blackPieces, board);
 
-        ChessBoard tempBoard = board.DeepCopy();
-        tempBoard.OutputBoard();
-        
-        
         // :testing:
         // Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
         // board.GetSpace(5, 4).PlacePiece(new Pawn(Piece.PieceColor.Black, Piece.PieceType.Pawn));
         // testPiece.GenerateValidMoves(board);
         // testPiece.PrintValidMoves();
         // board.OutputBoard();
-        
         
         int moveCounter = 1;
         while (true)
@@ -47,28 +35,36 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
-            
+
             GeneratePieceMoves(whitePieces, board);
             GeneratePieceMoves(blackPieces, board);
-            
+
             AssignThreatsToSpaces(whitePieces, board);
             AssignThreatsToSpaces(blackPieces, board);
+            
+            ChessBoard tempBoard = board.DeepCopy();
+            // tempBoard.OutputBoard();
+            
             board.OutputBoard();
 
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White 
                                                    : Piece.PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
-
-
             Tuple<string, string> parsedInput = GetPlayerMove();
-            // get player move
-            // validate on tempBoard
-            // if passes all checks, goes here
 
-            if (IsValidMove(tempBoard, colorToMove, parsedInput))
+            if (IsValidMove(tempBoard, colorToMove, parsedInput, whitePieces, blackPieces))
             {
-                PlayerMove(board, colorToMove, parsedInput);
+                // playermove() makes the pieces disappear
+                // either something about the copying
+                // or my movePiece functions are too convoluted
+                PlayerMove(tempBoard, colorToMove, parsedInput);
+                board = tempBoard.DeepCopy();
             }
+            else
+            {
+                continue;
+            }
+            
             moveCounter++;
         }
     }
