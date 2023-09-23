@@ -37,7 +37,38 @@ public abstract class Piece
 
     public virtual Piece DeepCopy()
     {
-        return (Piece)MemberwiseClone();
+        Piece pieceCopy;
+        switch (Type)
+        {
+            case PieceType.Pawn: pieceCopy = new Pawn(this.Color, this.Type);
+                break;
+            case PieceType.Knight: pieceCopy = new Knight(this.Color, this.Type);
+                break;
+            case PieceType.Bishop: pieceCopy = new Bishop(this.Color, this.Type);
+                break;
+            case PieceType.Rook: pieceCopy = new Rook(this.Color, this.Type);
+                break;
+            case PieceType.Queen: pieceCopy = new Queen(this.Color, this.Type);
+                break;
+            case PieceType.King: pieceCopy = new King(this.Color, this.Type);
+                break;
+                
+            default: throw new Exception("Piece.DeepCopy() switch error");
+        }
+
+        pieceCopy.IsActive = IsActive;
+        pieceCopy.PiecePosition.ColIndex = PiecePosition.ColIndex;
+        pieceCopy.PiecePosition.RowIndex = PiecePosition.RowIndex;
+        pieceCopy.Pos = Pos;
+        pieceCopy.Type = Type;
+        pieceCopy.Color = Color;
+        pieceCopy.Name = Name;
+        pieceCopy.Icon = Icon;
+        pieceCopy.HasMoved = HasMoved;
+        pieceCopy.IsPinned = IsPinned;
+        //pieceCopy.CurrentSpace = this.CurrentSpace.DeepCopy();
+        pieceCopy.ValidMoves.Clear();
+        return pieceCopy;
     }
     
     public enum PieceColor

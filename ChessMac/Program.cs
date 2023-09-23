@@ -41,6 +41,9 @@ internal static class Program
 
             AssignThreatsToSpaces(whitePieces, board);
             AssignThreatsToSpaces(blackPieces, board);
+
+            Piece[] whitePiecesCopy;
+            Piece[] blackPiecesCopy;
             
             ChessBoard tempBoard = board.DeepCopy();
             // tempBoard.OutputBoard();

@@ -40,8 +40,11 @@ public class ChessBoard
             for (int col = 0; col < 8; col++)
             {
                 newBoard.BoardSpaces[row, col] = this.BoardSpaces[row, col]?.DeepCopy();
+                if (newBoard.GetSpace(row, col).HasPiece)
+                    newBoard.GetSpace(row, col).Piece.GenerateValidMoves(this);
             }
         }
+        
 
         return newBoard;
     }

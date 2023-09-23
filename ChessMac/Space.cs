@@ -1,5 +1,5 @@
 namespace ChessMac;
-
+using static Methods;
 // Each space on the chessboard
 // 64 instances of this class will be created and stored in array within ChessBoard
     // instance
@@ -30,8 +30,26 @@ public class Space
 
     public Space? DeepCopy()
     {
-        Space newSpace = (Space)this.MemberwiseClone();
-        newSpace.Piece = this.Piece?.DeepCopy();
+        Space newSpace = new Space(
+            this.RowIndex, this.ColIndex);
+        newSpace.HasPiece = HasPiece;
+        newSpace.Icon = Icon;
+        if (this.HasPiece)
+        {
+            newSpace.Piece = this.Piece?.DeepCopy();
+            if (newSpace.Piece is not null)
+            {
+                newSpace.Piece.CurrentSpace = this;
+                newSpace.Piece.ValidMoves.Clear();
+            }
+        }
+        newSpace.IsThreatened = IsThreatened;
+        newSpace.Threats.Clear();
+        foreach (var threat in Threats)
+        {
+            newSpace.Threats.Add(threat);
+        }
+        
         return newSpace;
     }
     
@@ -50,6 +68,8 @@ public class Space
     private const char EmptySpaceIcon = '\u2610';
     private const char HighlightedIcon = '\u25C9';
     
+    public Piece? Piece { get; set; }
+    
     // indices
     public readonly Position Pos = new();
     public readonly int RowIndex;
@@ -58,10 +78,9 @@ public class Space
     // readable
     public int Row { get; set; }
     public char Col { get; set; }
-    
-    
     public string? Name { get; set; } // ie A3, G7, etc
-    public Piece? Piece { get; set; }
+    
+   
     public bool HasPiece { get; set; }
     
     public char? IconDefault = EmptySpaceIcon;
