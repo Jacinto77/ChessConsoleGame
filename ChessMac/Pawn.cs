@@ -1,10 +1,5 @@
 namespace ChessMac;
 using static Space;
-using static Methods;
-
-// TODO: implement en passant
-// TODO: implement promotion
-// TODO: code in piece direction with private readonly int direction = 1/-1
 
 public class Pawn : Piece
 {
@@ -62,7 +57,7 @@ public class Pawn : Piece
             if (IsWithinBoard(forwardTwo) && inBoard.GetSpace(forwardTwo).HasPiece == false
                                        && this.HasMoved == false)
             {
-                ValidMoves.Add(forwardOne);
+                ValidMoves.Add(forwardTwo);
             }
         }
         // diagonal take

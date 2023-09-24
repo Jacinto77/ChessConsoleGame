@@ -148,12 +148,15 @@ public static class Methods
 
     public static void PlacePieces(Piece?[] pieces, ChessBoard inBoard)
     {
+        Console.WriteLine("PlacePieces()");
         foreach (var piece in pieces)
         {
             string? name = piece?.Name;
             Tuple<int, int> defSpace = new Tuple<int, int>(-1, -1);
             if (name is null) throw new Exception("Methods.PlacePieces(), name is null");
-
+            
+            Console.WriteLine(piece?.Name);
+            Console.WriteLine(piece?.Color);
             // correlate default starting spot with color and piece name
             defSpace = piece?.Color switch
             {
@@ -162,6 +165,7 @@ public static class Methods
                 _ => defSpace
             };
             // place the piece and set piece and space information
+            Console.WriteLine($"Row: {defSpace.Item1} Col: {defSpace.Item2}\n");
             
             piece?.PlacePiece(inBoard, defSpace);
         }
@@ -437,28 +441,29 @@ public static class Methods
         if (destSpace.HasPiece)
             destPiece = destSpace.Piece;
         
-        PlacePiece(pieceBeingMoved, tempBoard, destPos);
+        pieceBeingMoved.MovePiece(tempBoard, destPos);
+        
         tempBoard.GetSpace(startPos)?.ClearPieceInfo();
                         
         if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
             CheckAndPromotePawn(pieceBeingMoved, tempBoard);
-
-        // TODO finish this before anything else
+        
         GeneratePieceMoves(whitePieces, tempBoard);
         GeneratePieceMoves(blackPieces, tempBoard);
 
-        if (!IsKingInCheck(pieceBeingMoved, tempBoard, whitePieces[3], blackPieces[3])) return true;
+        if (!IsKingInCheck(pieceBeingMoved, tempBoard, whitePieces[3], blackPieces[3])) 
+            return true;
         Console.WriteLine("Your king is in check!");
         return false;
 
     }
 
     public static bool IsKingInCheck(Piece pieceBeingMoved, ChessBoard tempBoard, 
-        Piece? whiteKing, Piece? blackKing)
+        Piece whiteKing, Piece blackKing)
     {
-        if (blackKing is not null)
+        if (!blackKing.IsActive)
             throw new Exception("Methods.IsKingInCheck() black king piece is null");
-        if (whiteKing is not null)
+        if (!whiteKing.IsActive)
             throw new Exception("Methods.IsKingInCheck() black king piece is null");
 
         Tuple<int, int> whiteKingPos = new Tuple<int, int>(whiteKing.RowIndex, whiteKing.ColIndex);

@@ -8,20 +8,23 @@ using static Methods;
 
 public class Space
 {
-    public Space()
+    public Space(Tuple<int, int> inPosition)
     {
         HasPiece = false;
         Piece = null;
         Icon = IconDefault;
         IsThreatened = false;
+        SpaceIndex = inPosition;
+        SpaceName = SetName(inPosition);
     }
-    
     
     public Piece? Piece { get; set; }
     
     private const char EmptySpaceIcon = '\u2610';
     private const char HighlightedIcon = '\u25C9';
     
+    public Tuple<int, int> SpaceIndex { get; }
+    public string SpaceName { get; private set; }
     public bool HasPiece { get; set; }
     
     public char? IconDefault = EmptySpaceIcon;
@@ -30,34 +33,22 @@ public class Space
     public char? IconBuffer { get; set; }
     public char? HighlightIcon = HighlightedIcon;
     
-    public bool IsThreatened;
+    public bool IsThreatened = false;
 
-    public Space? DeepCopy()
+    public Space DeepCopy()
     {
         Space tempSpace = (Space)MemberwiseClone();
-        
-        if (Piece != null)
-        {
-            tempSpace.Piece = Piece.DeepCopy();
-        }
-
         return tempSpace;
     }
-    
-    public struct Position
+
+    public string SetName(Tuple<int, int> inPosition)
     {
-        public int RowIndex;
-        public int ColIndex;
-        
-        public Position(int inRowIndex, int inColIndex)
-        {
-            RowIndex = inRowIndex;
-            ColIndex = inColIndex;
-        }
+        return ConvertIndexToPos(inPosition);
     }
 
     public void SetPieceInfo(Piece inPiece)
     {
+        ClearPieceInfo();
         Piece = inPiece;
         HasPiece = true;
         Icon = inPiece.Icon;

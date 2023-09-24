@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static ChessMac.Program;
 using static ChessMac.Space;
 using static ChessMac.Methods;
@@ -72,19 +74,22 @@ public abstract class Piece
         }
 
         pieceCopy.IsActive = IsActive;
-        pieceCopy.Pos = Pos;
+        
         pieceCopy.Type = Type;
         pieceCopy.Color = Color;
         pieceCopy.Name = Name;
         pieceCopy.Icon = Icon;
+        
         pieceCopy.HasMoved = HasMoved;
         pieceCopy.IsPinned = IsPinned;
-        //pieceCopy.CurrentSpace = this.CurrentSpace.DeepCopy();
-        pieceCopy.ValidMoves.Clear();
+        
+        pieceCopy.Pos = Pos;
+        pieceCopy.RowIndex = RowIndex;
+        pieceCopy.ColIndex = ColIndex; 
+        
         foreach (var validMove in ValidMoves)
         {
-            var tempValid = validMove;
-            pieceCopy.ValidMoves.Add(tempValid);
+            pieceCopy.ValidMoves.Add(new Tuple<int, int>(validMove.Item1, validMove.Item2));
         }
         
         return pieceCopy;
@@ -192,6 +197,12 @@ public abstract class Piece
             _ => Icon
         };
     }
+
+    public void SetPosition(Tuple<int, int> inPosition)
+    {
+        RowIndex = inPosition.Item1;
+        ColIndex = inPosition.Item2;
+    }
     
     public void SetName(PieceColor color, PieceType type)
     {
@@ -203,6 +214,7 @@ public abstract class Piece
         foreach (var position in ValidMoves)
         {
             Console.Write($"Row: {position.Item1} Col: {position.Item2}\n");
+            Console.WriteLine(ConvertIndexToPos(position.Item1, position.Item2));
         }
     }
     
@@ -226,13 +238,13 @@ public abstract class Piece
             int rowChange = dir.Item1;
             int colChange = dir.Item2;
 
-            for (int i = 1; i < 8; i++)  // Max possible steps is 7 in any direction
+            for (int i = 1; i < 8; i++) 
             {
                 int newRow = currentRow + i * rowChange;
                 int newCol = currentCol + i * colChange;
 
                 Tuple<int, int> newLocation = new Tuple<int, int>(newRow, newCol);
-                if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) // Check boundary conditions
+                if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) 
                     break;
 
                 Space? tempSpace = inBoard.GetSpace(newLocation);
@@ -449,10 +461,18 @@ public abstract class Piece
 
     public void PlacePiece(ChessBoard inBoard, Tuple<int, int> destLocation)
     {
+        SetPosition(destLocation);
         inBoard.GetSpace(destLocation).SetPieceInfo(this);
         IsActive = true;
     }
 
+    public void MovePiece(ChessBoard inBoard, Tuple<int, int> inMove)
+    {
+        SetPosition(inMove);
+        inBoard.GetSpace(inMove).SetPieceInfo(this);
+        HasMoved = true;
+    }
+    
     public bool IsMoveValid(Tuple<int, int> inMove)
     {
         foreach (var validSpace in ValidMoves)
@@ -463,15 +483,7 @@ public abstract class Piece
 
         return false;
     }
-    
-    public void MovePiece(Space destSpace, ChessBoard inBoard, Tuple<int, int> inMove)
-    {
-        
-        Space? startSpace = inBoard.GetSpace(new Tuple<int, int>(RowIndex, ColIndex));
-        PlacePiece(inBoard, inMove);
-        startSpace?.ClearPieceInfo();
-    }
-    
+
 
     public void PromotePawn(ChessBoard inBoard)
     {

@@ -22,12 +22,12 @@ public class ChessBoard
     
     const int NumberOfPieces = 16;
     
-    public Piece?[] WhitePieces = new Piece?[NumberOfPieces];
-    public Piece?[] BlackPieces = new Piece?[NumberOfPieces];
+    public Piece[] WhitePieces = new Piece[NumberOfPieces];
+    public Piece[] BlackPieces = new Piece[NumberOfPieces];
     
     // collection of all spaces in 8x8 array
     // first index is the row, second index is the column
-    public Space?[,] BoardSpaces = new Space?[8, 8];
+    public Space[,] BoardSpaces = new Space[8, 8];
     
     // Sets each space to a default Space object
     public void InitBoardSpaces()
@@ -36,7 +36,7 @@ public class ChessBoard
         {
             for (int col = 0; col < 8; col++)
             {
-                BoardSpaces[row, col] = new Space();
+                BoardSpaces[row, col] = new Space(new Tuple<int, int>(row, col));
             }
         }
     }
@@ -44,16 +44,32 @@ public class ChessBoard
     public ChessBoard DeepCopy()
     {
         ChessBoard newBoard = new ChessBoard();
+        for (int i = 0; i < this.WhitePieces.Length; i++)
+        {
+            newBoard.WhitePieces[i] = WhitePieces[i].DeepCopy();
+            newBoard.BlackPieces[i] = BlackPieces[i].DeepCopy();
+        }
+        
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
             {
-                Tuple<int, int> currentSpace = new Tuple<int, int>(row, col);
                 if (BoardSpaces[row, col] is null)
                     throw new Exception("ChessBoard.DeepCopy() BoardSpaces space is null");
                 
-                newBoard.BoardSpaces[row, col] = BoardSpaces[row, col]?.DeepCopy();
+                newBoard.BoardSpaces[row, col] = BoardSpaces[row, col].DeepCopy();
             }
+        }
+
+        for (int i = 0; i < WhitePieces.Length; i++)
+        {
+            Piece tempPiece = newBoard.WhitePieces[i];
+            tempPiece.PlacePiece(newBoard, new Tuple<int, int>(tempPiece.RowIndex, tempPiece.ColIndex));
+        }
+        for (int i = 0; i < BlackPieces.Length; i++)
+        {
+            Piece tempPiece = newBoard.BlackPieces[i];
+            tempPiece.PlacePiece(newBoard, new Tuple<int, int>(tempPiece.RowIndex, tempPiece.ColIndex));
         }
 
         return newBoard;
@@ -249,7 +265,7 @@ public class ChessBoard
         return new Tuple<int, int>(colIndex, rowIndex);
     }
 
-    public Space? GetSpace(Tuple<int, int> inLocation)
+    public Space GetSpace(Tuple<int, int> inLocation)
     {
         if (inLocation.Item1 > 7 || inLocation.Item1 < 0 || inLocation.Item2 > 7 || inLocation.Item2 < 0)
         {
@@ -258,38 +274,12 @@ public class ChessBoard
         return BoardSpaces[inLocation.Item1, inLocation.Item2];
     }
     
-    // // add console output for if the passed values are out of bounds 
-    // public Space GetSpace(Space.Position inPosition)
-    // {
-    //     if (inPosition.RowIndex > 7 
-    //         || inPosition.RowIndex < 0 
-    //         || inPosition.ColIndex > 7 
-    //         || inPosition.ColIndex < 0)
-    //     {
-    //         Space tempSpace = new Space(-1, -1);
-    //         tempSpace.HasPiece = false;
-    //         tempSpace.Piece = null;
-    //
-    //         return tempSpace;
-    //     }
-    //     return BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
-    // }
-
-    // public Space GetSpace(string position)
-    // {
-    //     Space.Position pos = Methods.ConvertPosToIndex(position);
-    //     if (Space.IsWithinBoard())
-    //         return GetSpace(pos);
-    //
-    //     return new Space(-1, -1);
-    // }
-    
     
     public Piece? GetPiece(Tuple<int, int> inPosition)
     {
         Space? tempSpace = BoardSpaces[inPosition.Item1, inPosition.Item2];
-        if (tempSpace.HasPiece) return tempSpace.Piece;
-        else return null;
+        if (tempSpace is null) return null;
+        return tempSpace.HasPiece ? tempSpace.Piece : null;
     }
     
     // TODO: 

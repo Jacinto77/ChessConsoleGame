@@ -1,5 +1,7 @@
 namespace ChessMac;
 
+// TODO implement castling
+
 public class King : Piece
 {
     public King(PieceColor color, string name, char icon, PieceType type) 

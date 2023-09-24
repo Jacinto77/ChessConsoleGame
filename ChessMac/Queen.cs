@@ -15,6 +15,7 @@ public class Queen : Piece
     {
     }
 
+    // TODO make methods into extensions
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         ValidMoves.Clear();
