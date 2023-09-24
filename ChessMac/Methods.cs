@@ -29,45 +29,47 @@ public static class Methods
         { "KingIcon", '\u265A' },
     };
 
-    public static readonly Dictionary<string, string> DefWhiteStart = new()
+    public static readonly Dictionary<string, Tuple<int, int>> DefWhiteStart = new()
     {
-        {"WhiteRook_16", "H1"},
-        {"WhiteKnight_15", "G1"},
-        {"WhiteBishop_14", "F1"},
-        {"WhiteKing_13", "E1"},
-        {"WhiteQueen_12", "D1"},
-        {"WhiteBishop_11", "C1"},
-        {"WhiteKnight_10", "B1"},
-        {"WhiteRook_9", "A1"},
-        {"WhitePawn_8", "H2"},
-        {"WhitePawn_7", "G2"},
-        {"WhitePawn_6", "F2"},
-        {"WhitePawn_5", "E2"},
-        {"WhitePawn_4", "D2"},
-        {"WhitePawn_3", "C2"},
-        {"WhitePawn_2", "B2"},
-        {"WhitePawn_1", "A2"}
+        {"WhiteRook_16",   new Tuple<int, int>(7, 7)},
+        {"WhiteKnight_15", new Tuple<int, int>(7, 6)},
+        {"WhiteBishop_14", new Tuple<int, int>(7, 5)},
+        {"WhiteKing_13",   new Tuple<int, int>(7, 4)},
+        {"WhiteQueen_12",  new Tuple<int, int>(7, 3)},
+        {"WhiteBishop_11", new Tuple<int, int>(7, 2)},
+        {"WhiteKnight_10", new Tuple<int, int>(7, 1)},
+        {"WhiteRook_9",    new Tuple<int, int>(7, 0)},
+        
+        {"WhitePawn_8", new Tuple<int, int>(6, 7)},
+        {"WhitePawn_7", new Tuple<int, int>(6, 6)},
+        {"WhitePawn_6", new Tuple<int, int>(6, 5)},
+        {"WhitePawn_5", new Tuple<int, int>(6, 4)},
+        {"WhitePawn_4", new Tuple<int, int>(6, 3)},
+        {"WhitePawn_3", new Tuple<int, int>(6, 2)},
+        {"WhitePawn_2", new Tuple<int, int>(6, 1)},
+        {"WhitePawn_1", new Tuple<int, int>(6, 0)}
         
     };
 
-    public static readonly Dictionary<string, string> DefBlackStart = new()
+    public static readonly Dictionary<string, Tuple<int, int>> DefBlackStart = new()
     {
-        {"BlackRook_16", "H8"},
-        {"BlackKnight_15", "G8"},
-        {"BlackBishop_14", "F8"},
-        {"BlackKing_13", "E8"},
-        {"BlackQueen_12", "D8"},
-        {"BlackBishop_11", "C8"},
-        {"BlackKnight_10", "B8"},
-        {"BlackRook_9", "A8"},
-        {"BlackPawn_8", "H7"},
-        {"BlackPawn_7", "G7"},
-        {"BlackPawn_6", "F7"},
-        {"BlackPawn_5", "E7"},
-        {"BlackPawn_4", "D7"},
-        {"BlackPawn_3", "C7"},
-        {"BlackPawn_2", "B7"},
-        {"BlackPawn_1", "A7"}
+        {"BlackRook_16",   new Tuple<int, int>(0, 7)},
+        {"BlackKnight_15", new Tuple<int, int>(0, 6)},
+        {"BlackBishop_14", new Tuple<int, int>(0, 5)},
+        {"BlackKing_13",   new Tuple<int, int>(0, 4)},
+        {"BlackQueen_12",  new Tuple<int, int>(0, 3)},
+        {"BlackBishop_11", new Tuple<int, int>(0, 2)},
+        {"BlackKnight_10", new Tuple<int, int>(0, 1)},
+        {"BlackRook_9",    new Tuple<int, int>(0, 0)},
+        
+        {"BlackPawn_8", new Tuple<int, int>(1, 7)},
+        {"BlackPawn_7", new Tuple<int, int>(1, 6)},
+        {"BlackPawn_6", new Tuple<int, int>(1, 5)},
+        {"BlackPawn_5", new Tuple<int, int>(1, 4)},
+        {"BlackPawn_4", new Tuple<int, int>(1, 3)},
+        {"BlackPawn_3", new Tuple<int, int>(1, 2)},
+        {"BlackPawn_2", new Tuple<int, int>(1, 1)},
+        {"BlackPawn_1", new Tuple<int, int>(1, 0)}
     };
 
     const char emptySpaceIcon = '\u2610';
@@ -149,22 +151,19 @@ public static class Methods
         foreach (var piece in pieces)
         {
             string? name = piece?.Name;
-            Space? space = null;
-            if (name is null) return;
+            Tuple<int, int> defSpace = new Tuple<int, int>(-1, -1);
+            if (name is null) throw new Exception("Methods.PlacePieces(), name is null");
 
             // correlate default starting spot with color and piece name
-            space = piece?.Color switch
+            defSpace = piece?.Color switch
             {
-                Piece.PieceColor.White => inBoard.GetSpace(DefWhiteStart[name]),
-                Piece.PieceColor.Black => inBoard.GetSpace(DefBlackStart[name]),
-                _ => space
+                Piece.PieceColor.White => DefWhiteStart[name],
+                Piece.PieceColor.Black => DefBlackStart[name],
+                _ => defSpace
             };
-            if (space is null)
-            {
-                return;
-            }
             // place the piece and set piece and space information
-            piece?.PlacePiece(space, inBoard);
+            
+            piece?.PlacePiece(inBoard, defSpace);
         }
     }
 
@@ -248,12 +247,12 @@ public static class Methods
         return column + row;
     }
     
-    public static string ConvertIndexToPos(Space.Position inPosition)
+    public static string ConvertIndexToPos(Tuple<int, int> inIndex)
     {
         string column = "";
         string row = "";
 
-        column = inPosition.ColIndex switch
+        column = inIndex.Item2 switch
         {
             0 => "A",
             1 => "B",
@@ -266,7 +265,7 @@ public static class Methods
             _ => column
         };
 
-        row = inPosition.RowIndex switch
+        row = inIndex.Item1 switch
         {
             0 => "8",
             1 => "7",
@@ -282,13 +281,15 @@ public static class Methods
         return column + row;
     }
     
-    public static Space.Position ConvertPosToIndex(string input)
+    public static Tuple<int, int> ConvertPosToIndex(string input)
     {
-        var column = input[0];
-        var row = input[1];
+        var columnChar = input[0];
+        var rowChar = input[1];
 
-        Space.Position position = new Space.Position();
-        position.ColIndex = column switch
+        int tempCol = -1;
+        int tempRow = -1;
+        Tuple<int, int> position = new Tuple<int, int>(-1, -1);
+        tempCol = columnChar switch
         {
             'A' => 0,
             'B' => 1,
@@ -298,10 +299,10 @@ public static class Methods
             'F' => 5,
             'G' => 6,
             'H' => 7,
-            _ => position.ColIndex
+            _ => tempCol
         };
 
-        position.RowIndex = row switch
+        tempRow = rowChar switch
         {
             '1' => 7,
             '2' => 6,
@@ -311,18 +312,19 @@ public static class Methods
             '6' => 2,
             '7' => 1,
             '8' => 0,
-            _ => position.RowIndex
+            _ => tempRow
         };
-
-        return position;
+        
+        return new Tuple<int, int>(tempRow, tempCol);
     }
 
     public static void GeneratePieceMoves(Piece?[] pieces, ChessBoard inBoard)
     {
         foreach (var piece in pieces)
         {
+            if (piece is null) throw new Exception("GeneratePieceMoves() piece is null");
+            
             piece.GenerateValidMoves(inBoard);
-            piece.AddPieceToSpaceThreats();
         }
     }
 
@@ -332,21 +334,13 @@ public static class Methods
         return ParseInput(playerInput);
     }
     
-    public static void PlayerMove(ChessBoard inBoard, Piece.PieceColor color, Tuple<string, string> parsedInput)
-    {
-        Space.Position originalPosition = ConvertPosToIndex(parsedInput.Item1);
-        Space.Position destinationPosition = ConvertPosToIndex(parsedInput.Item2);    
-        Piece? pieceBeingMoved = inBoard.GetPiece(originalPosition);
-        
-        Space destSpace = inBoard.GetSpace(destinationPosition);
-        Piece? destPiece = destSpace.Piece;
-        // pieceBeingMoved.AddPieceTake(destSpace.P 
-        pieceBeingMoved?.MovePiece(destSpace, inBoard);
-                    
-        if (pieceBeingMoved?.Type == Piece.PieceType.Pawn)
-            CheckAndPromotePawn(pieceBeingMoved);
-    }
 
+    public static void PlacePiece(Piece piece, ChessBoard inBoard, Tuple<int, int> inMove)
+    {
+        inBoard.GetSpace(inMove).SetPieceInfo(piece);
+        piece.IsActive = true;
+    }
+    
     public static void CheckForCheck()
     {
         // need to know the pieces that put the king in check
@@ -384,11 +378,11 @@ public static class Methods
         
     }
     
-    public static void CheckAndPromotePawn(Piece pieceBeingMoved)
+    public static void CheckAndPromotePawn(Piece pieceBeingMoved, ChessBoard inBoard)
     {
         if (!pieceBeingMoved.IsPawnPromotionSpace())
             return;
-        pieceBeingMoved.PromotePawn();
+        pieceBeingMoved.PromotePawn(inBoard);
     }
     
     
@@ -403,25 +397,25 @@ public static class Methods
         }
     }
 
-    public static void AssignThreatsToSpaces(IEnumerable<Piece?> inPieces, ChessBoard? inBoard)
-    {
-        foreach (var piece in inPieces)
-        {
-            foreach (var space in piece!.ValidMoves)
-            {
-                space.AddPieceToThreats(piece);
-            }
-        }
-    }
+    // public static void AssignThreatsToSpaces(IEnumerable<Piece?> inPieces, ChessBoard? inBoard)
+    // {
+    //     foreach (var piece in inPieces)
+    //     {
+    //         foreach (var space in piece!.ValidMoves)
+    //         {
+    //             space.AddPieceToThreats(piece);
+    //         }
+    //     }
+    // }
 
     public static bool IsValidMove(ChessBoard tempBoard, Piece.PieceColor colorToMove, 
         Tuple<string, string> playerMove, Piece?[] whitePieces, Piece?[] blackPieces)
     {
-        Space.Position originalPosition = ConvertPosToIndex(playerMove.Item1);
-        Space.Position destinationPosition = ConvertPosToIndex(playerMove.Item2);
+        Tuple<int, int> startPos = ConvertPosToIndex(playerMove.Item1);
+        Tuple<int, int> destPos = ConvertPosToIndex(playerMove.Item2);
 
-        Piece? pieceBeingMoved = tempBoard.GetPiece(originalPosition);
-        Space destSpace = tempBoard.GetSpace(destinationPosition);
+        Piece? pieceBeingMoved = tempBoard.GetPiece(startPos);
+        Space? destSpace = tempBoard.GetSpace(destPos);
 
         if (pieceBeingMoved is null)
         {
@@ -433,7 +427,7 @@ public static class Methods
             Console.WriteLine("That ain't your piece");
             return false;
         }
-        if (!pieceBeingMoved.IsMoveValid(destSpace))
+        if (!pieceBeingMoved.IsMoveValid(destPos))
         {
             Console.WriteLine("move is not valid");
             return false;
@@ -443,41 +437,38 @@ public static class Methods
         if (destSpace.HasPiece)
             destPiece = destSpace.Piece;
         
-        pieceBeingMoved.MovePiece(destSpace, tempBoard);
+        PlacePiece(pieceBeingMoved, tempBoard, destPos);
+        tempBoard.GetSpace(startPos)?.ClearPieceInfo();
                         
         if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
-            CheckAndPromotePawn(pieceBeingMoved);
+            CheckAndPromotePawn(pieceBeingMoved, tempBoard);
 
         // TODO finish this before anything else
         GeneratePieceMoves(whitePieces, tempBoard);
         GeneratePieceMoves(blackPieces, tempBoard);
-            
-        AssignThreatsToSpaces(whitePieces, tempBoard);
-        AssignThreatsToSpaces(blackPieces, tempBoard);
 
-        if (IsKingInCheck(pieceBeingMoved, tempBoard, whitePieces, blackPieces))
-        {
-            Console.WriteLine("Your KING is in check!");
-            return false;
-        }
+        if (!IsKingInCheck(pieceBeingMoved, tempBoard, whitePieces[3], blackPieces[3])) return true;
+        Console.WriteLine("Your king is in check!");
+        return false;
 
-        return true;
     }
 
     public static bool IsKingInCheck(Piece pieceBeingMoved, ChessBoard tempBoard, 
-        Piece?[] whitePieces, Piece?[] blackPieces)
+        Piece? whiteKing, Piece? blackKing)
     {
-        switch (pieceBeingMoved.Color)
+        if (blackKing is not null)
+            throw new Exception("Methods.IsKingInCheck() black king piece is null");
+        if (whiteKing is not null)
+            throw new Exception("Methods.IsKingInCheck() black king piece is null");
+
+        Tuple<int, int> whiteKingPos = new Tuple<int, int>(whiteKing.RowIndex, whiteKing.ColIndex);
+        Tuple<int, int> blackKingPos = new Tuple<int, int>(blackKing.RowIndex, blackKing.ColIndex);
+
+        return pieceBeingMoved.Color switch
         {
-            case Piece.PieceColor.White when whitePieces[3].CurrentSpace.IsThreatened:
-                Console.WriteLine("Your king is in check!");
-                return true;
-            case Piece.PieceColor.Black when blackPieces[3].CurrentSpace.IsThreatened:
-                Console.WriteLine("Your king is in check!");
-                return true;
-            
-            default:
-                return false;
-        }
+            Piece.PieceColor.White when tempBoard.GetSpace(blackKingPos).IsThreatened => true,
+            Piece.PieceColor.Black when tempBoard.GetSpace(whiteKingPos).IsThreatened => true,
+            _ => false
+        };
     }
 }

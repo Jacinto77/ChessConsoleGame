@@ -1,5 +1,5 @@
 namespace ChessMac;
-
+using static Methods;
 // creation of chessboard
 // outputs chess board display
 // modifies itself based on moves made
@@ -11,13 +11,23 @@ public class ChessBoard
     // initializes board with all spaces set to []
     public ChessBoard()
     {
+        
         InitBoardSpaces();
+        
+        InitPieces(WhitePieces, Piece.PieceColor.White);
+        InitPieces(BlackPieces, Piece.PieceColor.Black);
+        PlacePieces(WhitePieces, this);
+        PlacePieces(BlackPieces, this);
     }
     
+    const int NumberOfPieces = 16;
+    
+    public Piece?[] WhitePieces = new Piece?[NumberOfPieces];
+    public Piece?[] BlackPieces = new Piece?[NumberOfPieces];
     
     // collection of all spaces in 8x8 array
     // first index is the row, second index is the column
-    public Space[,] BoardSpaces = new Space[8, 8];
+    public Space?[,] BoardSpaces = new Space?[8, 8];
     
     // Sets each space to a default Space object
     public void InitBoardSpaces()
@@ -26,7 +36,7 @@ public class ChessBoard
         {
             for (int col = 0; col < 8; col++)
             {
-                BoardSpaces[row, col] = new Space(row, col);
+                BoardSpaces[row, col] = new Space();
             }
         }
     }
@@ -34,40 +44,40 @@ public class ChessBoard
     public ChessBoard DeepCopy()
     {
         ChessBoard newBoard = new ChessBoard();
-
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
             {
-                newBoard.BoardSpaces[row, col] = this.BoardSpaces[row, col]?.DeepCopy();
-                if (newBoard.GetSpace(row, col).HasPiece)
-                    newBoard.GetSpace(row, col).Piece.GenerateValidMoves(this);
+                Tuple<int, int> currentSpace = new Tuple<int, int>(row, col);
+                if (BoardSpaces[row, col] is null)
+                    throw new Exception("ChessBoard.DeepCopy() BoardSpaces space is null");
+                
+                newBoard.BoardSpaces[row, col] = BoardSpaces[row, col]?.DeepCopy();
             }
         }
-        
 
         return newBoard;
     }
     
-    // debugging
-    public void PrintBoardSpacesConsole()
-    {
-        for (int row = 0; row < 8; row++)
-        {
-            for (int col = 0; col < 8; col++)
-            {
-                // print indices
-                Console.Write("Row: {0}; Col: {1} \t", row, col);
-                
-                // print readable col/row
-                Console.Write(BoardSpaces[row, col].Col);
-                Console.Write(BoardSpaces[row, col].Row + "\t");
-                
-                // print whether it has a piece or not
-                Console.Write(BoardSpaces[row, col].HasPiece + "\n");
-            }
-        }
-    }
+    // // debugging
+    // public void PrintBoardSpacesConsole()
+    // {
+    //     for (int row = 0; row < 8; row++)
+    //     {
+    //         for (int col = 0; col < 8; col++)
+    //         {
+    //             // print indices
+    //             Console.Write("Row: {0}; Col: {1} \t", row, col);
+    //             
+    //             // print readable col/row
+    //             Console.Write(BoardSpaces[row, col].Col);
+    //             Console.Write(BoardSpaces[row, col].Row + "\t");
+    //             
+    //             // print whether it has a piece or not
+    //             Console.Write(BoardSpaces[row, col].HasPiece + "\n");
+    //         }
+    //     }
+    // }
     
     // Output Board Display in ASCII to console
     public void OutputBoard()
@@ -85,7 +95,8 @@ public class ChessBoard
             
             for (int col = 0; col < 8; col++)
             {
-                Console.Write(GetSpace(row, col).Icon);
+                Tuple<int, int> currentSpace = new Tuple<int, int>(row, col);
+                Console.Write(GetSpace(currentSpace).Icon);
                 // if (BoardSpaces[row, col].Piece == null)
                 //     Console.Write(BoardSpaces[row, col].Icon);
                 // else
@@ -238,61 +249,63 @@ public class ChessBoard
         return new Tuple<int, int>(colIndex, rowIndex);
     }
 
-    public Space GetSpace(int inRow, int inCol)
+    public Space? GetSpace(Tuple<int, int> inLocation)
     {
-        if (inRow > 7 || inRow < 0 || inCol > 7 || inCol < 0)
+        if (inLocation.Item1 > 7 || inLocation.Item1 < 0 || inLocation.Item2 > 7 || inLocation.Item2 < 0)
         {
-            return new Space(-1, -1);
+            throw new Exception("Chessboard.GetSpace() failed");
         }
-        return BoardSpaces[inRow, inCol];
+        return BoardSpaces[inLocation.Item1, inLocation.Item2];
     }
     
-    // add console output for if the passed values are out of bounds 
-    public Space GetSpace(Space.Position inPosition)
-    {
-        if (inPosition.RowIndex > 7 
-            || inPosition.RowIndex < 0 
-            || inPosition.ColIndex > 7 
-            || inPosition.ColIndex < 0)
-        {
-            Space tempSpace = new Space(-1, -1);
-            tempSpace.HasPiece = false;
-            tempSpace.Piece = null;
+    // // add console output for if the passed values are out of bounds 
+    // public Space GetSpace(Space.Position inPosition)
+    // {
+    //     if (inPosition.RowIndex > 7 
+    //         || inPosition.RowIndex < 0 
+    //         || inPosition.ColIndex > 7 
+    //         || inPosition.ColIndex < 0)
+    //     {
+    //         Space tempSpace = new Space(-1, -1);
+    //         tempSpace.HasPiece = false;
+    //         tempSpace.Piece = null;
+    //
+    //         return tempSpace;
+    //     }
+    //     return BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
+    // }
 
-            return tempSpace;
-        }
-        return BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
-    }
-
-    public Space GetSpace(string position)
-    {
-        Space.Position pos = Methods.ConvertPosToIndex(position);
-        if (Space.IsWithinBoard(pos))
-            return GetSpace(pos);
-
-        return new Space(-1, -1);
-    }
+    // public Space GetSpace(string position)
+    // {
+    //     Space.Position pos = Methods.ConvertPosToIndex(position);
+    //     if (Space.IsWithinBoard())
+    //         return GetSpace(pos);
+    //
+    //     return new Space(-1, -1);
+    // }
     
-    public Piece? GetPiece(Space.Position inPosition)
+    
+    public Piece? GetPiece(Tuple<int, int> inPosition)
     {
-        Space tempSpace = BoardSpaces[inPosition.RowIndex, inPosition.ColIndex];
+        Space? tempSpace = BoardSpaces[inPosition.Item1, inPosition.Item2];
         if (tempSpace.HasPiece) return tempSpace.Piece;
         else return null;
     }
     
-    public void DisplayMoves(Piece? inPiece)
-    {
-        for (int i = 0; i < inPiece.ValidMoves.Count; i++)
-        {
-            inPiece.ValidMoves[i].SetIconHighlight();
-        }
-    }
-
-    public void RemoveDisplayMoves(Piece? inPiece)
-    {
-        for (int i = 0; i < inPiece.ValidMoves.Count; i++)
-        {
-            inPiece.ValidMoves[i].UnsetIconHighlight();
-        }
-    }
+    // TODO: 
+    // public void DisplayMoves(Piece? inPiece)
+    // {
+    //     for (int i = 0; i < inPiece.ValidMoves.Count; i++)
+    //     {
+    //         inPiece.ValidMoves[i].SetIconHighlight();
+    //     }
+    // }
+    //
+    // public void RemoveDisplayMoves(Piece? inPiece)
+    // {
+    //     for (int i = 0; i < inPiece.ValidMoves.Count; i++)
+    //     {
+    //         inPiece.ValidMoves[i].UnsetIconHighlight();
+    //     }
+    // }
 }

@@ -18,22 +18,22 @@ public class Knight : Piece
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         ValidMoves.Clear();
-        int currentCol = this.GetPosition().ColIndex;
-        int currentRow = this.GetPosition().RowIndex;
+        int currentCol = ColIndex;
+        int currentRow = RowIndex;
         
         //Console.WriteLine("Current Column:" + currentCol);
         //Console.WriteLine("Current Row: " + currentRow);
 
-        List<Space.Position> validPositions = new List<Space.Position>
+        List<Tuple<int, int>> validPositions = new List<Tuple<int, int>>
         {
-            new Space.Position(currentRow + 2, currentCol + 1),
-            new Space.Position(currentRow + 2, currentCol - 1),
-            new Space.Position(currentRow - 2, currentCol + 1),
-            new Space.Position(currentRow - 2, currentCol - 1),
-            new Space.Position(currentRow + 1, currentCol + 2),
-            new Space.Position(currentRow + 1, currentCol - 2),
-            new Space.Position(currentRow - 1, currentCol + 2),
-            new Space.Position(currentRow - 1, currentCol - 2)
+            new (currentRow + 2, currentCol + 1),
+            new (currentRow + 2, currentCol - 1),
+            new (currentRow - 2, currentCol + 1),
+            new (currentRow - 2, currentCol - 1),
+            new (currentRow + 1, currentCol + 2),
+            new (currentRow + 1, currentCol - 2),
+            new (currentRow - 1, currentCol + 2),
+            new (currentRow - 1, currentCol - 2)
         };
         
         foreach (var move in validPositions)
@@ -44,19 +44,18 @@ public class Knight : Piece
             }
             
             // check if move's dest space has a piece of the same color
-            Space destSpace = inBoard.GetSpace(move);
+            Space? destSpace = inBoard.GetSpace(move);
             // Console.WriteLine(destSpace.HasPiece);
             if (destSpace.HasPiece == true)
             {
                 if (destSpace.Piece?.Color == this.Color)
                 {
-                    destSpace.AddPieceToThreats(this);
                     continue;
                 }
             }
             
-            ValidMoves.Add(destSpace);
-            destSpace.AddPieceToThreats(this);
+            ValidMoves.Add(move);
+            
         }
     }
 }

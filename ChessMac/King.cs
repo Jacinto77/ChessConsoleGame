@@ -15,10 +15,10 @@ public class King : Piece
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         ValidMoves.Clear();
-        int currentRow = this.GetPosition().RowIndex;
-        int currentCol = this.GetPosition().ColIndex;
+        int currentRow = RowIndex;
+        int currentCol = ColIndex;
         
-        List<Space.Position> tempMoves = new List<Space.Position>
+        List<Tuple<int, int>> tempMoves = new List<Tuple<int, int>>
         {
             new(currentRow + 1, currentCol),
             new(currentRow + 1, currentCol + 1),
@@ -34,7 +34,7 @@ public class King : Piece
         {
             if (Space.IsWithinBoard(move) == false) continue;
 
-            Space destSpace = inBoard.GetSpace(move.RowIndex, move.ColIndex);
+            Space? destSpace = inBoard.GetSpace(move);
             if (destSpace.HasPiece == true)
             {
                 if (destSpace.Piece?.Color == Color)
@@ -43,7 +43,7 @@ public class King : Piece
                 }
             }
             
-            ValidMoves.Add(destSpace);
+            ValidMoves.Add(move);
         }
 
         // // reset pinned pieces before regenerating new

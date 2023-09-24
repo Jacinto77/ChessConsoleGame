@@ -8,29 +8,29 @@ using static Methods;
 
 public class Pawn : Piece
 {
+    private readonly int direction;
+    
     public Pawn(PieceColor color, string name, char icon, PieceType type) 
         : base(color, name, icon)
     {
         this.Type = type;
     }
-
+    
     public Pawn(PieceColor color, PieceType type) : base(color, type)
     {
         direction = (Color == PieceColor.White) ? -1 : 1;
     }
-
-    private int direction = 0;
     
-    private void CheckAndAddDiagonal(Position diagonal, ChessBoard inBoard)
+    private void CheckAndAddDiagonal(Tuple<int, int> diagonal, ChessBoard inBoard)
     {
         if (IsWithinBoard(diagonal) && inBoard.GetPiece(diagonal)?.Color != Color 
                                     && inBoard.GetSpace(diagonal).HasPiece)
         {
-            ValidMoves.Add(inBoard.GetSpace(diagonal));
+            ValidMoves.Add(diagonal);
         }
     }
-
-    private void CheckEnPassant(Position horizontal, Position diagonal, ChessBoard inBoard)
+    
+    private void CheckEnPassant(Tuple<int, int> horizontal, Tuple<int, int> diagonal, ChessBoard inBoard)
     {
         if (!IsWithinBoard(horizontal)) return;
         if (!inBoard.GetSpace(horizontal).HasPiece || inBoard.GetPiece(horizontal)?.Type != PieceType.Pawn) 
@@ -38,31 +38,31 @@ public class Pawn : Piece
         if (inBoard.GetPiece(horizontal)?.MoveCounter != 1 || inBoard.GetSpace(diagonal).HasPiece)
             return;
 
-        ValidMoves.Add(inBoard.GetSpace(horizontal));
+        ValidMoves.Add(horizontal);
         
     }
-
+    
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
         ValidMoves.Clear();
-        int currentCol = this.GetPosition().ColIndex;
-        int currentRow = this.GetPosition().RowIndex;
+        int currentCol = ColIndex;
+        int currentRow = RowIndex;
         
-        Position forwardOne = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol);
-        Position forwardTwo = new Position(inRowIndex: currentRow + (direction * 2), inColIndex: currentCol);
-        Position diagPos = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol + 1);
-        Position diagNeg = new Position(inRowIndex: currentRow + (direction * 1), inColIndex: currentCol - 1);
-        Position horizPos = new Position(currentRow, currentCol + 1);
-        Position horizNeg = new Position(currentRow, currentCol - 1);
+        Tuple<int, int> forwardOne = new Tuple<int, int>(currentRow + (direction * 1), currentCol);
+        Tuple<int, int> forwardTwo = new Tuple<int, int>(currentRow + (direction * 2), currentCol);
+        Tuple<int, int> diagPos = new Tuple<int, int>(currentRow + (direction * 1),  currentCol + 1);
+        Tuple<int, int> diagNeg = new Tuple<int, int>( currentRow + (direction * 1),  currentCol - 1);
+        Tuple<int, int> horizPos = new Tuple<int, int>(currentRow, currentCol + 1);
+        Tuple<int, int> horizNeg = new Tuple<int, int>(currentRow, currentCol - 1);
         
         if (IsWithinBoard(forwardOne) && inBoard.GetSpace(forwardOne).HasPiece == false)
         {
-            ValidMoves.Add(inBoard.GetSpace(forwardOne));
+            ValidMoves.Add(forwardOne);
 
             if (IsWithinBoard(forwardTwo) && inBoard.GetSpace(forwardTwo).HasPiece == false
                                        && this.HasMoved == false)
             {
-                ValidMoves.Add(inBoard.GetSpace(forwardTwo));
+                ValidMoves.Add(forwardOne);
             }
         }
         // diagonal take

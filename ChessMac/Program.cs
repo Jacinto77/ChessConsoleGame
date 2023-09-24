@@ -4,6 +4,8 @@ using static Methods;
 
 
 // TODO: make chessboard a static object
+// TODO: make pieces part of the board
+
 
 internal static class Program
 {
@@ -12,13 +14,8 @@ internal static class Program
         ChessBoard board = new ChessBoard();
         // board.OutputBoard();
 
-        const int numberOfPieces = 16;
-        Piece?[] whitePieces = new Piece?[numberOfPieces];
-        Piece?[] blackPieces = new Piece?[numberOfPieces];
-        InitPieces(whitePieces, Piece.PieceColor.White);
-        InitPieces(blackPieces, Piece.PieceColor.Black);
-        PlacePieces(whitePieces, board);
-        PlacePieces(blackPieces, board);
+        
+        
 
         // :testing:
         // Piece? testPiece = board.GetPiece(new Space.Position(6, 5));
@@ -36,15 +33,12 @@ internal static class Program
                 return;
             }
 
-            GeneratePieceMoves(whitePieces, board);
-            GeneratePieceMoves(blackPieces, board);
+            GeneratePieceMoves(board.WhitePieces, board);
+            GeneratePieceMoves(board.BlackPieces, board);
 
-            AssignThreatsToSpaces(whitePieces, board);
-            AssignThreatsToSpaces(blackPieces, board);
+            // AssignThreatsToSpaces(board.WhitePieces, board);
+            // AssignThreatsToSpaces(board.BlackPieces, board);
 
-            Piece[] whitePiecesCopy;
-            Piece[] blackPiecesCopy;
-            
             ChessBoard tempBoard = board.DeepCopy();
             // tempBoard.OutputBoard();
             
@@ -55,12 +49,11 @@ internal static class Program
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
             Tuple<string, string> parsedInput = GetPlayerMove();
 
-            if (IsValidMove(tempBoard, colorToMove, parsedInput, whitePieces, blackPieces))
+            if (IsValidMove(tempBoard, colorToMove, parsedInput, tempBoard.WhitePieces, tempBoard.BlackPieces))
             {
                 // playermove() makes the pieces disappear
                 // either something about the copying
                 // or my movePiece functions are too convoluted
-                PlayerMove(tempBoard, colorToMove, parsedInput);
                 board = tempBoard.DeepCopy();
             }
             else
