@@ -24,22 +24,12 @@ public class ChessBoard
     
     public Piece[] WhitePieces = new Piece[NumberOfPieces];
     public Piece[] BlackPieces = new Piece[NumberOfPieces];
+
+    public Piece[,] BoardPieces = new Piece[8, 8];
     
     // collection of all spaces in 8x8 array
     // first index is the row, second index is the column
     public Space[,] BoardSpaces = new Space[8, 8];
-    
-    // Sets each space to a default Space object
-    public void InitBoardSpaces()
-    {
-        for (int row = 0; row < 8; row++)
-        {
-            for (int col = 0; col < 8; col++)
-            {
-                BoardSpaces[row, col] = new Space(new Tuple<int, int>(row, col));
-            }
-        }
-    }
     
     public ChessBoard DeepCopy()
     {
@@ -74,7 +64,31 @@ public class ChessBoard
 
         return newBoard;
     }
+
+    //TODO finish transitioning from using Space class to only Piece class
+    public void InitBoardPieces()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                BoardPieces[row, col] = new Piece(Piece.PieceColor.Null, Piece.PieceType.Null);
+            }
+        }
+    }
     
+    // Sets each space to a default Space object
+    public void InitBoardSpaces()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                BoardSpaces[row, col] = new Space(new Tuple<int, int>(row, col));
+            }
+        }
+    }
+
     // // debugging
     // public void PrintBoardSpacesConsole()
     // {
@@ -150,42 +164,6 @@ public class ChessBoard
     {
         8, 7, 6, 5, 4, 3, 2, 1
     };
-    
-    // not used
-    private char[] colChars =
-    {
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'
-    };
-    
-    // not used
-    private char[] pieces = 
-    {
-        'P', 'R', 'B', 'Q', 'N', 'K'
-    };
-    
-    // unicode chars for piece display
-    private char blackPawn = '\u2659';
-    private char blackRook = '\u2656';
-    private char blackKnight = '\u2658';
-    private char blackBishop = '\u2657';
-    private char blackQueen = '\u2655';
-    private char blackKing = '\u2654';
-    
-    private char whitePawn = '\u265F';
-    private char whiteRook = '\u265C';
-    private char whiteKnight = '\u265E';
-    private char whiteBishop = '\u265D';
-    private char whiteQueen = '\u265B';
-    private char whiteKing = '\u265A';
-
-    private char emptySpace = '\u2610';
-    
-    // debugging
-    public void PrintChars()
-    {
-        Console.WriteLine("WhitePawn = " + whitePawn);
-        Console.WriteLine("BlackPawn = " + blackPawn);
-    }
 
     // for fun
     public void PrintBoard_3()
@@ -222,45 +200,31 @@ public class ChessBoard
     {
         int colIndex = -1;
         int rowIndex = -1;
-        switch (position.Item1)
+        colIndex = position.Item1 switch
         {
-            case 'A': colIndex = 0;
-                break;
-            case 'B': colIndex = 1;
-                break;
-            case 'C': colIndex = 2;
-                break;
-            case 'D': colIndex = 3;
-                break;
-            case 'E': colIndex = 4;
-                break;
-            case 'F': colIndex = 5;
-                break;
-            case 'G': colIndex = 6;
-                break;
-            case 'H': colIndex = 7;
-                break;
-        }
+            'A' => 0,
+            'B' => 1,
+            'C' => 2,
+            'D' => 3,
+            'E' => 4,
+            'F' => 5,
+            'G' => 6,
+            'H' => 7,
+            _ => colIndex
+        };
 
-        switch (position.Item2)
+        rowIndex = position.Item2 switch
         {
-            case 1: rowIndex = 7;
-                break;
-            case 2: rowIndex = 6;
-                break;
-            case 3: rowIndex = 5;
-                break;
-            case 4: rowIndex = 4;
-                break;
-            case 5: rowIndex = 3;
-                break;
-            case 6: rowIndex = 2;
-                break;
-            case 7: rowIndex = 1;
-                break;
-            case 8: rowIndex = 0;
-                break;
-        }
+            1 => 7,
+            2 => 6,
+            3 => 5,
+            4 => 4,
+            5 => 3,
+            6 => 2,
+            7 => 1,
+            8 => 0,
+            _ => rowIndex
+        };
 
         return new Tuple<int, int>(colIndex, rowIndex);
     }
@@ -282,7 +246,6 @@ public class ChessBoard
         return tempSpace.HasPiece ? tempSpace.Piece : null;
     }
     
-    // TODO: 
     // public void DisplayMoves(Piece? inPiece)
     // {
     //     for (int i = 0; i < inPiece.ValidMoves.Count; i++)

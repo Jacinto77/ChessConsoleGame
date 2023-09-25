@@ -49,8 +49,8 @@ public class Space
     public void SetPieceInfo(Piece inPiece)
     {
         ClearPieceInfo();
-        Piece = inPiece;
-        HasPiece = true;
+        this.Piece = inPiece;
+        this.HasPiece = true;
         Icon = inPiece.Icon;
     }
     

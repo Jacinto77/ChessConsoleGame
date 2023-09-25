@@ -39,6 +39,7 @@ public class Pawn : Piece
     
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
+        base.GenerateValidMoves(inBoard);
         ValidMoves.Clear();
         int currentCol = ColIndex;
         int currentRow = RowIndex;

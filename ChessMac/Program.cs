@@ -152,10 +152,20 @@ internal static class Program
             // TODO, piece taking not quite working yet
             if (IsValidMove(tempBoard, colorToMove, parsedInput, tempBoard.WhitePieces, tempBoard.BlackPieces))
             {
-                // playermove() makes the pieces disappear
-                // either something about the copying
-                // or my movePiece functions are too convoluted
-                board = tempBoard.DeepCopy();
+                Piece? pieceBeingMoved = board.GetPiece(ConvertPosToIndex(parsedInput.Item1));
+                if (pieceBeingMoved is null) throw new Exception("Program.Main() pieceBeingMoved is null");
+                else
+                {
+                    Tuple<int, int> startPos = ConvertPosToIndex(parsedInput.Item1);
+                    Tuple<int, int> destPos = ConvertPosToIndex(parsedInput.Item2);
+                    pieceBeingMoved.MovePiece(board, destPos);    
+                    
+                    board.GetSpace(startPos)?.ClearPieceInfo();
+                        
+                    if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
+                        CheckAndPromotePawn(pieceBeingMoved, board);
+                }
+                
             }
             else
             {

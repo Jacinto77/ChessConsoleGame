@@ -15,7 +15,7 @@ namespace ChessMac;
  * TODO: add move counter
  */
 
-public abstract class Piece
+public class Piece
 {
     public bool IsActive { get; set; }
     // human readable position of piece
@@ -29,20 +29,19 @@ public abstract class Piece
     public string? Name { get; set; }
     public char? Icon { get; set; }
     
-    public bool HasMoved { get; set; }
-    public bool IsPinned { get; set; }
+    public bool? HasMoved { get; set; }
+    public bool? IsPinned { get; set; }
     
-    public int MoveCounter = 0;
+    public int? MoveCounter = 0;
     // all valid moves for the piece
-    public List<Tuple<int, int>> ValidMoves = new();
+    public List<Tuple<int, int>?>? ValidMoves = new();
     
-    public Piece(PieceColor color, string name, char icon)
+    public Piece(PieceColor color, string? name, char? icon)
     {
         Color = color;
-        Name = name;
-        Icon = icon;
+        Name = name ?? null;
+        Icon = icon ?? null;
         HasMoved = false;
-        
     }
 
     public Piece(PieceColor color, PieceType type)
@@ -52,53 +51,16 @@ public abstract class Piece
         SetupIconAndName(color, type);
     }
 
-    public virtual Piece DeepCopy()
+    public Piece()
     {
-        Piece pieceCopy;
-        switch (Type)
-        {
-            case PieceType.Pawn: pieceCopy = new Pawn(this.Color, this.Type);
-                break;
-            case PieceType.Knight: pieceCopy = new Knight(this.Color, this.Type);
-                break;
-            case PieceType.Bishop: pieceCopy = new Bishop(this.Color, this.Type);
-                break;
-            case PieceType.Rook: pieceCopy = new Rook(this.Color, this.Type);
-                break;
-            case PieceType.Queen: pieceCopy = new Queen(this.Color, this.Type);
-                break;
-            case PieceType.King: pieceCopy = new King(this.Color, this.Type);
-                break;
-                
-            default: throw new Exception("Piece.DeepCopy() switch error");
-        }
-
-        pieceCopy.IsActive = IsActive;
         
-        pieceCopy.Type = Type;
-        pieceCopy.Color = Color;
-        pieceCopy.Name = Name;
-        pieceCopy.Icon = Icon;
-        
-        pieceCopy.HasMoved = HasMoved;
-        pieceCopy.IsPinned = IsPinned;
-        
-        pieceCopy.Pos = Pos;
-        pieceCopy.RowIndex = RowIndex;
-        pieceCopy.ColIndex = ColIndex; 
-        
-        foreach (var validMove in ValidMoves)
-        {
-            pieceCopy.ValidMoves.Add(new Tuple<int, int>(validMove.Item1, validMove.Item2));
-        }
-        
-        return pieceCopy;
     }
     
     public enum PieceColor
     {
         White, 
-        Black
+        Black,
+        Null
     }
 
     public enum PieceType
@@ -108,21 +70,8 @@ public abstract class Piece
         Bishop,
         Rook,
         Queen,
-        King
-    }
-
-    public static PieceType ConvertIntToPieceType(int? input)
-    {
-        PieceType pieceType = input switch
-        {
-            1 => PieceType.Knight,
-            2 => PieceType.Bishop,
-            3 => PieceType.Rook,
-            4 => PieceType.Queen,
-            _ => PieceType.Pawn
-        };
-
-        return pieceType;
+        King,
+        Null
     }
     
     private static int PieceCounter = 16;
@@ -144,6 +93,8 @@ public abstract class Piece
                 break;
             case PieceType.King: tempPiece = new King(color, type);
                 break;
+            case PieceType.Null: tempPiece = new Piece(color, type);
+                break;
 
             default:
             {
@@ -154,12 +105,52 @@ public abstract class Piece
         PieceCounter -= 1;
         return tempPiece;
     }
-
+    
     public static void ResetPieceCounter()
     {
         PieceCounter = 16;
     }
     
+    public virtual Piece DeepCopy()
+    {
+        Piece pieceCopy = CreatePiece(this.Color, this.Type);
+
+        pieceCopy.IsActive = this.IsActive;
+        
+        pieceCopy.Type = this.Type;
+        pieceCopy.Color = this.Color;
+        pieceCopy.Name = this.Name;
+        pieceCopy.Icon = this.Icon;
+        
+        pieceCopy.HasMoved = this.HasMoved;
+        pieceCopy.IsPinned = this.IsPinned;
+        
+        pieceCopy.Pos = this.Pos;
+        pieceCopy.RowIndex = this.RowIndex;
+        pieceCopy.ColIndex = this.ColIndex; 
+        
+        foreach (var validMove in ValidMoves)
+        {
+            pieceCopy.ValidMoves.Add(new Tuple<int, int>(validMove.Item1, validMove.Item2));
+        }
+        
+        return pieceCopy;
+    }
+
+    public static PieceType ConvertIntToPieceType(int? input)
+    {
+        PieceType pieceType = input switch
+        {
+            1 => PieceType.Knight,
+            2 => PieceType.Bishop,
+            3 => PieceType.Rook,
+            4 => PieceType.Queen,
+            _ => PieceType.Pawn
+        };
+
+        return pieceType;
+    }
+
     public static readonly Dictionary<PieceType, char> BlackIcons = new()
     {
         { PieceType.Pawn, '\u2659' },
@@ -180,15 +171,17 @@ public abstract class Piece
     };
 
     // generates all valid moves
-    public abstract void GenerateValidMoves(ChessBoard inBoard);
+    public virtual void GenerateValidMoves(ChessBoard inBoard)
+    {
+    }
     
-    public void SetupIconAndName(PieceColor color, PieceType type)
+    public void SetupIconAndName(PieceColor? color, PieceType type)
     {
         SetIcon(color, type);
         SetName(color, type);
     }
 
-    public void SetIcon(PieceColor inColor, PieceType inType)
+    public void SetIcon(PieceColor? inColor, PieceType inType)
     {
         Icon = inColor switch
         {
@@ -204,7 +197,7 @@ public abstract class Piece
         ColIndex = inPosition.Item2;
     }
     
-    public void SetName(PieceColor color, PieceType type)
+    public void SetName(PieceColor? color, PieceType? type)
     {
         Name = color.ToString() + type.ToString() + "_" + PieceCounter.ToString();
     }
@@ -233,11 +226,8 @@ public abstract class Piece
             new Tuple<int, int>(0, 1)    // Right
         };
 
-        foreach (var dir in directions)
+        foreach (var (rowChange, colChange) in directions)
         {
-            int rowChange = dir.Item1;
-            int colChange = dir.Item2;
-
             for (int i = 1; i < 8; i++) 
             {
                 int newRow = currentRow + i * rowChange;
@@ -466,11 +456,12 @@ public abstract class Piece
         IsActive = true;
     }
 
-    public void MovePiece(ChessBoard inBoard, Tuple<int, int> inMove)
+    public void MovePiece(ChessBoard inBoard, Tuple<int, int> destPos)
     {
-        SetPosition(inMove);
-        inBoard.GetSpace(inMove).SetPieceInfo(this);
+        SetPosition(destPos);
+        inBoard.GetSpace(destPos).SetPieceInfo(this);
         HasMoved = true;
+        this.MoveCounter += 1;
     }
     
     public bool IsMoveValid(Tuple<int, int> inMove)

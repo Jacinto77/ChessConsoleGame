@@ -171,7 +171,7 @@ public static class Methods
         }
     }
 
-    public static string? GetPlayerInput()
+    public static string GetPlayerInput()
     {
         while (true)
         {
@@ -208,7 +208,7 @@ public static class Methods
             piece = input[0..2];
             dest = input[3..5];
         }
-        //undetectable bug, nice
+        //TODO undetectable bug, nice
         else
         {
             Console.WriteLine("Error in input validation in: ParseInput()");
@@ -221,20 +221,6 @@ public static class Methods
     {
         string column = "";
         string row = "";
-
-        column = inCol switch
-        {
-            0 => "A",
-            1 => "B",
-            2 => "C",
-            3 => "D",
-            4 => "E",
-            5 => "F",
-            6 => "G",
-            7 => "H",
-            _ => column
-        };
-
         row = inRow switch
         {
             0 => "8",
@@ -247,16 +233,7 @@ public static class Methods
             7 => "1",
             _ => row
         };
-        
-        return column + row;
-    }
-    
-    public static string ConvertIndexToPos(Tuple<int, int> inIndex)
-    {
-        string column = "";
-        string row = "";
-
-        column = inIndex.Item2 switch
+        column = inCol switch
         {
             0 => "A",
             1 => "B",
@@ -268,7 +245,13 @@ public static class Methods
             7 => "H",
             _ => column
         };
-
+        return column + row;
+    }
+    
+    public static string ConvertIndexToPos(Tuple<int, int> inIndex)
+    {
+        string row = "";
+        string column = "";
         row = inIndex.Item1 switch
         {
             0 => "8",
@@ -281,7 +264,18 @@ public static class Methods
             7 => "1",
             _ => row
         };
-        
+        column = inIndex.Item2 switch
+        {
+            0 => "A",
+            1 => "B",
+            2 => "C",
+            3 => "D",
+            4 => "E",
+            5 => "F",
+            6 => "G",
+            7 => "H",
+            _ => column
+        };
         return column + row;
     }
     
@@ -292,7 +286,6 @@ public static class Methods
 
         int tempCol = -1;
         int tempRow = -1;
-        Tuple<int, int> position = new Tuple<int, int>(-1, -1);
         tempCol = columnChar switch
         {
             'A' => 0,
@@ -344,51 +337,13 @@ public static class Methods
         inBoard.GetSpace(inMove).SetPieceInfo(piece);
         piece.IsActive = true;
     }
-    
-    public static void CheckForCheck()
-    {
-        // need to know the pieces that put the king in check
-        // need to know if any pieces are pinned to the king
-        // if a piece is pinned to the king and the king is in check
-        //      the pinnedPiece cannot move
-        // A list of pieces threatening the king's space
-        // if pieces threatening king > 1
-        //    only the king can move
-        // else
-        //    king and any non-pinned piece can move that has the threateningPiece's space,
-        //      or a space that is on the line threatening the king
-        //
-        //      get spaces on a line in between king and each piece
-        //      check pieces that have one of those spaces in their valid moves
-        //          if a piece can get in between a piece
-        //          if none exists
-        //              king has to move
-        //              if king has no moves
-        //                  checkmate
-        
-        
-        // runs prior to prompt to move
-        // if the space the king is on is threatened,
-        //  check for mate
-        //      done by assessing all squares in validMoves, returning only the ones
-        //      that arent threatened
-        //      if list is empty and no other pieces can block
-        //          game ends and print color that wins
-        // tell player and only allow moves that get king out of check
-        // this would be a move that places the king on a non threatened square
-        // or a piece can move to the square that blocks the check, or takes 
-        // the piece threatening the king
-        
-        
-    }
-    
+
     public static void CheckAndPromotePawn(Piece pieceBeingMoved, ChessBoard inBoard)
     {
         if (!pieceBeingMoved.IsPawnPromotionSpace())
             return;
         pieceBeingMoved.PromotePawn(inBoard);
     }
-    
     
     public static int? GetPlayerTypeInt()
     {
@@ -400,17 +355,6 @@ public static class Methods
             Console.WriteLine("Input must be 1-4");
         }
     }
-
-    // public static void AssignThreatsToSpaces(IEnumerable<Piece?> inPieces, ChessBoard? inBoard)
-    // {
-    //     foreach (var piece in inPieces)
-    //     {
-    //         foreach (var space in piece!.ValidMoves)
-    //         {
-    //             space.AddPieceToThreats(piece);
-    //         }
-    //     }
-    // }
 
     public static bool IsValidMove(ChessBoard tempBoard, Piece.PieceColor colorToMove, 
         Tuple<string, string> playerMove, Piece?[] whitePieces, Piece?[] blackPieces)
