@@ -19,23 +19,30 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
+
             board.GeneratePieceMoves();
-            
+
             //board.OutputBoard();
             var tempBoard = board.DeepCopy();
-            var colorToMove = moveCounter % 2 != 0 ? PieceColor.White 
-                                                   : PieceColor.Black;
+            var colorToMove = moveCounter % 2 != 0
+                ? PieceColor.White
+                : PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
             Tuple<string, string> parsedInput = GetPlayerMove();
-            
+
             var startPiece = ConvertPosToIndex(parsedInput.Item1);
             var destPos = ConvertPosToIndex(parsedInput.Item2);
-            
+
             if (tempBoard.IsValidMove(colorToMove, startPiece, destPos))
+            {
                 board.MovePiece(startPiece, destPos);
+                board.BoardPieces[destPos.row, destPos.col]!.HasMoved = true;
+                board.BoardPieces[destPos.row, destPos.col]!.MoveCounter++;
+            }
             else continue;
             
             moveCounter++;
+            board.OutputBoard();
         }
         
     }

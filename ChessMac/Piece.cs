@@ -19,12 +19,12 @@ public class Piece
     public PieceColor Color { get; }
     public char? Icon { get; set; }
 
-    public bool HasMoved { get; private set; } = false;
+    public bool HasMoved { get; set; } = false;
     public bool IsPinned { get; private set; } = false;
-    public int MoveCounter { get; private set; } = 0;
+    public int MoveCounter { get; set; } = 0;
 
     private List<(int row, int col)> validMoves = new();
-
+  
     protected Piece(PieceColor inColor)
     {
         Color = inColor;

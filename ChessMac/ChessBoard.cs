@@ -22,7 +22,7 @@ public class ChessBoard
     // initializes board with all spaces set to []
     public ChessBoard()
     {
-        InitBoardPieces();
+        // InitBoardPieces();
     }
 
     public Piece?[,] BoardPieces = new Piece[8, 8];
@@ -32,7 +32,7 @@ public class ChessBoard
     // and showing as Pawns
     public ChessBoard DeepCopy()
     {
-        ChessBoard tempBoard = this;
+        ChessBoard tempBoard = new ChessBoard();
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
@@ -41,7 +41,7 @@ public class ChessBoard
                 tempBoard.BoardPieces[row, col] = BoardPieces[row, col]?.DeepCopy();
             }
         }
-        return new ChessBoard();
+        return tempBoard;
     }
 
     public void InitBoardPieces()
