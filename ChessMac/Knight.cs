@@ -1,60 +1,50 @@
 using System.Reflection.Metadata.Ecma335;
 
 namespace ChessMac;
-using static ChessMac.Program;
+using static ChessBoard;
 
 public class Knight : Piece
 {
-    public Knight(PieceColor color, string name, char icon, PieceType type) 
-        : base(color, name, icon)
+    public Knight(PieceColor color)
     {
-        this.Type = type;
-    }
-
-    public Knight(PieceColor color, PieceType type) : base(color, type)
-    {
+        this.Type = PieceType.Knight;
     }
     
-    public override void GenerateValidMoves(ChessBoard inBoard)
+    public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         ValidMoves.Clear();
-        int currentCol = ColIndex;
-        int currentRow = RowIndex;
-        
-        //Console.WriteLine("Current Column:" + currentCol);
-        //Console.WriteLine("Current Row: " + currentRow);
 
-        List<Tuple<int, int>> validPositions = new List<Tuple<int, int>>
-        {
-            new (currentRow + 2, currentCol + 1),
-            new (currentRow + 2, currentCol - 1),
-            new (currentRow - 2, currentCol + 1),
-            new (currentRow - 2, currentCol - 1),
-            new (currentRow + 1, currentCol + 2),
-            new (currentRow + 1, currentCol - 2),
-            new (currentRow - 1, currentCol + 2),
-            new (currentRow - 1, currentCol - 2)
-        };
+        List<(int row, int col)> tempMoves = CreateList(
         
-        foreach (var move in validPositions)
+            (currentRow + 2, currentCol + 1),
+            (currentRow + 2, currentCol - 1),
+            (currentRow - 2, currentCol + 1),
+            (currentRow - 2, currentCol - 1),
+            (currentRow + 1, currentCol + 2),
+            (currentRow + 1, currentCol - 2),
+            (currentRow - 1, currentCol + 2),
+            (currentRow - 1, currentCol - 2)
+        );
+        
+        foreach (var (row, col) in tempMoves)
         {
-            if (Space.IsWithinBoard(move) == false)
+            if (IsWithinBoard(row, col) == false)
             {
                 continue;
             }
             
             // check if move's dest space has a piece of the same color
-            Space? destSpace = inBoard.GetSpace(move);
+            Piece? destSpace = inBoard.BoardPieces[row, col];
             // Console.WriteLine(destSpace.HasPiece);
-            if (destSpace.HasPiece == true)
+            if (destSpace is not null)
             {
-                if (destSpace.Piece?.Color == this.Color)
+                if (destSpace.Color == this.Color)
                 {
                     continue;
                 }
             }
             
-            ValidMoves.Add(move);
+            ValidMoves.Add((row, col));
             
         }
     }

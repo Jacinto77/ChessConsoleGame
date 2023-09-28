@@ -74,14 +74,14 @@ public class Space
         IconBuffer = null;
     }
     
-    public static bool IsWithinBoard(Tuple<int, int> inMove)
+    public static bool IsWithinBoard((int row, int col) inMove)
     {
-        if (inMove.Item1 is > 7 or < 0)
+        if (inMove.row is > 7 or < 0)
         {
             return false;
         }
 
-        if (inMove.Item2 is > 7 or < 0)
+        if (inMove.col is > 7 or < 0)
         {
             return false;
         }

@@ -3,19 +3,14 @@ namespace ChessMac;
 //TODO implement castling
 public class Rook : Piece
 {
-    public Rook(PieceColor color, string name, char icon, PieceType type) 
-        : base(color,  name, icon)
+    public Rook(PieceColor color) : base()
     {
-        this.Type = type;
+        this.Type = PieceType.Rook;
     }
-
-    public Rook(PieceColor color, PieceType type) : base(color, type)
-    {
-    }
-
-    public override void GenerateValidMoves(ChessBoard inBoard)
+    
+    public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         ValidMoves.Clear();
-        base.GenerateRookMoves(inBoard);
+        base.GenerateRookMoves(inBoard, currentRow, currentCol);
     }
 }

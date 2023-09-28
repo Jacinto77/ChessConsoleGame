@@ -1,59 +1,45 @@
 namespace ChessMac;
-
+using static ChessBoard;
 // TODO implement castling
 
 public class King : Piece
 {
-    public King(PieceColor color, string name, char icon, PieceType type) 
-        : base(color,  name, icon)
+    public King(PieceColor color)
     {
-        this.Type = type;
+        this.Type = PieceType.King;
     }
-
-    public King(PieceColor color, PieceType type) : base(color, type)
-    {
-    }
-
-    public override void GenerateValidMoves(ChessBoard inBoard)
+    
+    
+    
+    public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         ValidMoves.Clear();
-        int currentRow = RowIndex;
-        int currentCol = ColIndex;
+
         
-        List<Tuple<int, int>> tempMoves = new List<Tuple<int, int>>
-        {
-            new(currentRow + 1, currentCol),
-            new(currentRow + 1, currentCol + 1),
-            new(currentRow + 1, currentCol - 1),
-            new(currentRow, currentCol + 1),
-            new(currentRow, currentCol - 1),
-            new(currentRow - 1, currentCol),
-            new(currentRow - 1, currentCol + 1),
-            new(currentRow - 1, currentCol - 1)
-        };
+        List<(int row, int col)> tempMoves = CreateList(
+            (currentRow + 1, currentCol), 
+            (currentRow + 1, currentCol + 1), 
+            (currentRow + 1, currentCol - 1), 
+            (currentRow, currentCol + 1), 
+            (currentRow, currentCol - 1), 
+            (currentRow - 1, currentCol),
+            (currentRow - 1, currentCol + 1),
+            (currentRow - 1, currentCol - 1)
+        );
 
         foreach (var move in tempMoves)
         {
-            if (Space.IsWithinBoard(move) == false) continue;
+            if (IsWithinBoard(move.row, move.col) == false) continue;
 
-            Space? destSpace = inBoard.GetSpace(move);
-            if (destSpace.HasPiece == true)
+            Piece? destSpace = inBoard.BoardPieces[move.row, move.col];
+            if (destSpace is not null)
             {
-                if (destSpace.Piece?.Color == Color)
+                if (destSpace.Color == this.Color)
                 {
                     continue;
                 }
             }
-            
             ValidMoves.Add(move);
         }
-
-        // // reset pinned pieces before regenerating new
-        // foreach (var pinnedPiece in PinnedPieces)
-        // {
-        //     pinnedPiece.IsPinned = false;
-        // }
-        // PinnedPieces.Clear();
-        // ScanForPinnedPiece(inBoard);
     }
 }

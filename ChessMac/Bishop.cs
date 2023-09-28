@@ -2,19 +2,14 @@ namespace ChessMac;
 
 public class Bishop : Piece
 {
-    public Bishop(PieceColor color, string name, char icon, PieceType type) 
-        : base(color, name, icon)
+    public Bishop(PieceColor inColor)
     {
-        this.Type = type;
-    }
-
-    public Bishop(PieceColor color, PieceType type) : base(color, type)
-    {
+        this.Type = PieceType.Bishop;
     }
     
-    public override void GenerateValidMoves(ChessBoard inBoard)
+    public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         ValidMoves.Clear();
-        base.GenerateBishopMoves(inBoard);
+        base.GenerateBishopMoves(inBoard, currentRow, currentCol);
     }
 }

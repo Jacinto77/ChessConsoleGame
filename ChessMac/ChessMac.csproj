@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <Compile Remove="BoardSpace.cs" />
+      <Compile Remove="Space.cs" />
     </ItemGroup>
 
 </Project>

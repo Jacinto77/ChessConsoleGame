@@ -1,62 +1,63 @@
+using System.Runtime.CompilerServices;
+
 namespace ChessMac;
-using static Space;
+using static ChessBoard;
 
 public class Pawn : Piece
 {
     private readonly int direction;
-    
-    public Pawn(PieceColor color, string name, char icon, PieceType type) 
-        : base(color, name, icon)
+
+    public Pawn(PieceColor color)
     {
-        this.Type = type;
+        this.Type = PieceType.Pawn;
+        if (color == PieceColor.Black) direction = 1;
+        else direction = -1;
     }
     
-    public Pawn(PieceColor color, PieceType type) : base(color, type)
+    private void CheckAndAddDiagonal((int row, int col) diagonal, ChessBoard inBoard)
     {
-        direction = (Color == PieceColor.White) ? -1 : 1;
-    }
-    
-    private void CheckAndAddDiagonal(Tuple<int, int> diagonal, ChessBoard inBoard)
-    {
-        if (IsWithinBoard(diagonal) && inBoard.GetPiece(diagonal)?.Color != Color 
-                                    && inBoard.GetSpace(diagonal).HasPiece)
+        if (IsWithinBoard(diagonal.row, diagonal.col) && inBoard.BoardPieces[diagonal.row, diagonal.col] is not null
+                                    && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
         {
             ValidMoves.Add(diagonal);
         }
     }
     
-    private void CheckEnPassant(Tuple<int, int> horizontal, Tuple<int, int> diagonal, ChessBoard inBoard)
+    private void CheckEnPassant((int row, int col) horizontal, (int row, int col) diagonal, ChessBoard inBoard)
     {
-        if (!IsWithinBoard(horizontal)) return;
-        if (!inBoard.GetSpace(horizontal).HasPiece || inBoard.GetPiece(horizontal)?.Type != PieceType.Pawn) 
+        if (!IsWithinBoard(horizontal.row, horizontal.col)) return;
+        
+        Piece? horizPiece = inBoard.BoardPieces[horizontal.row, horizontal.col];
+        Piece? diagPiece = inBoard.BoardPieces[diagonal.row, diagonal.col];
+        
+        if (horizPiece is null || horizPiece.Type != PieceType.Pawn) 
             return;
-        if (inBoard.GetPiece(horizontal)?.MoveCounter != 1 || inBoard.GetSpace(diagonal).HasPiece)
+        if (horizPiece.MoveCounter != 1 || diagPiece is not null)
             return;
 
         ValidMoves.Add(horizontal);
         
     }
     
-    public override void GenerateValidMoves(ChessBoard inBoard)
+    public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        base.GenerateValidMoves(inBoard);
+        base.GenerateValidMoves(inBoard, currentRow, currentCol);
         ValidMoves.Clear();
-        int currentCol = ColIndex;
-        int currentRow = RowIndex;
+
+        (int row, int col) forwardOne = new (currentRow + (direction * 1), currentCol);
+        (int row, int col) forwardTwo = new (currentRow + (direction * 2), currentCol);
+        (int row, int col) diagPos = new (currentRow + (direction * 1),  currentCol + 1);
+        (int row, int col) diagNeg = new ( currentRow + (direction * 1),  currentCol - 1);
+        (int row, int col) horizPos = new (currentRow, currentCol + 1);
+        (int row, int col) horizNeg = new (currentRow, currentCol - 1);
         
-        Tuple<int, int> forwardOne = new Tuple<int, int>(currentRow + (direction * 1), currentCol);
-        Tuple<int, int> forwardTwo = new Tuple<int, int>(currentRow + (direction * 2), currentCol);
-        Tuple<int, int> diagPos = new Tuple<int, int>(currentRow + (direction * 1),  currentCol + 1);
-        Tuple<int, int> diagNeg = new Tuple<int, int>( currentRow + (direction * 1),  currentCol - 1);
-        Tuple<int, int> horizPos = new Tuple<int, int>(currentRow, currentCol + 1);
-        Tuple<int, int> horizNeg = new Tuple<int, int>(currentRow, currentCol - 1);
-        
-        if (IsWithinBoard(forwardOne) && inBoard.GetSpace(forwardOne).HasPiece == false)
+        if (IsWithinBoard(forwardOne.row, forwardOne.col) && inBoard.BoardPieces[forwardOne.row, forwardOne.col] is null)
         {
             ValidMoves.Add(forwardOne);
 
-            if (IsWithinBoard(forwardTwo) && inBoard.GetSpace(forwardTwo).HasPiece == false
-                                       && this.HasMoved == false)
+            if (IsWithinBoard(forwardTwo.row, forwardTwo.col) 
+                && inBoard.BoardPieces[forwardTwo.row, forwardTwo.col] is null
+                && this.HasMoved == false)
             {
                 ValidMoves.Add(forwardTwo);
             }
