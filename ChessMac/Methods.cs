@@ -9,71 +9,6 @@ namespace ChessMac;
 
 public static class Methods
 {
-    public static readonly Dictionary<string, char> BlackIcons = new()
-    {
-        { "PawnIcon", '\u2659' },
-        { "RookIcon", '\u2656' },
-        { "KnightIcon", '\u2658' },
-        { "BishopIcon",'\u2657' },
-        { "QueenIcon", '\u2655' },
-        { "KingIcon", '\u2654' },
-    };
-
-    public static readonly Dictionary<string, char> WhiteIcons = new()
-    {
-        { "PawnIcon", '\u265F' },
-        { "RookIcon", '\u265C' },
-        { "KnightIcon", '\u265E' },
-        { "BishopIcon", '\u265D' },
-        { "QueenIcon", '\u265B' },
-        { "KingIcon", '\u265A' },
-    };
-
-    public static readonly Dictionary<string, Tuple<int, int>> DefWhiteStart = new()
-    {
-        {"WhiteRook_16",   new Tuple<int, int>(7, 7)},
-        {"WhiteKnight_15", new Tuple<int, int>(7, 6)},
-        {"WhiteBishop_14", new Tuple<int, int>(7, 5)},
-        {"WhiteKing_13",   new Tuple<int, int>(7, 4)},
-        {"WhiteQueen_12",  new Tuple<int, int>(7, 3)},
-        {"WhiteBishop_11", new Tuple<int, int>(7, 2)},
-        {"WhiteKnight_10", new Tuple<int, int>(7, 1)},
-        {"WhiteRook_9",    new Tuple<int, int>(7, 0)},
-        
-        {"WhitePawn_8", new Tuple<int, int>(6, 7)},
-        {"WhitePawn_7", new Tuple<int, int>(6, 6)},
-        {"WhitePawn_6", new Tuple<int, int>(6, 5)},
-        {"WhitePawn_5", new Tuple<int, int>(6, 4)},
-        {"WhitePawn_4", new Tuple<int, int>(6, 3)},
-        {"WhitePawn_3", new Tuple<int, int>(6, 2)},
-        {"WhitePawn_2", new Tuple<int, int>(6, 1)},
-        {"WhitePawn_1", new Tuple<int, int>(6, 0)}
-        
-    };
-
-    public static readonly Dictionary<string, Tuple<int, int>> DefBlackStart = new()
-    {
-        {"BlackRook_16",   new Tuple<int, int>(0, 7)},
-        {"BlackKnight_15", new Tuple<int, int>(0, 6)},
-        {"BlackBishop_14", new Tuple<int, int>(0, 5)},
-        {"BlackKing_13",   new Tuple<int, int>(0, 4)},
-        {"BlackQueen_12",  new Tuple<int, int>(0, 3)},
-        {"BlackBishop_11", new Tuple<int, int>(0, 2)},
-        {"BlackKnight_10", new Tuple<int, int>(0, 1)},
-        {"BlackRook_9",    new Tuple<int, int>(0, 0)},
-        
-        {"BlackPawn_8", new Tuple<int, int>(1, 7)},
-        {"BlackPawn_7", new Tuple<int, int>(1, 6)},
-        {"BlackPawn_6", new Tuple<int, int>(1, 5)},
-        {"BlackPawn_5", new Tuple<int, int>(1, 4)},
-        {"BlackPawn_4", new Tuple<int, int>(1, 3)},
-        {"BlackPawn_3", new Tuple<int, int>(1, 2)},
-        {"BlackPawn_2", new Tuple<int, int>(1, 1)},
-        {"BlackPawn_1", new Tuple<int, int>(1, 0)}
-    };
-
-    const char emptySpaceIcon = '\u2610';
-
     public static string GetPlayerInput()
     {
         while (true)
@@ -151,7 +86,7 @@ public static class Methods
         return column + row;
     }
     
-    public static Tuple<int, int> ConvertPosToIndex(string input)
+    public static (int row, int col) ConvertPosToIndex(string input)
     {
         var columnChar = input[0];
         var rowChar = input[1];
@@ -184,12 +119,12 @@ public static class Methods
             _ => tempRow
         };
         
-        return new Tuple<int, int>(tempRow, tempCol);
+        return (tempRow, tempCol);
     }
 
     public static Tuple<string, string> GetPlayerMove()
     {
-        string? playerInput = GetPlayerInput();
+        string playerInput = GetPlayerInput();
         return ParseInput(playerInput);
     }
 

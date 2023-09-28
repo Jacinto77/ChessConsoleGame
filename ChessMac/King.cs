@@ -4,17 +4,15 @@ using static ChessBoard;
 
 public class King : Piece
 {
-    public King(PieceColor color)
+    public King(PieceColor inColor) : base(inColor)
     {
         this.Type = PieceType.King;
+        this.Icon = GetColorPieceIcon(inColor);
     }
-    
-    
     
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ValidMoves.Clear();
-
+        ClearValidMoves();
         
         List<(int row, int col)> tempMoves = CreateList(
             (currentRow + 1, currentCol), 
@@ -39,7 +37,7 @@ public class King : Piece
                     continue;
                 }
             }
-            ValidMoves.Add(move);
+            AddValidMove(move);
         }
     }
 }

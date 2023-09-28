@@ -5,15 +5,16 @@ namespace ChessMac;
 
 public class Queen : Piece
 {
-    public Queen(PieceColor color)
+    public Queen(PieceColor inColor) : base(inColor)
     {
         this.Type = PieceType.Queen;
+        this.Icon = GetColorPieceIcon(inColor);
     }
 
     // TODO make methods into extensions
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ValidMoves.Clear();
+        ClearValidMoves();
         base.GenerateRookMoves(inBoard, currentRow, currentCol);
         base.GenerateBishopMoves(inBoard, currentRow, currentCol);
     }

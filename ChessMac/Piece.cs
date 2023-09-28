@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using static ChessMac.ChessBoard;
 using static ChessMac.Methods;
 namespace ChessMac;
@@ -18,13 +19,13 @@ public class Piece
     public PieceColor Color { get; }
     public char? Icon { get; set; }
 
-    public bool? HasMoved { get; set; }
-    public bool? IsPinned { get; set; }
-    public int? MoveCounter = 0;
+    public bool HasMoved { get; private set; } = false;
+    public bool IsPinned { get; private set; } = false;
+    public int MoveCounter { get; private set; } = 0;
 
-    public List<(int row, int col)> ValidMoves = new();
-    
-    public Piece(PieceColor inColor)
+    private List<(int row, int col)> validMoves = new();
+
+    protected Piece(PieceColor inColor)
     {
         Color = inColor;
     }
@@ -38,6 +39,32 @@ public class Piece
     public Piece()
     {
     }
+
+    public static Piece CreatePiece(PieceColor inColor, PieceType inType)
+    {
+        Piece? tempPiece;
+        switch (inType)
+        {
+            case PieceType.Pawn: tempPiece = new Pawn(inColor);
+                break;
+            case PieceType.Knight: tempPiece = new Knight(inColor);
+                break;
+            case PieceType.Bishop: tempPiece = new Bishop(inColor);
+                break;
+            case PieceType.Rook: tempPiece = new Rook(inColor);
+                break;
+            case PieceType.Queen: tempPiece = new Queen(inColor);
+                break;
+            case PieceType.King: tempPiece = new King(inColor);
+                break;
+            default:
+            {
+                Console.WriteLine("PieceGenError");
+                throw new Exception("Piece generation error: CreatePiece()");
+            }
+        }
+        return tempPiece;
+    }
     
     protected static List<T> CreateList<T>(params T[] values)
     {
@@ -46,7 +73,17 @@ public class Piece
 
     public virtual Piece DeepCopy()
     {
-        return new Piece();
+        Piece pieceCopy = CreatePiece(this.Color, this.Type);
+        pieceCopy.HasMoved = HasMoved;
+        pieceCopy.IsPinned = IsPinned;
+        pieceCopy.MoveCounter = MoveCounter;
+        pieceCopy.validMoves = new List<(int row, int col)>();
+
+        foreach (var move in validMoves)
+        {
+            pieceCopy.AddValidMove(move);
+        }
+        return pieceCopy;
     }
 
     public static PieceType ConvertIntToPieceType(int? input)
@@ -83,6 +120,28 @@ public class Piece
         { PieceType.King, '\u265A' },
     };
 
+    public char GetColorPieceIcon(PieceColor inColor)
+    {
+        if (inColor == PieceColor.Black)
+        {
+            return BlackIcons[this.Type];
+        }
+        else
+        {
+            return WhiteIcons[this.Type];
+        }
+    }
+
+    protected void AddValidMove((int row, int col) validMove)
+    {
+        validMoves.Add(validMove);
+    }
+
+    protected void ClearValidMoves()
+    {
+        validMoves.Clear();
+    }
+    
     // generates all valid moves
     public virtual void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
@@ -90,7 +149,7 @@ public class Piece
 
     public void GenerateRookMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ValidMoves.Clear();
+        ClearValidMoves();
 
         // Define the possible directions for movement as (rowChange, colChange)
         Tuple<int, int>[] directions = {
@@ -115,7 +174,7 @@ public class Piece
                 if (tempPiece is not null && tempPiece.Color == Color)
                     break;
             
-                ValidMoves.Add(new ValueTuple<int, int>(newRow, newCol));
+                AddValidMove(new ValueTuple<int, int>(newRow, newCol));
             
                 if (tempPiece is not null)
                     break;
@@ -152,7 +211,7 @@ public class Piece
                 if (tempSpace is not null && tempSpace.Color == Color)
                     break;
             
-                ValidMoves.Add(new ValueTuple<int, int>(newRow, newCol));
+                AddValidMove(new ValueTuple<int, int>(newRow, newCol));
             
                 if (tempSpace is not null)
                     break;
@@ -160,11 +219,11 @@ public class Piece
         }
     }
 
-    public bool IsMoveValid(Tuple<int, int> inMove)
+    public bool IsMoveValid((int row, int col) inMove)
     {
-        foreach (var validSpace in ValidMoves)
+        foreach (var validSpace in validMoves)
         {
-            if (validSpace.Equals(inMove))
+            if (validSpace.row == inMove.row && validSpace.col == inMove.col)
                 return true;
         }
 

@@ -1,14 +1,5 @@
-using System.Runtime.CompilerServices;
-using static ChessMac.Piece;
-
-
 namespace ChessMac;
 using static Methods;
-// creation of chessboard
-// outputs chess board display
-// modifies itself based on moves made
-// outputs information about the state of the board
-// holds all 64 Spaces
 
 public enum PieceColor
 {
@@ -32,14 +23,24 @@ public class ChessBoard
     public ChessBoard()
     {
         InitBoardPieces();
-        PlacePieces();
     }
 
     public Piece?[,] BoardPieces = new Piece[8, 8];
     private const char EmptySpaceIcon = '\u2610';
     
+    // TODO copying is producing a tempBoard with all pieces set to Piece, 
+    // and showing as Pawns
     public ChessBoard DeepCopy()
     {
+        ChessBoard tempBoard = this;
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if (BoardPieces[row, col] is null) continue;
+                tempBoard.BoardPieces[row, col] = BoardPieces[row, col]?.DeepCopy();
+            }
+        }
         return new ChessBoard();
     }
 
@@ -92,17 +93,12 @@ public class ChessBoard
         BoardPieces[6, 6] = new Pawn(PieceColor.White);
         BoardPieces[6, 7] = new Pawn(PieceColor.White);
     }
-    
-    public void SetInitialPiecePositions()
-    {
-        
-    }
-    
+
     public void GeneratePieceMoves()
     {
-        for (int row = 0; row < BoardPieces.Length; row++)
+        for (int row = 0; row < 8; row++)
         {
-            for (int col = 0; col < BoardPieces.Length; col++)
+            for (int col = 0; col < 8; col++)
             {
                 if (BoardPieces[row, col] is null) continue;
                 BoardPieces[row, col]!.GenerateValidMoves(this, row, col);
@@ -127,15 +123,11 @@ public class ChessBoard
             
             for (int col = 0; col < 8; col++)
             {
-                if (BoardPieces[row, col] is not null)
+                if (BoardPieces[row, col]?.Icon is null)
                 {
-                    Console.Write(BoardPieces[row, col]!.Icon);
+                    Console.Write(EmptySpaceIcon);
                 }
-                else Console.Write(EmptySpaceIcon);
-                // if (BoardSpaces[row, col].Piece == null)
-                //     Console.Write(BoardSpaces[row, col].Icon);
-                // else
-                //     Console.Write(BoardSpaces[row, col].Piece.Icon);
+                else Console.Write(BoardPieces[row, col]?.Icon);
                 
                 if (col < 7) Console.Write("\t");
                 
@@ -209,15 +201,13 @@ public class ChessBoard
         return (currentCol is <= 7 and >= 0) && (currentRow is <= 7 and >= 0);
     }
 
-    public void MovePiece(Piece inPiece, (int row, int col) startPos, 
-        (int row, int col) destPos)
+    public void MovePiece((int row, int col) startPos, (int row, int col) destPos)
     {
-        this.BoardPieces[destPos.row, destPos.col] = inPiece;
+        this.BoardPieces[destPos.row, destPos.col] = BoardPieces[startPos.row, startPos.col];
         this.BoardPieces[startPos.row, startPos.col] = null;
-
     }
     
-    public static Piece? InitialMoveValidation(Piece? activePiece, PieceColor colorToMove, Tuple<int, int> destPos)
+    public static Piece? InitialMoveValidation(Piece? activePiece, PieceColor colorToMove, ValueTuple<int, int> destPos)
     {
         if (activePiece is null)
         {
@@ -238,14 +228,10 @@ public class ChessBoard
         return activePiece;
     }
     
-    public bool IsValidMove(ChessBoard tempBoard, PieceColor colorToMove, 
-        Tuple<string, string> playerMove)
+    public bool IsValidMove(PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
     {
-        Tuple<int, int> startPos = ConvertPosToIndex(playerMove.Item1);
-        Tuple<int, int> destPos = ConvertPosToIndex(playerMove.Item2);
-
-        Piece? pieceBeingMoved = tempBoard.BoardPieces[startPos.Item1, startPos.Item2];
-        Piece? destSpace = tempBoard.BoardPieces[destPos.Item1, destPos.Item2];
+        Piece? pieceBeingMoved = this.BoardPieces[startPos.row, startPos.col];
+        Piece? destSpace = this.BoardPieces[destPos.row, destPos.col];
 
         Piece? testedMove = InitialMoveValidation(pieceBeingMoved, colorToMove, destPos);
         if (testedMove is null)
@@ -258,16 +244,14 @@ public class ChessBoard
             // pieceBeingMoved.TakenPieces.Add(destSpace);
         }
         
-        MovePiece(testedMove, (row: startPos.Item1, col: startPos.Item2), 
-                              (row: destPos.Item1, col: destPos.Item2));
+        MovePiece((startPos.row, startPos.col), (destPos.row, destPos.col));
 
         if (testedMove.Type == PieceType.Pawn)
-            CheckAndPromotePawn(testedMove, this, destPos.Item1);
+            CheckAndPromotePawn(testedMove, this, destPos.row);
         
         GeneratePieceMoves();
-        
 
-        if (!IsKingInCheck(testedMove, tempBoard, BoardPieces)) 
+        if (!IsKingInCheck(testedMove, this, BoardPieces)) 
             return true;
         Console.WriteLine("Your king is in check!");
         return false;
