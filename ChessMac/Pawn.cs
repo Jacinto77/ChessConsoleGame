@@ -29,10 +29,12 @@ public class Pawn : Piece
     
     private void CheckAndAddDiagonal((int row, int col) diagonal, ChessBoard inBoard)
     {
-        if (IsWithinBoard(diagonal.row, diagonal.col) && inBoard.BoardPieces[diagonal.row, diagonal.col] is not null
-                                    && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
+        if (IsWithinBoard(diagonal.row, diagonal.col) 
+            && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Icon != EmptySpaceIcon
+            && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
         {
             AddValidMove(diagonal);
+            inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
         }
     }
     
@@ -43,12 +45,13 @@ public class Pawn : Piece
         Piece? horizPiece = inBoard.BoardPieces[horizontal.row, horizontal.col];
         Piece? diagPiece = inBoard.BoardPieces[diagonal.row, diagonal.col];
         
-        if (horizPiece is null || horizPiece.Type != PieceType.Pawn) 
+        if (horizPiece?.Icon == EmptySpaceIcon || horizPiece?.Type != PieceType.Pawn) 
             return;
-        if (horizPiece.MoveCounter != 1 || diagPiece is not null)
+        if (horizPiece.MoveCounter != 1 || diagPiece?.Icon != EmptySpaceIcon)
             return;
 
-        AddValidMove(horizontal);
+        AddValidMove(diagonal);
+        inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
         
     }
     
@@ -64,12 +67,13 @@ public class Pawn : Piece
         (int row, int col) horizPos = new (currentRow, currentCol + 1);
         (int row, int col) horizNeg = new (currentRow, currentCol - 1);
         
-        if (IsWithinBoard(forwardOne.row, forwardOne.col) && inBoard.BoardPieces[forwardOne.row, forwardOne.col] is null)
+        if (IsWithinBoard(forwardOne.row, forwardOne.col) 
+            && inBoard.BoardPieces[forwardOne.row, forwardOne.col]?.Icon == EmptySpaceIcon)
         {
             AddValidMove(forwardOne);
 
             if (IsWithinBoard(forwardTwo.row, forwardTwo.col) 
-                && inBoard.BoardPieces[forwardTwo.row, forwardTwo.col] is null
+                && inBoard.BoardPieces[forwardTwo.row, forwardTwo.col]?.Icon == EmptySpaceIcon
                 && this.HasMoved == false)
             {
                 AddValidMove(forwardTwo);

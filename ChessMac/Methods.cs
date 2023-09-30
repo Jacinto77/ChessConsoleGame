@@ -145,27 +145,4 @@ public static class Methods
             Console.WriteLine("Input must be 1-4");
         }
     }
-
-    
-
-    public static bool IsKingInCheck(Piece pieceBeingMoved, ChessBoard tempBoard, 
-        Piece?[,] inBoardPieces)
-    {
-        // if (!blackKing.IsActive)
-        //     throw new Exception("Methods.IsKingInCheck() black king piece is null");
-        // if (!whiteKing.IsActive)
-        //     throw new Exception("Methods.IsKingInCheck() black king piece is null");
-        //
-        // Tuple<int, int> whiteKingPos = new Tuple<int, int>(whiteKing.RowIndex, whiteKing.ColIndex);
-        // Tuple<int, int> blackKingPos = new Tuple<int, int>(blackKing.RowIndex, blackKing.ColIndex);
-        //
-        // return pieceBeingMoved.Color switch
-        // {
-        //     Piece.PieceColor.White when tempBoard.GetSpace(blackKingPos).IsThreatened => true,
-        //     Piece.PieceColor.Black when tempBoard.GetSpace(whiteKingPos).IsThreatened => true,
-        //     _ => false
-        // };
-
-        return false;
-    }
 }

@@ -19,10 +19,12 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
-
+            
+            board.ClearThreats();
             board.GeneratePieceMoves();
+            board.AddThreats();
 
-            //board.OutputBoard();
+            Console.WriteLine(board.BoardPieces[3, 2]?.IsThreatened);
             var tempBoard = board.DeepCopy();
             var colorToMove = moveCounter % 2 != 0
                 ? PieceColor.White
@@ -44,6 +46,5 @@ internal static class Program
             moveCounter++;
             board.OutputBoard();
         }
-        
     }
 }

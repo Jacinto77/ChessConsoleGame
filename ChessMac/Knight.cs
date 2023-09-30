@@ -34,12 +34,11 @@ public class Knight : Piece
                 continue;
             }
             
-            // check if move's dest space has a piece of the same color
             Piece? destSpace = inBoard.BoardPieces[row, col];
-            // Console.WriteLine(destSpace.HasPiece);
-            if (destSpace is not null)
+            
+            if (destSpace?.Icon != EmptySpaceIcon)
             {
-                if (destSpace.Color == this.Color)
+                if (destSpace?.Color == this.Color)
                 {
                     continue;
                 }

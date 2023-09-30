@@ -9,6 +9,35 @@ public class King : Piece
         this.Type = PieceType.King;
         this.Icon = GetColorPieceIcon(inColor);
     }
+
+    public bool CheckCastle(PieceColor inColor, ChessBoard inBoard)
+    {
+        if (HasMoved) return false;
+        
+        (int row, int col) KingSideRookPos;
+        (int row, int col) QueenSideRookPos;
+
+        if (inColor == PieceColor.White)
+        {
+            KingSideRookPos = (7, 7);
+            QueenSideRookPos = (7, 0);
+        }
+        else
+        {
+            KingSideRookPos = (0, 7);
+            QueenSideRookPos = (0, 0);
+        }
+
+        Piece? kingSideRook = inBoard.BoardPieces[KingSideRookPos.row, KingSideRookPos.col];
+        Piece? queenSideRook = inBoard.BoardPieces[QueenSideRookPos.row, QueenSideRookPos.col];
+        
+        if (kingSideRook?.Type == PieceType.Rook && kingSideRook.HasMoved == false)
+        {
+            // if (inBoard.BoardPieces[KingSideRookPos.row, KingSideRookPos.col - 1]?.Icon == EmptySpaceIcon
+            //     &&)
+        }
+    }
+    
     
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
@@ -30,13 +59,15 @@ public class King : Piece
             if (IsWithinBoard(move.row, move.col) == false) continue;
 
             Piece? destSpace = inBoard.BoardPieces[move.row, move.col];
-            if (destSpace is not null)
+            if (destSpace?.Icon != EmptySpaceIcon)
             {
-                if (destSpace.Color == this.Color)
+                if (destSpace?.Color == this.Color)
                 {
                     continue;
                 }
             }
+            if (destSpace is { IsThreatened: true }) continue;
+            
             AddValidMove(move);
         }
     }

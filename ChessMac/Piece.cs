@@ -22,9 +22,11 @@ public class Piece
     public bool HasMoved { get; set; } = false;
     public bool IsPinned { get; private set; } = false;
     public int MoveCounter { get; set; } = 0;
-
+    public bool IsThreatened { get; set; } = false;
     private List<(int row, int col)> validMoves = new();
   
+    public readonly char EmptySpaceIcon = '\u2610';
+    
     protected Piece(PieceColor inColor)
     {
         Color = inColor;
@@ -38,6 +40,22 @@ public class Piece
 
     public Piece()
     {
+        Icon = EmptySpaceIcon;
+    }
+
+    public void SetThreat()
+    {
+        IsThreatened = true;
+    }
+
+    public void ClearThreat()
+    {
+        IsThreatened = false;
+    }
+
+    public List<(int row, int col)> GetValidMoveList()
+    {
+        return validMoves;
     }
 
     public static Piece CreatePiece(PieceColor inColor, PieceType inType)
@@ -201,19 +219,18 @@ public class Piece
             {
                 int newRow = currentRow + i * rowChange;
                 int newCol = currentCol + i * colChange;
-    
-                Tuple<int, int> newLocation = new Tuple<int, int>(newRow, newCol);
+                
                 if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) // Check boundary conditions
                     break;
     
                 Piece? tempSpace = inBoard.BoardPieces[newRow, newCol];
     
-                if (tempSpace is not null && tempSpace.Color == Color)
+                if (tempSpace?.Icon != EmptySpaceIcon && tempSpace?.Color == Color)
                     break;
             
                 AddValidMove(new ValueTuple<int, int>(newRow, newCol));
             
-                if (tempSpace is not null)
+                if (tempSpace?.Icon != EmptySpaceIcon)
                     break;
             }
         }
