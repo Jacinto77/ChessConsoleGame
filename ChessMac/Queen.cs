@@ -16,6 +16,8 @@ public class Queen : Piece
     {
         ClearValidMoves();
         base.GenerateRookMoves(inBoard, currentRow, currentCol);
+        // TODO: rook moves are being cleared from the list of valid moves or GenBishopMoves is overwriting them?
+        // TODO: perhaps the deepcopy isn't working properly for the pieces?
         base.GenerateBishopMoves(inBoard, currentRow, currentCol);
     }
 }

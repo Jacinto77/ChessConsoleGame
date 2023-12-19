@@ -5,6 +5,7 @@ public enum PieceColor
 {
     White, 
     Black,
+    NULL,
 }
 
 public enum PieceType
@@ -14,7 +15,8 @@ public enum PieceType
     Bishop,
     Rook,
     Queen,
-    King
+    King,
+    NULL
 }
 
 public class ChessBoard
@@ -70,6 +72,7 @@ public class ChessBoard
 
     public void PlacePieces()
     {
+        // black pieces
         BoardPieces[0, 0] = new Rook(PieceColor.Black);
         BoardPieces[0, 1] = new Knight(PieceColor.Black);
         BoardPieces[0, 2] = new Bishop(PieceColor.Black);
@@ -88,6 +91,7 @@ public class ChessBoard
         BoardPieces[1, 6] = new Pawn(PieceColor.Black);
         BoardPieces[1, 7] = new Pawn(PieceColor.Black);
         
+        // white pieces
         BoardPieces[7, 0] = new Rook(PieceColor.White);
         BoardPieces[7, 1] = new Knight(PieceColor.White);
         BoardPieces[7, 2] = new Bishop(PieceColor.White);
@@ -107,6 +111,27 @@ public class ChessBoard
         BoardPieces[6, 7] = new Pawn(PieceColor.White);
     }
 
+    public void TestingPlacePieces()
+    {
+        BoardPieces[7, 0] = new Rook(PieceColor.White);
+        BoardPieces[7, 7] = new Rook(PieceColor.White);
+        BoardPieces[7, 4] = new King(PieceColor.White);
+        
+    }
+
+    public void ClearValidMoves()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
+                BoardPieces[row, col]?.ClearValidMoves();
+            }
+
+        }
+    }
+    
     public void GeneratePieceMoves()
     {
         for (int row = 0; row < 8; row++)
@@ -116,10 +141,10 @@ public class ChessBoard
                 if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
                 BoardPieces[row, col]?.GenerateValidMoves(this, row, col);
             }
-            
+
         }
     }
-    
+
     // Output Board Display in ASCII to console
     public void OutputBoard()
     {
@@ -210,6 +235,11 @@ public class ChessBoard
         return (currentCol is <= 7 and >= 0) && (currentRow is <= 7 and >= 0);
     }
 
+    public void PlacePiece(Piece inPiece, (int row, int col) position)
+    {
+        BoardPieces[position.row, position.col] = inPiece;
+    }
+    
     public void MovePiece((int row, int col) startPos, (int row, int col) destPos)
     {
         this.BoardPieces[destPos.row, destPos.col] = BoardPieces[startPos.row, startPos.col];
@@ -228,9 +258,10 @@ public class ChessBoard
             Console.WriteLine("That ain't your piece");
             return null;
         }
-        if (!activePiece.IsMoveValid(destPos))
+        if (activePiece.IsMoveValid(destPos) == false)
         {
             Console.WriteLine("move is not valid");
+            activePiece.PrintValidMoves();
             return null;
         }
 
@@ -298,5 +329,19 @@ public class ChessBoard
         if (inColor == PieceColor.Black)
             return BoardPieces[blackKingPos.row, blackKingPos.col]!.IsThreatened;
         else return BoardPieces[whiteKingPos.row, whiteKingPos.col]!.IsThreatened;
+    }
+
+    public Piece GetPieceByIndex((int row, int col) piece)
+    {
+        if (BoardPieces[piece.row, piece.col] is null)
+        {
+            Console.WriteLine("Piece is null: Chessboard.GetPieceByIndex()");
+            return new Piece();
+        }
+        else
+        {
+            return BoardPieces[piece.row, piece.col];    
+        }
+        
     }
 }

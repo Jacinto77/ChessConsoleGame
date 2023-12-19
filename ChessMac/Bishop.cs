@@ -10,7 +10,6 @@ public class Bishop : Piece
     
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ClearValidMoves();
         base.GenerateBishopMoves(inBoard, currentRow, currentCol);
     }
 }

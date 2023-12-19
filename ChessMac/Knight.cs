@@ -13,8 +13,6 @@ public class Knight : Piece
     
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ClearValidMoves();
-
         List<(int row, int col)> tempMoves = CreateList(
         
             (currentRow + 2, currentCol + 1),

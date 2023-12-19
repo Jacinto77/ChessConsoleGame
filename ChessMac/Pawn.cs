@@ -58,7 +58,6 @@ public class Pawn : Piece
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         base.GenerateValidMoves(inBoard, currentRow, currentCol);
-        ClearValidMoves();
 
         (int row, int col) forwardOne = new (currentRow + (Direction * 1), currentCol);
         (int row, int col) forwardTwo = new (currentRow + (Direction * 2), currentCol);

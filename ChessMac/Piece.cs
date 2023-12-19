@@ -4,6 +4,11 @@ using static ChessMac.Methods;
 namespace ChessMac;
 
 /*
+ * TODO: add debugging functions
+ *  allow to query possible moves when prompted to move
+ *  show threatened pieces
+ *  show threatened squares
+ * 
  * TODO: decompose functions further
  * 
  * TODO: create move generation functionality work to identify and tag pieces as being threatened, as well as what piece is threatening
@@ -16,11 +21,11 @@ namespace ChessMac;
 public class Piece
 {
     public PieceType Type { get; protected init; }
-    public PieceColor Color { get; }
+    public PieceColor Color { get; set; }
     public char? Icon { get; set; }
 
     public bool HasMoved { get; set; } = false;
-    public bool IsPinned { get; private set; } = false;
+    public bool IsPinned { get; set; } = false;
     public int MoveCounter { get; set; } = 0;
     public bool IsThreatened { get; set; } = false;
     private List<(int row, int col)> validMoves = new();
@@ -155,19 +160,32 @@ public class Piece
         validMoves.Add(validMove);
     }
 
-    protected void ClearValidMoves()
+    public void ClearValidMoves()
     {
         validMoves.Clear();
+    }
+
+    public void PrintValidMoves()
+    {
+        int counter = 1;
+        Console.Write("Valid Moves are:\n");
+        foreach ((int row, int col) move in validMoves)
+        {
+            string validMove = ConvertIndexToPos(new Tuple<int, int>(move.row, move.col));
+
+            Console.WriteLine($"{counter}: {validMove}");
+            counter++;
+        }
     }
     
     // generates all valid moves
     public virtual void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
     }
-
+    
     public void GenerateRookMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        ClearValidMoves();
+        //ClearValidMoves();
 
         // Define the possible directions for movement as (rowChange, colChange)
         Tuple<int, int>[] directions = {
@@ -189,12 +207,12 @@ public class Piece
     
                 Piece? tempPiece = inBoard.BoardPieces[newRow, newCol];
     
-                if (tempPiece is not null && tempPiece.Color == Color)
+                if (tempPiece.Icon != EmptySpaceIcon && tempPiece.Color == Color)
                     break;
             
                 AddValidMove(new ValueTuple<int, int>(newRow, newCol));
             
-                if (tempPiece is not null)
+                if (tempPiece.Icon != EmptySpaceIcon)
                     break;
             }
         }

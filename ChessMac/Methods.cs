@@ -9,16 +9,29 @@ namespace ChessMac;
 
 public static class Methods
 {
+    
     public static string GetPlayerInput()
     {
         while (true)
         {
             Console.Write(
                 @"Move input must be in format:
-                    'A4 A5'            
-                > ");
+                'A4 A5' or enter ! to see valid moves            
+                >  ");
             string? playerInput = Console.ReadLine();
             //Console.WriteLine(playerInput);
+            // adding move checking logic
+            // TODO
+            if (playerInput == "!")
+            {
+                Console.WriteLine("Enter the piece you want to see the moves for:\n>  ");
+                playerInput = Console.ReadLine();
+                if (playerInput?.Length != 2)
+                {
+                    continue;
+                } 
+                return playerInput;
+            }
             if (playerInput?.Length != 5)
             {
                 continue;
@@ -145,4 +158,7 @@ public static class Methods
             Console.WriteLine("Input must be 1-4");
         }
     }
+    
+    
+    
 }
