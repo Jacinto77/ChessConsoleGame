@@ -1,0 +1,9 @@
+@startuml
+class Rook {
+    + Rook(inColor:PieceColor)
+    + AssignCastlePos(rookPos:(int row, int col)) : void
+    + CanCastle(inColor:PieceColor, inBoard:ChessBoard) : bool
+    + <<override>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+}
+Piece <|-- Rook
+@enduml

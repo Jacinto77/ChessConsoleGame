@@ -1,0 +1,12 @@
+@startuml
+class Pawn {
+    + Pawn(inColor:PieceColor)
+    - Direction : int <<get>> <<set>>
+    + <<override>> DeepCopy() : Piece
+    - SetPawnDirection(inColor:PieceColor) : void
+    - CheckAndAddDiagonal(diagonal:(int row, int col), inBoard:ChessBoard) : void
+    - CheckEnPassant(horizontal:(int row, int col), diagonal:(int row, int col), inBoard:ChessBoard) : void
+    + <<override>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+}
+Piece <|-- Pawn
+@enduml

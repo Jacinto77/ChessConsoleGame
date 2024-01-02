@@ -4,12 +4,12 @@ public class Bishop : Piece
 {
     public Bishop(PieceColor inColor) : base(inColor)
     {
-        this.Type = PieceType.Bishop;
-        this.Icon = GetColorPieceIcon(inColor);
+        Type = PieceType.Bishop;
+        Icon = GetColorPieceIcon(inColor);
     }
-    
+
     public override void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
-        base.GenerateBishopMoves(inBoard, currentRow, currentCol);
+        GenerateBishopMoves(inBoard, currentRow, currentCol);
     }
 }

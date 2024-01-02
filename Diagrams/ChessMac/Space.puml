@@ -1,0 +1,25 @@
+@startuml
+class Space {
+    + Space(inPosition:Tuple<int, int>)
+    + Piece : Piece? <<get>> <<set>>
+    - <<const>> EmptySpaceIcon : char = '\u2610'
+    - <<const>> HighlightedIcon : char = '\u25C9'
+    + SpaceName : string <<get>>
+    + HasPiece : bool <<get>> <<set>>
+    + IconDefault : char?
+    + Icon : char? <<get>> <<set>>
+    + IconBuffer : char? <<get>> <<set>>
+    + HighlightIcon : char?
+    + IsThreatened : bool = false
+    + DeepCopy() : Space
+    + SetName(inPosition:Tuple<int, int>) : string
+    + SetPieceInfo(inPiece:Piece) : void
+    + ClearPieceInfo() : void
+    + SetIconHighlight() : void
+    + UnsetIconHighlight() : void
+    + {static} IsWithinBoard(inMove:(int row, int col)) : bool
+}
+class "Tuple`2"<T1,T2> {
+}
+Space --> "SpaceIndex<int,int>" "Tuple`2"
+@enduml

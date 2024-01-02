@@ -1,0 +1,11 @@
+@startuml
+class Methods <<static>> {
+    + {static} GetPlayerInput() : string
+    + {static} ParseInput(input:string?) : Tuple<string, string>
+    + {static} ConvertIndexToPos(inIndex:Tuple<int, int>) : string
+    + {static} ConvertPosToIndex(input:string) : (int row, int col)
+    + {static} GetPlayerMove() : Tuple<string, string>
+    + {static} CheckAndPromotePawn(pieceBeingMoved:Piece, inBoard:ChessBoard, currentRow:int) : void
+    + {static} GetPlayerTypeInt() : int?
+}
+@enduml

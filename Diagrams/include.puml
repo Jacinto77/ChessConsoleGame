@@ -1,0 +1,16 @@
+@startuml
+!include ./ChessMac/Empty.puml
+!include ./ChessMac/Queen.puml
+!include ./ChessMac/Pawn.puml
+!include ./ChessMac/Rook.puml
+!include ./ChessMac/Piece.puml
+!include ./ChessMac/King.puml
+!include ./ChessMac/Bishop.puml
+!include ./ChessMac/Knight.puml
+!include ./ChessMac/obj/Debug/net5.0/ChessMac.AssemblyInfo.puml
+!include ./ChessMac/obj/Debug/net5.0/.NETCoreApp,Version=v5.0.AssemblyAttributes.puml
+!include ./ChessMac/obj/Debug/net5.0/ChessMac.GlobalUsings.g.puml
+!include ./ChessMac/obj/Debug/net7.0/.NETCoreApp,Version=v7.0.AssemblyAttributes.puml
+!include ./ChessMac/obj/Debug/net7.0/ChessMac.AssemblyInfo.puml
+!include ./ChessMac/obj/Debug/net7.0/ChessMac.GlobalUsings.g.puml
+@enduml

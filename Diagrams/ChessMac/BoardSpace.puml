@@ -1,0 +1,10 @@
+@startuml
+class BoardSpace {
+    - rowIndex : int? = null
+    - colIndex : int? = null
+    - rowNum : int? = null
+    - colChar : int? = null
+    - isOccupied : bool? = false
+    + setSpaceState(state:bool) : void
+}
+@enduml

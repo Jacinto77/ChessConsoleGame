@@ -1,15 +1,9 @@
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
 namespace ChessMac;
 
 // TODO: get rid of magic numbers
 
 public static class Methods
 {
-    
     public static string GetPlayerInput()
     {
         while (true)
@@ -18,7 +12,7 @@ public static class Methods
                 @"Move input must be in format:
                 'A4 A5' or enter ! to see valid moves            
                 >  ");
-            string? playerInput = Console.ReadLine();
+            var playerInput = Console.ReadLine();
             //Console.WriteLine(playerInput);
             // adding move checking logic
             // TODO
@@ -26,28 +20,20 @@ public static class Methods
             {
                 Console.WriteLine("Enter the piece you want to see the moves for:\n>  ");
                 playerInput = Console.ReadLine();
-                if (playerInput?.Length != 2)
-                {
-                    continue;
-                } 
+                if (playerInput?.Length != 2) continue;
                 return playerInput;
             }
-            if (playerInput?.Length != 5)
-            {
-                continue;
-            }
 
-            if (!playerInput.Contains(' '))
-            {
-                continue;
-            }
+            if (playerInput?.Length != 5) continue;
+
+            if (!playerInput.Contains(' ')) continue;
 
             return playerInput;
         }
-        
+
         return Console.ReadLine();
     }
-    
+
     // TODO: check input w/ regex and known words instead
     public static Tuple<string, string> ParseInput(string? input)
     {
@@ -56,7 +42,7 @@ public static class Methods
 
         if (input != null)
         {
-            piece = input[0..2];
+            piece = input[..2];
             dest = input[3..5];
         }
         //TODO undetectable bug, nice
@@ -65,13 +51,14 @@ public static class Methods
             Console.WriteLine("Error in input validation in: ParseInput()");
             return new Tuple<string, string>("A1", "A7");
         }
+
         return new Tuple<string, string>(piece, dest);
     }
 
     public static string ConvertIndexToPos(Tuple<int, int> inIndex)
     {
-        string row = "";
-        string column = "";
+        var row = "";
+        var column = "";
         row = inIndex.Item1 switch
         {
             0 => "8",
@@ -98,14 +85,14 @@ public static class Methods
         };
         return column + row;
     }
-    
+
     public static (int row, int col) ConvertPosToIndex(string input)
     {
         var columnChar = input[0];
         var rowChar = input[1];
 
-        int tempCol = -1;
-        int tempRow = -1;
+        var tempCol = -1;
+        var tempRow = -1;
         tempCol = columnChar switch
         {
             'A' => 0,
@@ -131,13 +118,13 @@ public static class Methods
             '8' => 0,
             _ => tempRow
         };
-        
+
         return (tempRow, tempCol);
     }
 
     public static Tuple<string, string> GetPlayerMove()
     {
-        string playerInput = GetPlayerInput();
+        var playerInput = GetPlayerInput();
         return ParseInput(playerInput);
     }
 
@@ -147,18 +134,15 @@ public static class Methods
             return;
         pieceBeingMoved.PromotePawn(inBoard);
     }
-    
+
     public static int? GetPlayerTypeInt()
     {
         while (true)
         {
-            int choice = Console.Read();
+            var choice = Console.Read();
             if (choice is <= 4 and >= 1) return choice;
-            
+
             Console.WriteLine("Input must be 1-4");
         }
     }
-    
-    
-    
 }

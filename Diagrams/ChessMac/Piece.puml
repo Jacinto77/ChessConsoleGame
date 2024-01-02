@@ -1,0 +1,40 @@
+@startuml
+class Piece {
+    + <<readonly>> EmptySpaceIcon : char = '\u2610'
+    # Piece(inColor:PieceColor)
+    + Piece(inColor:PieceColor, inType:PieceType)
+    + Piece()
+    + Icon : char? <<get>> <<set>>
+    + HasMoved : bool <<get>> <<set>>
+    + IsPinned : bool <<get>> <<set>>
+    + MoveCounter : int <<get>> <<set>>
+    + IsThreatened : bool <<get>> <<set>>
+    + SetThreat() : void
+    + ClearThreat() : void
+    + GetValidMoveList() : List<(int row, int col)>
+    + {static} CreatePiece(inColor:PieceColor, inType:PieceType) : Piece
+    # {static} CreateList(values:T[]) : List<T>
+    + <<virtual>> DeepCopy() : Piece
+    + {static} ConvertIntToPieceType(input:int?) : PieceType
+    + GetColorPieceIcon(inColor:PieceColor) : char
+    # AddValidMove(validMove:(int row, int col)) : void
+    + ClearValidMoves() : void
+    + PrintValidMoves() : void
+    + <<virtual>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+    + GenerateRookMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+    + GenerateBishopMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+    + IsMoveValid(inMove:(int row, int col)) : bool
+    + PromotePawn(inBoard:ChessBoard) : void
+    + IsPawnPromotionSpace(inRowIndex:int) : bool
+    - PromptForPromotion() : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+class "List`1"<T> {
+}
+Piece o-> "BlackIcons<PieceType,char>" "Dictionary`2"
+Piece o-> "WhiteIcons<PieceType,char>" "Dictionary`2"
+Piece o-> "validMoves<(int row, int col)>" "List`1"
+Piece --> "Type" PieceType
+Piece --> "Color" PieceColor
+@enduml

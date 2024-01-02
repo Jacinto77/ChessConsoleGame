@@ -11,5 +11,4 @@ public class Empty : Piece
         IsPinned = false;
         MoveCounter = 0;
     }
-    
 }

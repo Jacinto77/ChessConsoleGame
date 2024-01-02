@@ -1,0 +1,7 @@
+@startuml
+class Knight {
+    + Knight(inColor:PieceColor)
+    + <<override>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+}
+Piece <|-- Knight
+@enduml

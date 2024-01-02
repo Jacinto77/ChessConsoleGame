@@ -1,0 +1,13 @@
+@startuml
+class King {
+    + King(inColor:PieceColor)
+    + GetKingSideSpaces() : List<(int row, int col)>
+    + GetQueenSideSpaces() : List<(int row, int col)>
+    + CheckQueenSideCastle(inColor:PieceColor, inBoard:ChessBoard) : bool
+    + CheckKingSideCastle(inColor:PieceColor, inBoard:ChessBoard) : bool
+    + GetRookPos(inColor:PieceColor, inBoard:ChessBoard) : List<(int row, int col)>
+    + CheckCastle(inColor:PieceColor, inBoard:ChessBoard) : (bool king, bool queen)
+    + <<override>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+}
+Piece <|-- King
+@enduml

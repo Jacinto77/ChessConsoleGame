@@ -1,0 +1,6 @@
+@startuml
+class Empty {
+    + Empty()
+}
+Piece <|-- Empty
+@enduml

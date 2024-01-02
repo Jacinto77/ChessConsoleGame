@@ -1,6 +1,5 @@
-using System.Runtime.CompilerServices;
-using static ChessMac.ChessBoard;
 using static ChessMac.Methods;
+
 namespace ChessMac;
 
 /*
@@ -20,18 +19,29 @@ namespace ChessMac;
 
 public class Piece
 {
-    public PieceType Type { get; protected init; }
-    public PieceColor Color { get; set; }
-    public char? Icon { get; set; }
+    public static readonly Dictionary<PieceType, char> BlackIcons = new()
+    {
+        { PieceType.Pawn, '\u2659' },
+        { PieceType.Rook, '\u2656' },
+        { PieceType.Knight, '\u2658' },
+        { PieceType.Bishop, '\u2657' },
+        { PieceType.Queen, '\u2655' },
+        { PieceType.King, '\u2654' }
+    };
 
-    public bool HasMoved { get; set; } = false;
-    public bool IsPinned { get; set; } = false;
-    public int MoveCounter { get; set; } = 0;
-    public bool IsThreatened { get; set; } = false;
-    private List<(int row, int col)> validMoves = new();
-  
+    public static readonly Dictionary<PieceType, char> WhiteIcons = new()
+    {
+        { PieceType.Pawn, '\u265F' },
+        { PieceType.Rook, '\u265C' },
+        { PieceType.Knight, '\u265E' },
+        { PieceType.Bishop, '\u265D' },
+        { PieceType.Queen, '\u265B' },
+        { PieceType.King, '\u265A' }
+    };
+
     public readonly char EmptySpaceIcon = '\u2610';
-    
+    private List<(int row, int col)> validMoves = new();
+
     protected Piece(PieceColor inColor)
     {
         Color = inColor;
@@ -47,6 +57,15 @@ public class Piece
     {
         Icon = EmptySpaceIcon;
     }
+
+    public PieceType Type { get; protected init; }
+    public PieceColor Color { get; set; }
+    public char? Icon { get; set; }
+
+    public bool HasMoved { get; set; }
+    public bool IsPinned { get; set; }
+    public int MoveCounter { get; set; }
+    public bool IsThreatened { get; set; }
 
     public void SetThreat()
     {
@@ -68,17 +87,23 @@ public class Piece
         Piece? tempPiece;
         switch (inType)
         {
-            case PieceType.Pawn: tempPiece = new Pawn(inColor);
+            case PieceType.Pawn:
+                tempPiece = new Pawn(inColor);
                 break;
-            case PieceType.Knight: tempPiece = new Knight(inColor);
+            case PieceType.Knight:
+                tempPiece = new Knight(inColor);
                 break;
-            case PieceType.Bishop: tempPiece = new Bishop(inColor);
+            case PieceType.Bishop:
+                tempPiece = new Bishop(inColor);
                 break;
-            case PieceType.Rook: tempPiece = new Rook(inColor);
+            case PieceType.Rook:
+                tempPiece = new Rook(inColor);
                 break;
-            case PieceType.Queen: tempPiece = new Queen(inColor);
+            case PieceType.Queen:
+                tempPiece = new Queen(inColor);
                 break;
-            case PieceType.King: tempPiece = new King(inColor);
+            case PieceType.King:
+                tempPiece = new King(inColor);
                 break;
             default:
             {
@@ -86,9 +111,10 @@ public class Piece
                 throw new Exception("Piece generation error: CreatePiece()");
             }
         }
+
         return tempPiece;
     }
-    
+
     protected static List<T> CreateList<T>(params T[] values)
     {
         return new List<T>(values);
@@ -96,22 +122,19 @@ public class Piece
 
     public virtual Piece DeepCopy()
     {
-        Piece pieceCopy = CreatePiece(this.Color, this.Type);
+        var pieceCopy = CreatePiece(Color, Type);
         pieceCopy.HasMoved = HasMoved;
         pieceCopy.IsPinned = IsPinned;
         pieceCopy.MoveCounter = MoveCounter;
         pieceCopy.validMoves = new List<(int row, int col)>();
 
-        foreach (var move in validMoves)
-        {
-            pieceCopy.AddValidMove(move);
-        }
+        foreach (var move in validMoves) pieceCopy.AddValidMove(move);
         return pieceCopy;
     }
 
     public static PieceType ConvertIntToPieceType(int? input)
     {
-        PieceType pieceType = input switch
+        var pieceType = input switch
         {
             1 => PieceType.Knight,
             2 => PieceType.Bishop,
@@ -123,36 +146,11 @@ public class Piece
         return pieceType;
     }
 
-    public static readonly Dictionary<PieceType, char> BlackIcons = new()
-    {
-        { PieceType.Pawn, '\u2659' },
-        { PieceType.Rook, '\u2656' },
-        { PieceType.Knight, '\u2658' },
-        { PieceType.Bishop,'\u2657' },
-        { PieceType.Queen, '\u2655' },
-        { PieceType.King, '\u2654' },
-    };
-    
-    public static readonly Dictionary<PieceType, char> WhiteIcons = new()
-    {
-        { PieceType.Pawn, '\u265F' },
-        { PieceType.Rook, '\u265C' },
-        { PieceType.Knight, '\u265E' },
-        { PieceType.Bishop, '\u265D' },
-        { PieceType.Queen, '\u265B' },
-        { PieceType.King, '\u265A' },
-    };
-
     public char GetColorPieceIcon(PieceColor inColor)
     {
         if (inColor == PieceColor.Black)
-        {
-            return BlackIcons[this.Type];
-        }
-        else
-        {
-            return WhiteIcons[this.Type];
-        }
+            return BlackIcons[Type];
+        return WhiteIcons[Type];
     }
 
     protected void AddValidMove((int row, int col) validMove)
@@ -167,87 +165,87 @@ public class Piece
 
     public void PrintValidMoves()
     {
-        int counter = 1;
+        var counter = 1;
         Console.Write("Valid Moves are:\n");
-        foreach ((int row, int col) move in validMoves)
+        foreach (var move in validMoves)
         {
-            string validMove = ConvertIndexToPos(new Tuple<int, int>(move.row, move.col));
+            var validMove = ConvertIndexToPos(new Tuple<int, int>(move.row, move.col));
 
             Console.WriteLine($"{counter}: {validMove}");
             counter++;
         }
     }
-    
+
     // generates all valid moves
     public virtual void GenerateValidMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
     }
-    
+
     public void GenerateRookMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         //ClearValidMoves();
 
         // Define the possible directions for movement as (rowChange, colChange)
-        Tuple<int, int>[] directions = {
-            new Tuple<int, int>(-1, 0),  // Up
-            new Tuple<int, int>(1, 0),   // Down
-            new Tuple<int, int>(0, -1),  // Left
-            new Tuple<int, int>(0, 1)    // Right
-        };
-    
-        foreach (var (rowChange, colChange) in directions)
+        Tuple<int, int>[] directions =
         {
-            for (int i = 1; i < 8; i++) 
+            new(-1, 0), // Up
+            new(1, 0), // Down
+            new(0, -1), // Left
+            new(0, 1) // Right
+        };
+
+        foreach (var (rowChange, colChange) in directions)
+            for (var i = 1; i < 8; i++)
             {
-                int newRow = currentRow + i * rowChange;
-                int newCol = currentCol + i * colChange;
-    
-                if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) 
+                var newRow = currentRow + i * rowChange;
+                var newCol = currentCol + i * colChange;
+
+                if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8)
                     break;
-    
-                Piece? tempPiece = inBoard.BoardPieces[newRow, newCol];
-    
+
+                var tempPiece = inBoard.BoardPieces[newRow, newCol];
+
                 if (tempPiece.Icon != EmptySpaceIcon && tempPiece.Color == Color)
                     break;
-            
+
                 AddValidMove(new ValueTuple<int, int>(newRow, newCol));
-            
+
                 if (tempPiece.Icon != EmptySpaceIcon)
                     break;
             }
-        }
     }
-    
+
     public void GenerateBishopMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         // Define the possible diagonal directions for movement as (rowChange, colChange)
-        Tuple<int, int>[] directions = {
-            new Tuple<int, int>(-1, -1),  // Up-Left
-            new Tuple<int, int>(-1, 1),   // Up-Right
-            new Tuple<int, int>(1, 1),    // Down-Right
-            new Tuple<int, int>(1, -1)    // Down-Left
+        Tuple<int, int>[] directions =
+        {
+            new(-1, -1), // Up-Left
+            new(-1, 1), // Up-Right
+            new(1, 1), // Down-Right
+            new(1, -1) // Down-Left
         };
-    
+
         foreach (var dir in directions)
         {
-            int rowChange = dir.Item1;
-            int colChange = dir.Item2;
-    
-            for (int i = 1; i < 8; i++)  // Max possible steps is 7 in any direction
+            var rowChange = dir.Item1;
+            var colChange = dir.Item2;
+
+            for (var i = 1; i < 8; i++) // Max possible steps is 7 in any direction
             {
-                int newRow = currentRow + i * rowChange;
-                int newCol = currentCol + i * colChange;
-                
+                var newRow = currentRow + i * rowChange;
+                var newCol = currentCol + i * colChange;
+
                 if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) // Check boundary conditions
                     break;
-    
-                Piece? tempSpace = inBoard.BoardPieces[newRow, newCol];
-    
+
+                var tempSpace = inBoard.BoardPieces[newRow, newCol];
+
                 if (tempSpace?.Icon != EmptySpaceIcon && tempSpace?.Color == Color)
                     break;
-            
+
                 AddValidMove(new ValueTuple<int, int>(newRow, newCol));
-            
+
                 if (tempSpace?.Icon != EmptySpaceIcon)
                     break;
             }
@@ -257,14 +255,12 @@ public class Piece
     public bool IsMoveValid((int row, int col) inMove)
     {
         foreach (var validSpace in validMoves)
-        {
             if (validSpace.row == inMove.row && validSpace.col == inMove.col)
                 return true;
-        }
 
         return false;
     }
-    
+
     public void PromotePawn(ChessBoard inBoard)
     {
         PromptForPromotion();

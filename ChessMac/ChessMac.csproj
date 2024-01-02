@@ -8,8 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="BoardSpace.cs" />
-      <Compile Remove="Space.cs" />
+        <Compile Remove="BoardSpace.cs" />
+        <Compile Remove="Space.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Testing\" />
     </ItemGroup>
 
 </Project>

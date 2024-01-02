@@ -1,0 +1,38 @@
+@startuml
+enum PieceColor {
+    White,
+    Black,
+    NULL,
+}
+enum PieceType {
+    Pawn,
+    Knight,
+    Bishop,
+    Rook,
+    Queen,
+    King,
+    NULL,
+}
+class ChessBoard {
+    + <<readonly>> EmptySpaceIcon : char = '\u2610'
+    + ChessBoard()
+    + DeepCopy() : ChessBoard
+    + UpdateKingPositions(inColor:PieceColor, inPos:(int row, int col)) : void
+    + InitBoardPieces() : void
+    + PlacePieces() : void
+    + TestingPlacePieces() : void
+    + ClearValidMoves() : void
+    + GeneratePieceMoves() : void
+    + OutputBoard() : void
+    + ConvertPosToIndices(position:Tuple<char, int>) : Tuple<int, int>
+    + {static} IsWithinBoard(currentRow:int, currentCol:int) : bool
+    + PlacePiece(inPiece:Piece, position:(int row, int col)) : void
+    + MovePiece(startPos:(int row, int col), destPos:(int row, int col)) : void
+    + {static} InitialMoveValidation(activePiece:Piece?, colorToMove:PieceColor, destPos:ValueTuple<int, int>) : Piece?
+    + IsValidMove(colorToMove:PieceColor, startPos:(int row, int col), destPos:(int row, int col)) : bool
+    + AddThreats() : void
+    + ClearThreats() : void
+    + IsKingInCheck(inColor:PieceColor) : bool
+    + GetPieceByIndex(piece:(int row, int col)) : Piece
+}
+@enduml

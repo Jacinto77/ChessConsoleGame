@@ -1,0 +1,7 @@
+@startuml
+class Bishop {
+    + Bishop(inColor:PieceColor)
+    + <<override>> GenerateValidMoves(inBoard:ChessBoard, currentRow:int, currentCol:int) : void
+}
+Piece <|-- Bishop
+@enduml
