@@ -19,29 +19,7 @@ namespace ChessMac;
 
 public class Piece
 {
-    public static readonly Dictionary<PieceType, char> BlackIcons = new()
-    {
-        { PieceType.Pawn, '\u2659' },
-        { PieceType.Rook, '\u2656' },
-        { PieceType.Knight, '\u2658' },
-        { PieceType.Bishop, '\u2657' },
-        { PieceType.Queen, '\u2655' },
-        { PieceType.King, '\u2654' }
-    };
-
-    public static readonly Dictionary<PieceType, char> WhiteIcons = new()
-    {
-        { PieceType.Pawn, '\u265F' },
-        { PieceType.Rook, '\u265C' },
-        { PieceType.Knight, '\u265E' },
-        { PieceType.Bishop, '\u265D' },
-        { PieceType.Queen, '\u265B' },
-        { PieceType.King, '\u265A' }
-    };
-
-    public readonly char EmptySpaceIcon = '\u2610';
-    private List<(int row, int col)> validMoves = new();
-
+    
     protected Piece(PieceColor inColor)
     {
         Color = inColor;
@@ -55,18 +33,72 @@ public class Piece
 
     public Piece()
     {
+        Type = PieceType.NULL;
+        Color = PieceColor.NULL;
         Icon = EmptySpaceIcon;
+        HasMoved = false;
+        IsPinned = false;
+        MoveCounter = 0;
     }
+    
+    private static readonly Dictionary<PieceType, char> BlackIcons = new()
+    {
+        { PieceType.Pawn, '\u2659' },
+        { PieceType.Rook, '\u2656' },
+        { PieceType.Knight, '\u2658' },
+        { PieceType.Bishop, '\u2657' },
+        { PieceType.Queen, '\u2655' },
+        { PieceType.King, '\u2654' }
+    };
 
+    private static readonly Dictionary<PieceType, char> WhiteIcons = new()
+    {
+        { PieceType.Pawn, '\u265F' },
+        { PieceType.Rook, '\u265C' },
+        { PieceType.Knight, '\u265E' },
+        { PieceType.Bishop, '\u265D' },
+        { PieceType.Queen, '\u265B' },
+        { PieceType.King, '\u265A' }
+    };
+
+    protected const char EmptySpaceIcon = '\u2610';
+
+    private List<(int row, int col)> validMoves = new();
+    
     public PieceType Type { get; protected init; }
     public PieceColor Color { get; set; }
     public char? Icon { get; set; }
 
-    public bool HasMoved { get; set; }
-    public bool IsPinned { get; set; }
-    public int MoveCounter { get; set; }
-    public bool IsThreatened { get; set; }
+    public bool HasMoved { get; protected set; }
+    public bool IsPinned { get; protected set; }
+    public int MoveCounter { get; protected set; }
+    public bool IsThreatened { get; private set; }
 
+    public void SetHasMoved()
+    {
+        HasMoved = true;
+    }
+
+    public void IncrementMoveCounter()
+    {
+        MoveCounter++;
+    }
+    
+    protected void AssignIconByColor(PieceColor inColor, PieceType inType)
+    {
+        Dictionary<PieceType, char> iconDict;
+        if (inColor is PieceColor.White)
+        {
+            iconDict = WhiteIcons;
+        }
+        else
+        {
+            iconDict = BlackIcons;
+        }
+
+        this.Icon = iconDict[inType];
+    }   
+    
     public void SetThreat()
     {
         IsThreatened = true;
@@ -169,7 +201,7 @@ public class Piece
         Console.Write("Valid Moves are:\n");
         foreach (var move in validMoves)
         {
-            var validMove = ConvertIndexToPos(new Tuple<int, int>(move.row, move.col));
+            var validMove = ConvertIndexToPos(move);
 
             Console.WriteLine($"{counter}: {validMove}");
             counter++;

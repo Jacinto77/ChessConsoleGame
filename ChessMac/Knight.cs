@@ -23,17 +23,17 @@ public class Knight : Piece
             (currentRow - 1, currentCol - 2)
         );
 
-        foreach (var (row, col) in tempMoves)
+        foreach (var possiblePosition in tempMoves)
         {
-            if (IsWithinBoard(row, col) == false) continue;
+            if (IsWithinBoard(possiblePosition) == false) continue;
 
-            var destSpace = inBoard.BoardPieces[row, col];
+            var destSpace = inBoard.BoardPieces[possiblePosition.row, possiblePosition.col];
 
             if (destSpace?.Icon != EmptySpaceIcon)
                 if (destSpace?.Color == Color)
                     continue;
 
-            AddValidMove((row, col));
+            AddValidMove(possiblePosition);
         }
     }
 }

@@ -168,7 +168,7 @@ public class King : Piece
 
         foreach (var move in tempMoves)
         {
-            if (IsWithinBoard(move.row, move.col) == false) continue;
+            if (IsWithinBoard(move) == false) continue;
 
             var destSpace = inBoard.BoardPieces[move.row, move.col];
             if (destSpace?.Icon != EmptySpaceIcon)

@@ -42,18 +42,18 @@ internal static class Program
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
 
             var parsedInput = GetPlayerMove();
-
-
-            var startPiece = ConvertPosToIndex(parsedInput.Item1);
-            var destPos = ConvertPosToIndex(parsedInput.Item2);
+            
+            var startPiece = ConvertPosToIndex(parsedInput.pieceToMove);
+            var destPos = ConvertPosToIndex(parsedInput.moveDestination);
 
             board.GetPieceByIndex(startPiece).PrintValidMoves();
-
+            
             if (tempBoard.IsValidMove(colorToMove, startPiece, destPos))
             {
                 board.MovePiece(startPiece, destPos);
-                board.BoardPieces[destPos.row, destPos.col]!.HasMoved = true;
-                board.BoardPieces[destPos.row, destPos.col]!.MoveCounter++;
+                var activePiece = board.GetPieceByIndex(destPos);
+                activePiece.SetHasMoved();
+                activePiece.IncrementMoveCounter();
             }
             else
             {

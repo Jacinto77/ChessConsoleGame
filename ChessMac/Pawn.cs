@@ -30,7 +30,7 @@ public class Pawn : Piece
 
     private void CheckAndAddDiagonal((int row, int col) diagonal, ChessBoard inBoard)
     {
-        if (IsWithinBoard(diagonal.row, diagonal.col)
+        if (IsWithinBoard(diagonal)
             && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Icon != EmptySpaceIcon
             && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
         {
@@ -41,7 +41,7 @@ public class Pawn : Piece
 
     private void CheckEnPassant((int row, int col) horizontal, (int row, int col) diagonal, ChessBoard inBoard)
     {
-        if (!IsWithinBoard(horizontal.row, horizontal.col)) return;
+        if (!IsWithinBoard(horizontal)) return;
 
         var horizPiece = inBoard.BoardPieces[horizontal.row, horizontal.col];
         var diagPiece = inBoard.BoardPieces[diagonal.row, diagonal.col];
@@ -66,12 +66,12 @@ public class Pawn : Piece
         (int row, int col) horizPos = new(currentRow, currentCol + 1);
         (int row, int col) horizNeg = new(currentRow, currentCol - 1);
 
-        if (IsWithinBoard(forwardOne.row, forwardOne.col)
+        if (IsWithinBoard(forwardOne)
             && inBoard.BoardPieces[forwardOne.row, forwardOne.col]?.Icon == EmptySpaceIcon)
         {
             AddValidMove(forwardOne);
 
-            if (IsWithinBoard(forwardTwo.row, forwardTwo.col)
+            if (IsWithinBoard(forwardTwo)
                 && inBoard.BoardPieces[forwardTwo.row, forwardTwo.col]?.Icon == EmptySpaceIcon
                 && HasMoved == false)
                 AddValidMove(forwardTwo);

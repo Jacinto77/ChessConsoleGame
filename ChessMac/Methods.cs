@@ -35,31 +35,29 @@ public static class Methods
     }
 
     // TODO: check input w/ regex and known words instead
-    public static Tuple<string, string> ParseInput(string? input)
+    public static (string pieceToMove, string moveDestination) ParseInput(string? input)
     {
-        string piece;
-        string dest;
-
+        (string pieceToMove, string moveDestination) pieceMove;
         if (input != null)
         {
-            piece = input[..2];
-            dest = input[3..5];
+            pieceMove.pieceToMove = input[..2];
+            pieceMove.moveDestination = input[3..5];
         }
         //TODO undetectable bug, nice
         else
         {
             Console.WriteLine("Error in input validation in: ParseInput()");
-            return new Tuple<string, string>("A1", "A7");
+            return new ("A1", "A7");
         }
 
-        return new Tuple<string, string>(piece, dest);
+        return pieceMove;
     }
 
-    public static string ConvertIndexToPos(Tuple<int, int> inIndex)
+    public static string ConvertIndexToPos((int row, int col) inIndex)
     {
-        var row = "";
-        var column = "";
-        row = inIndex.Item1 switch
+        string? row = null;
+        string? column = null;
+        row = inIndex.row switch
         {
             0 => "8",
             1 => "7",
@@ -122,9 +120,10 @@ public static class Methods
         return (tempRow, tempCol);
     }
 
-    public static Tuple<string, string> GetPlayerMove()
+    public static (string pieceToMove, string moveDestination) GetPlayerMove()
     {
         var playerInput = GetPlayerInput();
+        var pieceDest = ParseInput(playerInput);
         return ParseInput(playerInput);
     }
 

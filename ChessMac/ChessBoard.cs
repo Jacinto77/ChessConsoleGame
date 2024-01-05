@@ -124,20 +124,24 @@ public class ChessBoard
     public void ClearValidMoves()
     {
         for (var row = 0; row < 8; row++)
-        for (var col = 0; col < 8; col++)
         {
-            if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
-            BoardPieces[row, col]?.ClearValidMoves();
+            for (var col = 0; col < 8; col++)
+            {
+                if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
+                BoardPieces[row, col]?.ClearValidMoves();
+            }
         }
     }
 
     public void GeneratePieceMoves()
     {
         for (var row = 0; row < 8; row++)
-        for (var col = 0; col < 8; col++)
         {
-            if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
-            BoardPieces[row, col]?.GenerateValidMoves(this, row, col);
+            for (var col = 0; col < 8; col++)
+            {
+                if (BoardPieces[row, col]?.Icon == EmptySpaceIcon) continue;
+                BoardPieces[row, col]?.GenerateValidMoves(this, row, col);
+            }
         }
     }
 
@@ -218,12 +222,12 @@ public class ChessBoard
             _ => rowIndex
         };
 
-        return new Tuple<int, int>(colIndex, rowIndex);
+        return new Tuple<int, int>(rowIndex, colIndex);
     }
 
-    public static bool IsWithinBoard(int currentRow, int currentCol)
+    public static bool IsWithinBoard((int row, int col) position)
     {
-        return currentCol is <= 7 and >= 0 && currentRow is <= 7 and >= 0;
+        return position.row is <= 7 and >= 0 && position.col is <= 7 and >= 0;
     }
 
     public void PlacePiece(Piece inPiece, (int row, int col) position)
