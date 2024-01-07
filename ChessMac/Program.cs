@@ -9,13 +9,13 @@ internal static class Program
     private static void Main()
     {
         var board = new ChessBoard();
-        board.TestingPlacePieces();
-        //board.PlacePieces();
+        //board.TestingPlacePieces();
+        board.PlacePieces();
 
         // debugging
         // board.PlacePiece(new Queen(PieceColor.White), (4, 4));
 
-        board.OutputBoard();
+        //board.OutputBoard();
 
         var moveCounter = 1;
         while (true)
@@ -42,16 +42,17 @@ internal static class Program
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
 
             var parsedInput = GetPlayerMove();
-            
-            var startPiece = ConvertPosToIndex(parsedInput.pieceToMove);
-            var destPos = ConvertPosToIndex(parsedInput.moveDestination);
+            // TODO add validation for destinationPiece separate from pieceChoice
+            var startPiecePos = ConvertPosToIndex(parsedInput.pieceToMove);
+            var destPiecePos = ConvertPosToIndex(parsedInput.moveDestination);
 
-            board.GetPieceByIndex(startPiece).PrintValidMoves();
-            
-            if (tempBoard.IsValidMove(colorToMove, startPiece, destPos))
+            var activePiece = board.GetPieceByIndex(startPiecePos);
+            //activePiece.PrintValidMoves();
+
+            Piece takenPiece;
+            if (tempBoard.ValidateAndMovePiece(colorToMove, startPiecePos, destPiecePos))
             {
-                board.MovePiece(startPiece, destPos);
-                var activePiece = board.GetPieceByIndex(destPos);
+                board.MovePiece(startPiecePos, destPiecePos, out takenPiece);
                 activePiece.SetHasMoved();
                 activePiece.IncrementMoveCounter();
             }
@@ -59,9 +60,10 @@ internal static class Program
             {
                 continue;
             }
-
+            activePiece.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
+            activePiece.PrintValidMoves();
             moveCounter++;
-            board.OutputBoard();
+            //board.OutputBoard();
         }
     }
 }

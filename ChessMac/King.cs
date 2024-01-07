@@ -25,6 +25,20 @@ public class King : Piece
         }
     }
 
+    public King(PieceColor inColor, PieceType inType) : base(inColor, inType)
+    {
+        if (inColor == PieceColor.White)
+        {
+            KingSideCastlePos = (7, 6);
+            QueenSideCastlePos = (7, 2);
+        }
+        else
+        {
+            KingSideCastlePos = (0, 6);
+            QueenSideCastlePos = (0, 2);
+        }
+    }
+
     /*
      * Check if king has moved, if yes, no castle
      * check if rook has moved, if yes no castle

@@ -29,12 +29,13 @@ public class Piece
     {
         Color = inColor;
         Type = inType;
+        AssignIconByColor(inColor, inType);
     }
 
     public Piece()
     {
-        Type = PieceType.NULL;
-        Color = PieceColor.NULL;
+        Type = PieceType.Null;
+        Color = PieceColor.Null;
         Icon = EmptySpaceIcon;
         HasMoved = false;
         IsPinned = false;
@@ -67,7 +68,7 @@ public class Piece
     
     public PieceType Type { get; protected init; }
     public PieceColor Color { get; set; }
-    public char? Icon { get; set; }
+    public char? Icon { get; protected set; }
 
     public bool HasMoved { get; protected set; }
     public bool IsPinned { get; protected set; }
@@ -79,24 +80,42 @@ public class Piece
         HasMoved = true;
     }
 
+    public void SetHasMoved(bool hasMoved)
+    {
+        HasMoved = hasMoved;
+    }
+
+    public void SetIsPinned()
+    {
+        IsPinned = true;
+    }
+    
+    public void SetIsPinned(bool isPinned)
+    {
+        IsPinned = isPinned;
+    }
+
+    public void ClearIsPinned()
+    {
+        IsPinned = false;
+    }
+    
     public void IncrementMoveCounter()
     {
         MoveCounter++;
+    }
+
+    public void SetMoveCounter(int inCount)
+    {
+        MoveCounter = inCount;
     }
     
     protected void AssignIconByColor(PieceColor inColor, PieceType inType)
     {
         Dictionary<PieceType, char> iconDict;
-        if (inColor is PieceColor.White)
-        {
-            iconDict = WhiteIcons;
-        }
-        else
-        {
-            iconDict = BlackIcons;
-        }
+        iconDict = inColor is PieceColor.White ? WhiteIcons : BlackIcons;
 
-        this.Icon = iconDict[inType];
+        Icon = iconDict[inType];
     }   
     
     public void SetThreat()
@@ -104,6 +123,11 @@ public class Piece
         IsThreatened = true;
     }
 
+    public void SetThreat(bool isThreatened)
+    {
+        IsThreatened = isThreatened;
+    }
+    
     public void ClearThreat()
     {
         IsThreatened = false;
@@ -114,38 +138,42 @@ public class Piece
         return validMoves;
     }
 
-    public static Piece CreatePiece(PieceColor inColor, PieceType inType)
-    {
-        Piece? tempPiece;
-        switch (inType)
-        {
-            case PieceType.Pawn:
-                tempPiece = new Pawn(inColor);
-                break;
-            case PieceType.Knight:
-                tempPiece = new Knight(inColor);
-                break;
-            case PieceType.Bishop:
-                tempPiece = new Bishop(inColor);
-                break;
-            case PieceType.Rook:
-                tempPiece = new Rook(inColor);
-                break;
-            case PieceType.Queen:
-                tempPiece = new Queen(inColor);
-                break;
-            case PieceType.King:
-                tempPiece = new King(inColor);
-                break;
-            default:
-            {
-                Console.WriteLine("PieceGenError");
-                throw new Exception("Piece generation error: CreatePiece()");
-            }
-        }
-
-        return tempPiece;
-    }
+    // public static Piece CreatePiece(PieceColor inColor, PieceType inType)
+    // {
+    //     Piece? tempPiece;
+    //     switch (inType)
+    //     {
+    //         case PieceType.Pawn:
+    //             return new Piece(inColor, inType);
+    //             tempPiece = new Pawn(inColor);
+    //             break;
+    //         case PieceType.Knight:
+    //             tempPiece = new Knight(inColor);
+    //             break;
+    //         case PieceType.Bishop:
+    //             tempPiece = new Bishop(inColor);
+    //             break;
+    //         case PieceType.Rook:
+    //             tempPiece = new Rook(inColor);
+    //             break;
+    //         case PieceType.Queen:
+    //             tempPiece = new Queen(inColor);
+    //             break;
+    //         case PieceType.King:
+    //             tempPiece = new King(inColor);
+    //             break;
+    //         case PieceType.Null:
+    //             tempPiece = new Piece();
+    //             break;
+    //         default:
+    //         {
+    //             Console.WriteLine("PieceGenError");
+    //             throw new Exception("Piece generation error: CreatePiece()");
+    //         }
+    //     }
+    //
+    //     return tempPiece;
+    // }
 
     protected static List<T> CreateList<T>(params T[] values)
     {
@@ -154,12 +182,15 @@ public class Piece
 
     public virtual Piece DeepCopy()
     {
-        var pieceCopy = CreatePiece(Color, Type);
-        pieceCopy.HasMoved = HasMoved;
-        pieceCopy.IsPinned = IsPinned;
-        pieceCopy.MoveCounter = MoveCounter;
-        pieceCopy.validMoves = new List<(int row, int col)>();
-
+        var pieceCopy = new Piece(Color, Type);
+        
+        pieceCopy.SetHasMoved(this.HasMoved);
+        pieceCopy.SetThreat(this.IsThreatened);
+        pieceCopy.SetIsPinned(this.IsPinned);
+        pieceCopy.SetMoveCounter(this.MoveCounter);
+        
+        validMoves = new List<(int row, int col)>();
+        
         foreach (var move in validMoves) pieceCopy.AddValidMove(move);
         return pieceCopy;
     }

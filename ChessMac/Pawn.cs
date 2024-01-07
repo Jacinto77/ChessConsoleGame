@@ -11,12 +11,17 @@ public class Pawn : Piece
         SetPawnDirection(inColor);
     }
 
+    public Pawn(PieceColor inColor, PieceType inType) : base(inColor, inType)
+    {
+        SetPawnDirection(inColor);
+    }
+
     private int Direction { get; set; }
 
     public override Piece DeepCopy()
     {
-        var pawnCopy = (Pawn)base.DeepCopy();
-        pawnCopy.Direction = Direction;
+        Pawn pawnCopy = new Pawn(Color, Type);
+        pawnCopy.Direction = this.Direction;
 
         return pawnCopy;
     }
