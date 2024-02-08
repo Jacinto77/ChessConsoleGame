@@ -40,7 +40,9 @@ internal static class Program
                 ? PieceColor.White
                 : PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
-
+            // TODO change user input logic and validation to handle different methods of piece choice
+            // and move selection. will need to also handle help prompts among others
+            
             var parsedInput = GetPlayerMove();
             // TODO add validation for destinationPiece separate from pieceChoice
             var startPiecePos = ConvertPosToIndex(parsedInput.pieceToMove);
