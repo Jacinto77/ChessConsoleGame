@@ -12,8 +12,4 @@
         <Compile Remove="Space.cs" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Testing\" />
-    </ItemGroup>
-
 </Project>
