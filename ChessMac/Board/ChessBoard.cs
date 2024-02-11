@@ -12,14 +12,14 @@ public class ChessBoard
 {
     
     // initializes board with all spaces set to []
-    public ChessBoard()
-    {
-        //InitBoardPieces();
-    }
+    // public ChessBoard()
+    // {
+    //     //InitBoardPieces();
+    // }
     
     public Piece?[,] BoardPieces = new Piece[8, 8];
     
-    private readonly int[] rowNums =
+    private readonly int[] _rowNums =
     {
         8, 7, 6, 5, 4, 3, 2, 1
     };
@@ -132,7 +132,7 @@ public class ChessBoard
         for (var row = 0; row < 8; row++)
         {
             // row number labels
-            Console.Write(rowNums[row] + @"     |" + "\t");
+            Console.Write(_rowNums[row] + @"     |" + "\t");
 
             for (var col = 0; col < 8; col++)
             {
@@ -145,7 +145,7 @@ public class ChessBoard
                 {
                     // row number labels
                     Console.Write(@"  |" + "\t");
-                    Console.Write(rowNums[row]);
+                    Console.Write(_rowNums[row]);
                     Console.WriteLine();
                     if (row < 7)
                     {
@@ -205,13 +205,13 @@ public class ChessBoard
         return position.row is <= 7 and >= 0 && position.col is <= 7 and >= 0;
     }
 
-    public void PlacePiece(Piece inPiece, (int row, int col) position)
+    public void PlacePiece(Piece? inPiece, (int row, int col) position)
     {
         if (!IsWithinBoard(position)) throw new Exception("PlacePiece() arguments are not within bounds of ChessBoard");
         BoardPieces[position.row, position.col] = inPiece;
     }
 
-    public void MovePiece((int row, int col) startPos, (int row, int col) destPos, out Piece takenPiece)
+    public void MovePiece((int row, int col) startPos, (int row, int col) destPos, out Piece? takenPiece)
     {
         takenPiece = GetPieceByIndex(destPos);
         PlacePiece(GetPieceByIndex(startPos), destPos);
@@ -219,9 +219,9 @@ public class ChessBoard
     }
 
     // TODO: split up prompts for pieceToMove and destPiece input to simplify validation checking
-    public bool InitialMoveValidation(Piece activePiece, Piece.PieceColor colorToMove, (int row, int col) destPos)
+    public bool InitialMoveValidation(Piece? activePiece, Piece.PieceColor colorToMove, (int row, int col) destPos)
     {
-        if (activePiece.Color != colorToMove)
+        if (activePiece?.Color != colorToMove)
         {
             Console.WriteLine("That ain't your piece");
             return false;
@@ -242,7 +242,7 @@ public class ChessBoard
 
     public bool ValidateAndMovePiece(Piece.PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
     {
-        Piece pieceBeingMoved = GetPieceByIndex(startPos);
+        Piece? pieceBeingMoved = GetPieceByIndex(startPos);
         bool isMoveValid = InitialMoveValidation(pieceBeingMoved, colorToMove, destPos);
         if (isMoveValid == false)
         {
@@ -250,10 +250,10 @@ public class ChessBoard
             return false;
         }
 
-        Piece takenPiece;
+        Piece? takenPiece;
         MovePiece(startPos, destPos, out takenPiece);
 
-        if (pieceBeingMoved.Type == Piece.PieceType.Pawn)
+        if (pieceBeingMoved?.Type == Piece.PieceType.Pawn)
             CheckAndPromotePawn(pieceBeingMoved, this, destPos.row);
 
         ClearThreats();
@@ -275,11 +275,8 @@ public class ChessBoard
         foreach (var piece in BoardPieces)
         {
             if (piece is null) continue;
-
-            var validMoves = piece.GetValidMoveList();
-            
-            foreach (var move in validMoves) 
-               GetPieceByIndex(move).SetThreat();
+            foreach (var move in piece.GetValidMoveList()) 
+               GetPieceByIndex(move)?.SetThreat();
         }
     }
 
