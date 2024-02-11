@@ -94,7 +94,7 @@ public abstract class Piece
         { PieceType.King, '\u265A' }
     };
 
-    protected const char EmptySpaceIcon = '\u2610';
+    public const char EmptySpaceIcon = '\u2610';
 
     private List<(int row, int col)> _validMoves = new();
     

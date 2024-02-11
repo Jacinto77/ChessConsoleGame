@@ -88,20 +88,21 @@ internal static class Program
 
             var activePiece = board.GetPieceByIndex(startPiecePos);
             //activePiece.PrintValidMoves();
-
-            Piece takenPiece;
+            if (activePiece is null) continue;
+            
+            Piece? takenPiece;
             if (tempBoard.ValidateAndMovePiece(colorToMove, startPiecePos, destPiecePos))
             {
                 board.MovePiece(startPiecePos, destPiecePos, out takenPiece);
-                activePiece.SetHasMoved();
-                activePiece.IncrementMoveCounter();
+                activePiece?.SetHasMoved();
+                activePiece?.IncrementMoveCounter();
             }
             else
             {
                 continue;
             }
-            activePiece.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
-            activePiece.PrintValidMoves();
+            activePiece?.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
+            activePiece?.PrintValidMoves();
             moveCounter++;
             //board.OutputBoard();
         }

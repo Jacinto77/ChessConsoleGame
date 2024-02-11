@@ -1,3 +1,4 @@
+using System.ComponentModel.Design;
 using ChessMac.ChessBoard;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
@@ -136,7 +137,11 @@ public class ChessBoard
 
             for (var col = 0; col < 8; col++)
             {
-                Console.Write(BoardPieces[row, col]?.Icon);
+                var tempSpace = BoardPieces[row, col];
+                if (tempSpace is null) 
+                    Console.Write(Piece.EmptySpaceIcon);
+                else
+                    Console.Write(BoardPieces[row, col]?.Icon);
 
                 if (col < 7) Console.Write("\t");
 
