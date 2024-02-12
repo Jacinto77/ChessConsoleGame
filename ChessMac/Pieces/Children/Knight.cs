@@ -27,8 +27,19 @@ public class Knight : Piece
 
     public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
     {
-        List<(int row, int col)> tempMoves = CreateList(
-            (currentRow + 2, currentCol + 1),
+        // List<(int row, int col)> tempMoves = CreateList(
+        //     (currentRow + 2, currentCol + 1),
+        //     (currentRow + 2, currentCol - 1),
+        //     (currentRow - 2, currentCol + 1),
+        //     (currentRow - 2, currentCol - 1),
+        //     (currentRow + 1, currentCol + 2),
+        //     (currentRow + 1, currentCol - 2),
+        //     (currentRow - 1, currentCol + 2),
+        //     (currentRow - 1, currentCol - 2)
+        // );
+        List<(int row, int col)> tempMoves = new List<(int row, int col)>
+        { 
+            (currentRow + 2, currentCol + 1), 
             (currentRow + 2, currentCol - 1),
             (currentRow - 2, currentCol + 1),
             (currentRow - 2, currentCol - 1),
@@ -36,7 +47,7 @@ public class Knight : Piece
             (currentRow + 1, currentCol - 2),
             (currentRow - 1, currentCol + 2),
             (currentRow - 1, currentCol - 2)
-        );
+        };
 
         foreach (var possiblePosition in tempMoves)
         {

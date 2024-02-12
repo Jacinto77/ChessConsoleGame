@@ -182,16 +182,17 @@ public class King : Piece
     
     public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
     {
-        List<(int row, int col)> tempMoves = CreateList(
+        List<(int row, int col)> tempMoves = new List<(int row, int col)>
+        {
             (currentRow + 1, currentCol),
             (currentRow + 1, currentCol + 1),
             (currentRow + 1, currentCol - 1),
-            (currentRow, currentCol + 1),
-            (currentRow, currentCol - 1),
+            (currentRow,     currentCol + 1),
+            (currentRow,     currentCol - 1),
             (currentRow - 1, currentCol),
             (currentRow - 1, currentCol + 1),
             (currentRow - 1, currentCol - 1)
-        );
+        };
 
         foreach (var move in tempMoves)
         {

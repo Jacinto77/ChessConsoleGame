@@ -6,6 +6,7 @@ namespace ChessMac.Pieces.Base;
 
 /*
  * TODO: add debugging functions
+ * TODO: remove input validation checking from each piece, should be done once in the beginning and every other function will trust that the indices provided are valid
  *  allow to query possible moves when prompted to move
  *  show threatened pieces
  *  show threatened squares
@@ -74,7 +75,7 @@ public abstract class Piece
 
     public abstract Piece Clone();
     
-    private static readonly Dictionary<PieceType, char> BlackIcons = new()
+    public static readonly Dictionary<PieceType, char> BlackIcons = new()
     {
         { PieceType.Pawn, '\u2659' },
         { PieceType.Rook, '\u2656' },
@@ -84,7 +85,7 @@ public abstract class Piece
         { PieceType.King, '\u2654' }
     };
 
-    private static readonly Dictionary<PieceType, char> WhiteIcons = new()
+    public static readonly Dictionary<PieceType, char> WhiteIcons = new()
     {
         { PieceType.Pawn, '\u265F' },
         { PieceType.Rook, '\u265C' },
@@ -175,43 +176,6 @@ public abstract class Piece
     {
         return _validMoves;
     }
-    
-    // public static Piece CreatePiece(PieceColor inColor, PieceType inType)
-    // {
-    //     Piece? tempPiece;
-    //     switch (inType)
-    //     {
-    //         case PieceType.Pawn:
-    //             return new Piece(inColor, inType);
-    //             tempPiece = new Pawn(inColor);
-    //             break;
-    //         case PieceType.Knight:
-    //             tempPiece = new Knight(inColor);
-    //             break;
-    //         case PieceType.Bishop:
-    //             tempPiece = new Bishop(inColor);
-    //             break;
-    //         case PieceType.Rook:
-    //             tempPiece = new Rook(inColor);
-    //             break;
-    //         case PieceType.Queen:
-    //             tempPiece = new Queen(inColor);
-    //             break;
-    //         case PieceType.King:
-    //             tempPiece = new King(inColor);
-    //             break;
-    //         case PieceType.Null:
-    //             tempPiece = new Piece();
-    //             break;
-    //         default:
-    //         {
-    //             Console.WriteLine("PieceGenError");
-    //             throw new Exception("Piece generation error: CreatePiece()");
-    //         }
-    //     }
-    //
-    //     return tempPiece;
-    // }
 
     protected static List<T> CreateList<T>(params T[] values)
     {
@@ -353,7 +317,7 @@ public abstract class Piece
         }
     }
 
-    public bool IsMoveValid((int row, int col) inMove)
+    public bool HasMove((int row, int col) inMove)
     {
         foreach (var validSpace in _validMoves)
             if (validSpace.row == inMove.row && validSpace.col == inMove.col)

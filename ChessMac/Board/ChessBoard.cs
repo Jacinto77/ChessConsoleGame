@@ -1,4 +1,5 @@
 using System.ComponentModel.Design;
+using System.Runtime.InteropServices.JavaScript;
 using ChessMac.ChessBoard;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
@@ -121,6 +122,9 @@ public class ChessBoard
         }
     }
 
+    // TODO: change output logic to be based on a larger 2x2 array
+    //  will simplify output and allow for easier modifications later
+    
     // Output Board Display in ASCII to console
     public void OutputBoard()
     {
@@ -172,7 +176,7 @@ public class ChessBoard
     }
 
     // not used switch method to convert H3 input to [2, 7] output
-    public (int row, int col) ConvertPosToIndices((char col, int row) position)
+    public static (int row, int col) ConvertPosToIndices((char col, int row) position)
     {
         var colIndex = -1;
         var rowIndex = -1;
@@ -236,7 +240,7 @@ public class ChessBoard
 
     public bool DestinationValidation(Piece activePiece, Piece.PieceColor colorToMove, (int row, int col) destPos)
     {
-        if (!activePiece.IsMoveValid(destPos))
+        if (!activePiece.HasMove(destPos))
         {
             Console.WriteLine("move is not valid");
             activePiece.PrintValidMoves();
@@ -297,14 +301,16 @@ public class ChessBoard
     //     return BoardPieces[whiteKingPos.row, whiteKingPos.col]!.IsThreatened;
     // }
 
-    public Piece? GetPieceByIndex((int row, int col) piece)
+    public Piece? GetPieceByIndex((int row, int col) inIndex)
     {
-        // if (BoardPieces[piece.row, piece.col]!.Type is PieceType.NULL)
-        // {
-        //     Console.WriteLine("Piece is null: Chessboard.GetPieceByIndex()");
-        //     return new Piece();
-        // }
-
-        return BoardPieces[piece.row, piece.col];
+        try
+        {
+            return BoardPieces[inIndex.row, inIndex.col];
+        }
+        catch (IndexOutOfRangeException)
+        {
+            Console.WriteLine("Value provided is not within the bounds of the chessboard. Returning null.");
+            return null;
+        }
     }
 }
