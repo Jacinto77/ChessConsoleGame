@@ -1,6 +1,6 @@
 using ChessMac.Pieces.Base;
 
-namespace ChessMac.ChessBoard;
+namespace ChessMac.Board;
 
 // TODO: get rid of magic numbers
 
@@ -145,5 +145,15 @@ public static class Methods
 
             Console.WriteLine("Input must be 1-4");
         }
+    }
+    
+    public static bool HasPlayerSelectedCorrectColorPiece(Piece? activePiece, Piece.PieceColor colorToMove)
+    {
+        if (activePiece?.Color != colorToMove)
+        {
+            Console.WriteLine("That ain't your piece");
+            return false;
+        }
+        return true;
     }
 }

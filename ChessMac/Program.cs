@@ -1,5 +1,4 @@
 ﻿using ChessMac.Board;
-using ChessMac.ChessBoard;
 using ChessMac.Pieces.Base;
 
 namespace ChessMac;

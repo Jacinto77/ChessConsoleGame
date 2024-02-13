@@ -1,6 +1,5 @@
 using ChessMac;
 using ChessMac.Board;
-using ChessMac.ChessBoard;
 using ChessMac.Pieces;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
@@ -254,44 +253,113 @@ public class ChessboardTests
     [Test]
     public void PlacePiece_PieceIsPlacedAtPos()
     {
+        var chessboard = new ChessBoard();
+        var testPos = new List<(int row, int col)>
+        {
+            (0, 2),
+            (3, 3),
+            (5, 2)
+        };
+        var testPieces = new List<Piece>
+        {
+            PieceFactory.CreatePiece("Pawn", Piece.PieceColor.Black),
+            PieceFactory.CreatePiece("Rook", Piece.PieceColor.White),
+            PieceFactory.CreatePiece("Queen", Piece.PieceColor.Black)
+        };
+        for (int i = 0; i < testPos.Count; i++)
+        {
+            chessboard.PlacePiece(testPieces[i], testPos[i]);
+        }
+
+        int countPieces = 0;
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                try
+                {
+                    if (chessboard.BoardPieces[row, col] is not null)
+                        countPieces++;
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    continue;
+                }
+            }
+        }
         
+        Assert.That(countPieces, Is.EqualTo(testPos.Count));
+
+        for (int i = 0; i < testPos.Count; i++)
+        {
+            Assert.That(chessboard.BoardPieces[testPos[i].row, testPos[i].col], Is.EqualTo(testPieces[i]));
+        }
     }
 
     [Test]
     public void MovePiece_PieceIsMovedPriorSpaceIsNull()
     {
-        
+        const int limit = 50;
+        var rand = new Random();
+        var chessboard = new ChessBoard();
+        chessboard.PlacePieces();
+
+        int counter = 0;
+        while (counter < limit)
+        {
+            (int row, int col) startPos = (rand.Next(0, 8), rand.Next(0, 8));
+            (int row, int col) destPos = (rand.Next(0, 8), rand.Next(0, 8));
+
+            if (startPos == destPos) continue;
+            
+            Piece? startPiece = chessboard.GetPieceByIndex(startPos);
+            Piece? destPiece = chessboard.GetPieceByIndex(destPos);
+
+            if (startPiece is null) { continue; }
+            
+            var destPosNullFlag = chessboard.GetPieceByIndex(destPos) is null;
+            TestContext.WriteLine($"--Iteration--: {counter + 1}: ");
+            TestContext.WriteLine($"Start piece: {startPiece.GetType()}");
+            TestContext.WriteLine($"Dest is null: {destPiece?.GetType() is null}");
+            
+            chessboard.MovePiece(startPos, destPos, out var discardPiece);
+            
+            TestContext.WriteLine($"{startPos} : {destPos}");
+            TestContext.WriteLine($"{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
+            TestContext.WriteLine($"{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            TestContext.WriteLine($"Taken Piece: {discardPiece?.GetType()}");
+            TestContext.WriteLine("----");
+            
+            Assert.That(discardPiece, Is.EqualTo(destPiece));
+            Assert.That(chessboard.BoardPieces[startPos.row, startPos.col], Is.Null);
+            Assert.That(chessboard.BoardPieces[destPos.row, destPos.col], !Is.Null);
+            counter++;
+        }
     }
 
-    [Test]
-    public void InitialMoveValidation_CorrectlyReturnsBoolOnColorToMove()
-    {
-        
-    }
-
-    [Test]
-    public void DestinationValidation_PieceChecksThatMoveIsValid()
-    {
-        
-    }
-
-    [Test]
-    public void ValidateAndMovePiece_AllChecksPassPieceIsMoved()
-    {
-        
-    }
-
-    [Test]
-    public void AddThreats_AllPiecesHaveThreatsAssigned()
-    {
-        
-    }
-
-    [Test]
-    public void ClearThreats_ThreatsAreRemovedFromTables()
-    {
-        
-    }
+    // [Test]
+    // public void DestinationValidation_PieceChecksThatMoveIsValid()
+    // {
+    //     
+    // }
+    //
+    // [Test]
+    // public void ValidateAndMovePiece_AllChecksPassPieceIsMoved()
+    // {
+    //     
+    // }
+    //
+    // [Test]
+    // public void AddThreats_AllPiecesHaveThreatsAssigned()
+    // {
+    //     
+    // }
+    //
+    // [Test]
+    // public void ClearThreats_ThreatsAreRemovedFromTables()
+    // {
+    //     
+    // }
 
     [Test]
     public void GetPieceByIndex_GetsReferenceToPieceByIndex()

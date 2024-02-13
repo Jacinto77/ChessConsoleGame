@@ -1,6 +1,5 @@
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices.JavaScript;
-using ChessMac.ChessBoard;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
 
@@ -227,17 +226,6 @@ public class ChessBoard
         PlacePiece(null, startPos);
     }
 
-    // TODO: split up prompts for pieceToMove and destPiece input to simplify validation checking
-    public bool InitialMoveValidation(Piece? activePiece, Piece.PieceColor colorToMove, (int row, int col) destPos)
-    {
-        if (activePiece?.Color != colorToMove)
-        {
-            Console.WriteLine("That ain't your piece");
-            return false;
-        }
-        return true;
-    }
-
     public bool DestinationValidation(Piece activePiece, Piece.PieceColor colorToMove, (int row, int col) destPos)
     {
         if (!activePiece.HasMove(destPos))
@@ -252,7 +240,7 @@ public class ChessBoard
     public bool ValidateAndMovePiece(Piece.PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
     {
         Piece? pieceBeingMoved = GetPieceByIndex(startPos);
-        bool isMoveValid = InitialMoveValidation(pieceBeingMoved, colorToMove, destPos);
+        bool isMoveValid = Methods.HasPlayerSelectedCorrectColorPiece(pieceBeingMoved, colorToMove);
         if (isMoveValid == false)
         {
             Console.WriteLine("Destination is not a valid move");

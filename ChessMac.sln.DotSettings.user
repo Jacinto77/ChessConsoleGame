@@ -17,9 +17,14 @@
     &lt;/And&gt;
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.KnightTests.KnightConstructor_ValidMovesArePopulated&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PlacePiece_PieceIsPlacedAtPos&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PlacePieces_AllPiecesAreCorrect&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PlacePiece_PieceIsPlacedAndSaved&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.GeneratePieceMoves_PiecesHaveMovesInValidMoves&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.ClearValidMoves_AllPiecesHaveNoValidMoves&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.MovePiece_PieceIsMovedPriorSpaceIsNull&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.MethodsTests&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=74ed67ac_002Df9c8_002D4f71_002D9c3d_002Dc3e79aec77eb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	</wpf:ResourceDictionary>

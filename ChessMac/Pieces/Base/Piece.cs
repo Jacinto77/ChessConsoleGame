@@ -1,6 +1,5 @@
 using ChessMac.Board;
-using ChessMac.ChessBoard;
-using static ChessMac.ChessBoard.Methods;
+using static ChessMac.Board.Methods;
 
 namespace ChessMac.Pieces.Base;
 
