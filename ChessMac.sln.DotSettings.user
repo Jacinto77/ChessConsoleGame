@@ -24,6 +24,12 @@
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.ClearValidMoves_AllPiecesHaveNoValidMoves&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.MovePiece_PieceIsMovedPriorSpaceIsNull&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.MethodsTests&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.DestinationValidation_PieceChecksThatMoveIsValid&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PieceTests.HasMove_ReturnsFalseForInvalidMoves&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PieceTests.HasMove_ReturnsTrueForValidMoves&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PopulateActivePiecesList_AllPiecesAreAdded&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.InitializeActivePieces_AllPiecesAddedToList&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PopulateBoardPieces_AllPiecesAreAdded&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>

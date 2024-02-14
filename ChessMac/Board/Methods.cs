@@ -147,13 +147,10 @@ public static class Methods
         }
     }
     
-    public static bool HasPlayerSelectedCorrectColorPiece(Piece? activePiece, Piece.PieceColor colorToMove)
+    public static bool IsPieceCorrectColor(Piece? activePiece, Piece.PieceColor colorToMove)
     {
-        if (activePiece?.Color != colorToMove)
-        {
-            Console.WriteLine("That ain't your piece");
-            return false;
-        }
-        return true;
+        if (activePiece?.Color == colorToMove) return true;
+        Console.WriteLine("That ain't your piece");
+        return false;
     }
 }

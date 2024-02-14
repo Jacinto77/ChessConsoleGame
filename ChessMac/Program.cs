@@ -62,8 +62,7 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
-
-
+            board.PopulateBoardPieces();
             board.OutputBoard();
 
             board.ClearValidMoves();

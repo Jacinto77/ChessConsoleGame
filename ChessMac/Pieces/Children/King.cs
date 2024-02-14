@@ -19,14 +19,19 @@ public class King : Piece
         SetCastlePositions(inColor);
     }
 
+    public King(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
+    {
+        SetCastlePositions(inColor);
+    }
+
     public King(PieceColor inColor, PieceType inType) : base(inColor, inType)
     {
         SetCastlePositions(inColor);
     }
 
     public King(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened) : 
-        base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened)
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
     {
         SetCastlePositions(inColor);
     }
@@ -34,7 +39,7 @@ public class King : Piece
     public override Piece Clone()
     {
         return new King(this.Type, this.Color, this.GetValidMoveList(), this.Icon, this.HasMoved, this.IsPinned,
-            this.MoveCounter, this.IsThreatened);
+            this.MoveCounter, this.IsThreatened, this.Position);
     }
     /*
      * Check if king has moved, if yes, no castle

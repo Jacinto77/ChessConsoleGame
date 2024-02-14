@@ -25,7 +25,7 @@ public class KnightTests
                 validMoveInitialization[2],
                 validMoveInitialization[3],
             },
-            Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false);
+            Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false, null);
         
         Assert.That(knight.GetValidMoveList(), Has.Count.EqualTo(validMoveInitialization.Count));
         Assert.That(knight.GetValidMoveList()[0], Is.EqualTo(validMoveInitialization[0]));

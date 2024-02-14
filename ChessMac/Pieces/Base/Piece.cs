@@ -42,6 +42,12 @@ public abstract class Piece
         Color = inColor;
     }
 
+    protected Piece(PieceColor inColor, (int row, int col) inPosition)
+    {
+        Color = inColor;
+        Position = inPosition;
+    }
+
     public Piece(PieceColor inColor, PieceType inType)
     {
         Color = inColor;
@@ -60,7 +66,7 @@ public abstract class Piece
     // }
     
     public Piece(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened)
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition)
     {
         Type = inType;
         Color = inColor;
@@ -70,6 +76,8 @@ public abstract class Piece
         IsPinned = inIsPinned;
         MoveCounter = inMoveCounter;
         IsThreatened = inIsThreatened;
+
+        Position = inPosition;
     }
 
     public abstract Piece Clone();
@@ -94,6 +102,8 @@ public abstract class Piece
         { PieceType.King, '\u265A' }
     };
 
+    public (int row, int col)? Position { get; private set; }
+    
     public const char EmptySpaceIcon = '\u2610';
 
     private List<(int row, int col)> _validMoves = new();
@@ -107,6 +117,11 @@ public abstract class Piece
     public int MoveCounter { get; protected set; }
     public bool IsThreatened { get; protected set; }
 
+    public void UpdatePosition((int row, int col)? inPosition)
+    {
+        this.Position = inPosition;
+    }
+    
     public void SetHasMoved()
     {
         HasMoved = true;
@@ -190,9 +205,13 @@ public abstract class Piece
         pieceCopy.SetIsPinned(this.IsPinned);
         pieceCopy.SetMoveCounter(this.MoveCounter);
         
+        pieceCopy.UpdatePosition(this.Position);
+        
         _validMoves = new List<(int row, int col)>();
         
-        foreach (var move in _validMoves) pieceCopy.AddValidMove(move);
+        foreach (var move in _validMoves) 
+            pieceCopy.AddValidMove(move);
+        
         return pieceCopy;
     }
 
@@ -319,8 +338,12 @@ public abstract class Piece
     public bool HasMove((int row, int col) inMove)
     {
         foreach (var validSpace in _validMoves)
+        {
             if (validSpace.row == inMove.row && validSpace.col == inMove.col)
                 return true;
+            if (validSpace == inMove)
+                Console.WriteLine("Can do simple equality ya dummy");
+        }
 
         return false;
     }
@@ -347,84 +370,10 @@ public abstract class Piece
         Console.Write(">");
     }
 
-    // public Piece? ScanSpacesHorizVert(int inRowOffset, int inColOffset, int range, 
-    //     PieceType threatType1, PieceType threatType2, ChessBoard inBoard)
-    // {
-    //     Piece? pieceToReturn = null;
-    //     
-    //     int currentCol = ColIndex;
-    //     int currentRow = RowIndex;
-    //     int timeToLive = 2;
-    //     
-    //     for (int i = 1; i < range; i++)
-    //     {
-    //         int tempRow = currentRow + (i * inRowOffset); 
-    //         int tempCol = currentCol + (i * inColOffset);
-    //         Tuple<int, int> tempLocation = new Tuple<int, int>(tempRow, tempCol);
-    //         Space? tempSpace = inBoard.GetSpace(tempLocation);
-    //
-    //         if (!tempSpace.HasPiece) continue;
-    //         
-    //         timeToLive--;
-    //         if (timeToLive == 0 && (tempSpace.Piece!.Type == threatType1
-    //                                 || tempSpace.Piece.Type == threatType2))
-    //             return pieceToReturn;
-    //         pieceToReturn = tempSpace.Piece;
-    //     }
-    //     return null;
-    // }
-    //
-    // public Piece? ScanSpacesDiagonal(int inRowOffset, int inColOffset, int range1, int range2, 
-    //     PieceType threatType1, PieceType threatType2, ChessBoard inBoard)
-    // {
-    //     Piece? pieceToReturn = null;
-    //
-    //     int currentCol = ColIndex;
-    //     int currentRow = RowIndex;
-    //     int timeToLive = 2;
-    //     for (int i = 1; i < range1 && i < range2; i++)
-    //     {
-    //         int tempRow = currentRow + (i * inRowOffset); 
-    //         int tempCol = currentCol + (i * inColOffset);
-    //         Tuple<int, int> tempLocation = new Tuple<int, int>(tempRow, tempCol);
-    //         Space? tempSpace = inBoard.GetSpace(tempLocation);
-    //
-    //         if (!tempSpace.HasPiece) continue;
-    //         
-    //         timeToLive--;
-    //         if (timeToLive == 0 && (tempSpace.Piece!.Type == threatType1
-    //                                 || tempSpace.Piece.Type == threatType2))
-    //             return pieceToReturn;
-    //         pieceToReturn = tempSpace.Piece;
-    //     }
-    //     return null;
-    // }
-    //
-    // public void ScanForPinnedPiece(ChessBoard inBoard)
-    // {
-    //     int rangeUp = RowIndex + 1;
-    //     int rangeDown = 8 - RowIndex;
-    //     int rangeNeg = ColIndex + 1;
-    //     int rangePos = 8 - ColIndex;
-    //
-    //     List<Piece?> pinnedPieces = new List<Piece?>();
-    //     // scan horiz and vert
-    //     pinnedPieces.Add(ScanSpacesHorizVert(-1, 0, rangeUp,
-    //         PieceType.Queen, PieceType.Rook, inBoard));
-    //     pinnedPieces.Add(ScanSpacesHorizVert(1, 0, rangeDown,
-    //         PieceType.Queen, PieceType.Rook, inBoard));
-    //     pinnedPieces.Add(ScanSpacesHorizVert(0, 1, rangePos,
-    //         PieceType.Queen, PieceType.Rook, inBoard));
-    //     pinnedPieces.Add(ScanSpacesHorizVert(0, -1, rangeNeg,
-    //         PieceType.Queen, PieceType.Rook, inBoard));
-    //     
-    //     // scan diagonally
-    //     pinnedPieces.Add(ScanSpacesDiagonal(-1, 1, rangeUp, rangePos,
-    //         PieceType.Queen, PieceType.Bishop, inBoard));
-    //     pinnedPieces.Add(ScanSpacesDiagonal(1, 1, rangeDown, rangePos,
-    //         PieceType.Queen, PieceType.Bishop, inBoard));
-    //     pinnedPieces.Add(ScanSpacesDiagonal(-1, -1, rangeUp, rangeNeg,
-    //         PieceType.Queen, PieceType.Bishop, inBoard));
-    //     pinnedPieces.Add(ScanSpacesDiagonal(1, -1, rangeDown, rangeNeg,
-    //         PieceType.Queen, PieceType.Bishop, inBoard));
+    public bool IsColorToMove(PieceColor colorToMove)
+    {
+        if (this.Color == colorToMove) return true;
+        Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
+        return false;
+    }
 }

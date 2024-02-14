@@ -11,30 +11,32 @@ using static Methods;
 public class MethodsTests
 {
     [Test]
-    public void HasPlayerSelectedCorrectColorPiece_CorrectlyReturnsBoolOnColorToMove()
+    public void IsPieceCorrectColor_CorrectlyReturnsBoolOnColorToMove()
     {
-        Piece activePiece; 
-        PieceColor colorToMove;
-        
         var counter = 0;
-        var limit = 10;
+        const int limit = 10;
+        
         while (counter < limit)
         {
+            Piece activePiece; 
+            PieceColor colorToMove;
+            
             var rand = new Random();
             var flip = rand.Next(0, 2);
+            
             PieceColor colorOfPiece = flip == 0 ? PieceColor.Black : PieceColor.White;
             activePiece = CreatePiece("Pawn", colorOfPiece);
             
             colorToMove = PieceColor.Black;
             if (colorOfPiece == colorToMove)
             {
-                Assert.IsTrue(HasPlayerSelectedCorrectColorPiece(activePiece, colorToMove));
+                Assert.IsTrue(IsPieceCorrectColor(activePiece, colorToMove));
                 TestContext.WriteLine($"Color to move: {colorToMove}");
                 TestContext.WriteLine($"Color of Piece: {activePiece.Color}");
             }
             else
             {
-                Assert.IsFalse(HasPlayerSelectedCorrectColorPiece(activePiece, colorToMove));
+                Assert.IsFalse(IsPieceCorrectColor(activePiece, colorToMove));
                 TestContext.WriteLine($"Color to move: {colorToMove}");
                 TestContext.WriteLine($"Color of Piece: {activePiece.Color}");
             }
@@ -42,13 +44,13 @@ public class MethodsTests
             colorToMove = PieceColor.White;
             if (colorOfPiece == colorToMove)
             {
-                Assert.IsTrue(HasPlayerSelectedCorrectColorPiece(activePiece, colorToMove));
+                Assert.IsTrue(IsPieceCorrectColor(activePiece, colorToMove));
                 TestContext.WriteLine($"Color to move: {colorToMove}");
                 TestContext.WriteLine($"Color of Piece: {activePiece.Color}");
             }
             else
             {
-                Assert.IsFalse(HasPlayerSelectedCorrectColorPiece(activePiece, colorToMove));
+                Assert.IsFalse(IsPieceCorrectColor(activePiece, colorToMove));
                 TestContext.WriteLine($"Color to move: {colorToMove}");
                 TestContext.WriteLine($"Color of Piece: {activePiece.Color}");
             }

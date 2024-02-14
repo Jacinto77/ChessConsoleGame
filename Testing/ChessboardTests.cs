@@ -336,25 +336,53 @@ public class ChessboardTests
             counter++;
         }
     }
+    
+    [Test]
+    public void ValidateAndMovePiece_AllChecksPassPieceIsMoved()
+    {
+        
+    }
+    
+    [Test]
+    public void AddThreats_AllPiecesHaveThreatsAssigned()
+    {
+        
+    }
 
-    // [Test]
-    // public void DestinationValidation_PieceChecksThatMoveIsValid()
-    // {
-    //     
-    // }
-    //
-    // [Test]
-    // public void ValidateAndMovePiece_AllChecksPassPieceIsMoved()
-    // {
-    //     
-    // }
-    //
-    // [Test]
-    // public void AddThreats_AllPiecesHaveThreatsAssigned()
-    // {
-    //     
-    // }
-    //
+    [Test]
+    public void InitializeActivePieces_AllPiecesAddedToList()
+    {
+        var chessboard = new ChessBoard();
+        chessboard.InitializeActivePieces();
+        
+        Assert.That(chessboard.ActivePieces, Has.Count.EqualTo(32));
+        //Assert.That(chessboard.BoardPieces[0, 0]!.Type, Is.EqualTo(Piece.PieceType.Rook));
+
+        foreach (var piece in chessboard.ActivePieces)
+        {
+            Assert.That(piece, !Is.Null);
+        }
+    }
+    
+    [Test]
+    public void PopulateBoardPieces_AllPiecesAreAdded()
+    {
+        var chessboard = new ChessBoard();
+        chessboard.InitializeActivePieces();
+        
+        chessboard.PopulateBoardPieces();
+        
+        for (int row = 0; row < chessboard.BoardPieces.GetLength(0); row++)
+        {
+            for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+            {
+                if (chessboard.BoardPieces[row, col] is null) continue;
+                Assert.Contains(chessboard.BoardPieces[row, col], chessboard.ActivePieces);
+                TestContext.WriteLine($"{chessboard.BoardPieces[row, col]}");
+            }
+        }
+    }
+    
     // [Test]
     // public void ClearThreats_ThreatsAreRemovedFromTables()
     // {
