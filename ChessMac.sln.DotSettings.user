@@ -30,6 +30,7 @@
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PopulateActivePiecesList_AllPiecesAreAdded&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.InitializeActivePieces_AllPiecesAddedToList&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.PopulateBoardPieces_AllPiecesAreAdded&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.ClearThreats_ThreatsAreRemovedFromBoard&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>

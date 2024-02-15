@@ -22,10 +22,11 @@ public class Pawn : Piece
     public Pawn(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
         SetPawnDirection(inColor);
+        AssignIconByColor(inColor, PieceType.Pawn);
     }
 
     public Pawn(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
         base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
     {
         SetPawnDirection(inColor);
@@ -35,8 +36,19 @@ public class Pawn : Piece
 
     public override Piece Clone()
     {
-        return new Pawn(this.Type, this.Color, this.GetValidMoveList(), this.Icon, this.HasMoved, this.IsPinned,
-            this.MoveCounter, this.IsThreatened, this.Position);
+        var clonedPawn = new Pawn(
+            this.Type, 
+            this.Color, 
+            this.GetValidMoveList(), 
+            this.Icon, 
+            this.HasMoved,
+            this.IsPinned,
+            this.MoveCounter, 
+            this.IsThreatened, 
+            this.Position);
+
+        clonedPawn.Direction = this.Direction;
+        return clonedPawn;
     }
     
     public override Piece DeepCopy()
@@ -57,11 +69,11 @@ public class Pawn : Piece
     private void CheckAndAddDiagonal((int row, int col) diagonal, Board.ChessBoard inBoard)
     {
         if (IsWithinBoard(diagonal)
-            && inBoard.BoardPieces[diagonal.row, diagonal.col] is null
+            && inBoard.BoardPieces[diagonal.row, diagonal.col] is not null
             && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
         {
             AddValidMove(diagonal);
-            inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
+            //inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
         }
     }
 
@@ -74,23 +86,23 @@ public class Pawn : Piece
 
         if (horizPiece is null || horizPiece.Type != PieceType.Pawn)
             return;
-        if (horizPiece.MoveCounter != 1 || diagPiece is null)
+        if (horizPiece.MoveCounter != 1 || diagPiece is not null)
             return;
 
         AddValidMove(diagonal);
-        inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
+        //inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
     }
 
-    public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public override void GenerateValidMoves(Board.ChessBoard inBoard)
     {
-        base.GenerateValidMoves(inBoard, currentRow, currentCol);
+        base.GenerateValidMoves(inBoard);
 
-        (int row, int col) forwardOne = new(currentRow + Direction * 1, currentCol);
-        (int row, int col) forwardTwo = new(currentRow + Direction * 2, currentCol);
-        (int row, int col) diagPos = new(currentRow + Direction * 1, currentCol + 1);
-        (int row, int col) diagNeg = new(currentRow + Direction * 1, currentCol - 1);
-        (int row, int col) horizPos = new(currentRow, currentCol + 1);
-        (int row, int col) horizNeg = new(currentRow, currentCol - 1);
+        (int row, int col) forwardOne = new (Position.row + Direction * 1, Position.col);
+        (int row, int col) forwardTwo = new (Position.row + Direction * 2, Position.col);
+        (int row, int col) diagPos =    new (Position.row + Direction * 1, Position.col + 1);
+        (int row, int col) diagNeg =    new (Position.row + Direction * 1, Position.col - 1);
+        (int row, int col) horizPos =   new (Position.row, Position.col + 1);
+        (int row, int col) horizNeg =   new (Position.row, Position.col - 1);
 
         if (IsWithinBoard(forwardOne)
             && inBoard.BoardPieces[forwardOne.row, forwardOne.col] is null)

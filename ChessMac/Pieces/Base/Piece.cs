@@ -66,7 +66,7 @@ public abstract class Piece
     // }
     
     public Piece(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition)
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition)
     {
         Type = inType;
         Color = inColor;
@@ -102,7 +102,7 @@ public abstract class Piece
         { PieceType.King, '\u265A' }
     };
 
-    public (int row, int col)? Position { get; private set; }
+    public (int row, int col) Position { get; private set; }
     
     public const char EmptySpaceIcon = '\u2610';
 
@@ -117,7 +117,7 @@ public abstract class Piece
     public int MoveCounter { get; protected set; }
     public bool IsThreatened { get; protected set; }
 
-    public void UpdatePosition((int row, int col)? inPosition)
+    public void UpdatePosition((int row, int col) inPosition)
     {
         this.Position = inPosition;
     }
@@ -260,7 +260,7 @@ public abstract class Piece
     }
 
     // generates all valid moves
-    public virtual void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public virtual void GenerateValidMoves(ChessBoard inBoard)
     {
     }
 

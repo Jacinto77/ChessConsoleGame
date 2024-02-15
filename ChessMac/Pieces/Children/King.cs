@@ -22,6 +22,7 @@ public class King : Piece
     public King(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
         SetCastlePositions(inColor);
+        AssignIconByColor(inColor, PieceType.King);
     }
 
     public King(PieceColor inColor, PieceType inType) : base(inColor, inType)
@@ -30,7 +31,7 @@ public class King : Piece
     }
 
     public King(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
         base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
     {
         SetCastlePositions(inColor);
@@ -184,18 +185,18 @@ public class King : Piece
         return (canKingCastle, canQueenCastle);
     }
     
-    public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public override void GenerateValidMoves(Board.ChessBoard inBoard)
     {
         List<(int row, int col)> tempMoves = new List<(int row, int col)>
         {
-            (currentRow + 1, currentCol),
-            (currentRow + 1, currentCol + 1),
-            (currentRow + 1, currentCol - 1),
-            (currentRow,     currentCol + 1),
-            (currentRow,     currentCol - 1),
-            (currentRow - 1, currentCol),
-            (currentRow - 1, currentCol + 1),
-            (currentRow - 1, currentCol - 1)
+            (Position.row + 1, Position.col),
+            (Position.row + 1, Position.col + 1),
+            (Position.row + 1, Position.col - 1),
+            (Position.row,     Position.col + 1),
+            (Position.row,     Position.col - 1),
+            (Position.row - 1, Position.col),
+            (Position.row - 1, Position.col + 1),
+            (Position.row - 1, Position.col - 1)
         };
 
         foreach (var move in tempMoves)

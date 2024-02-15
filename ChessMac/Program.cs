@@ -45,14 +45,10 @@ internal static class Program
 {
     private static void Main()
     {
-        var board = new Board.ChessBoard();
-        //board.TestingPlacePieces();
-        board.PlacePieces();
-
-        // debugging
-        // board.PlacePiece(new Queen(PieceColor.White), (4, 4));
-
-        //board.OutputBoard();
+        var board = new ChessBoard();
+        
+        board.InitializeActivePieces();
+        board.PopulateBoardPieces();
 
         var moveCounter = 1;
         while (true)
@@ -72,9 +68,7 @@ internal static class Program
             board.AddThreats();
 
             var tempBoard = board.DeepCopy();
-            var colorToMove = moveCounter % 2 != 0
-                ? Piece.PieceColor.White
-                : Piece.PieceColor.Black;
+            var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
             // TODO change user input logic and validation to handle different methods of piece choice
             // and move selection. will need to also handle help prompts among others
@@ -99,8 +93,8 @@ internal static class Program
             {
                 continue;
             }
-            activePiece?.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
-            activePiece?.PrintValidMoves();
+            // activePiece?.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
+            // activePiece?.PrintValidMoves();
             moveCounter++;
             //board.OutputBoard();
         }

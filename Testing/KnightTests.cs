@@ -9,6 +9,10 @@ public class KnightTests
     [Test]
     public void KnightConstructor_ValidMovesArePopulated()
     {
+        Piece knight = new Knight(Piece.PieceType.Knight, Piece.PieceColor.White, 
+            new List<(int row, int col)>(),
+        Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false, (-1, -1));
+        
         List<(int row, int col)> validMoveInitialization = new List<(int row, int col)>
         {
             (0, 0),
@@ -16,16 +20,8 @@ public class KnightTests
             (7, 7),
             (4, 5)
         };
-        
-        Piece knight = new Knight(Piece.PieceType.Knight, Piece.PieceColor.White, 
-            new List<(int row, int col)>
-            {
-                validMoveInitialization[0], 
-                validMoveInitialization[1],
-                validMoveInitialization[2],
-                validMoveInitialization[3],
-            },
-            Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false, null);
+
+        knight.SetValidMoveList(validMoveInitialization);
         
         Assert.That(knight.GetValidMoveList(), Has.Count.EqualTo(validMoveInitialization.Count));
         Assert.That(knight.GetValidMoveList()[0], Is.EqualTo(validMoveInitialization[0]));

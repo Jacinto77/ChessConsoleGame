@@ -15,10 +15,11 @@ public class Knight : Piece
     
     public Knight(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
+        AssignIconByColor(inColor, PieceType.Knight);
     }
     
     public Knight(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
         base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
     {
     }
@@ -29,7 +30,7 @@ public class Knight : Piece
             this.MoveCounter, this.IsThreatened, this.Position);
     }
 
-    public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public override void GenerateValidMoves(Board.ChessBoard inBoard)
     {
         // List<(int row, int col)> tempMoves = CreateList(
         //     (currentRow + 2, currentCol + 1),
@@ -43,14 +44,14 @@ public class Knight : Piece
         // );
         List<(int row, int col)> tempMoves = new List<(int row, int col)>
         { 
-            (currentRow + 2, currentCol + 1), 
-            (currentRow + 2, currentCol - 1),
-            (currentRow - 2, currentCol + 1),
-            (currentRow - 2, currentCol - 1),
-            (currentRow + 1, currentCol + 2),
-            (currentRow + 1, currentCol - 2),
-            (currentRow - 1, currentCol + 2),
-            (currentRow - 1, currentCol - 2)
+            (Position.row + 2, Position.col + 1), 
+            (Position.row + 2, Position.col - 1),
+            (Position.row - 2, Position.col + 1),
+            (Position.row - 2, Position.col - 1),
+            (Position.row + 1, Position.col + 2),
+            (Position.row + 1, Position.col - 2),
+            (Position.row - 1, Position.col + 2),
+            (Position.row - 1, Position.col - 2)
         };
 
         foreach (var possiblePosition in tempMoves)

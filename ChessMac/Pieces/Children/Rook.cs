@@ -16,11 +16,11 @@ public class Rook : Piece
     
     public Rook(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
-        
+        AssignIconByColor(inColor, PieceType.Rook);   
     }
     
     public Rook(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
         base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
     {
     }
@@ -41,8 +41,8 @@ public class Rook : Piece
         return !HasMoved;
     }
 
-    public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public override void GenerateValidMoves(Board.ChessBoard inBoard)
     {
-        GenerateRookMoves(inBoard, currentRow, currentCol);
+        GenerateRookMoves(inBoard, Position.row, Position.col);
     }
 }

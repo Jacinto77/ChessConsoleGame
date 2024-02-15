@@ -148,24 +148,34 @@ public class ChessboardTests
     public void GeneratePieceMoves_PiecesHaveMovesInValidMoves()
     {
         var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
+        chessboard.PopulateBoardPieces();
         
         //TODO add a testing board with pieces in various other positions
         chessboard.GeneratePieceMoves();
         
         bool hasMoves = false;
-        
-        for (var row = 0; row < 8; row++)
+
+        foreach (var piece in chessboard.ActivePieces)
         {
-            for (var col = 0; col < 8; col++)
-            {
-                if (chessboard.BoardPieces[row, col]?.GetValidMoveList().Count > 0)
-                    hasMoves = true;
-                TestContext.Write($"{row}, {col}: \t");
-                TestContext.WriteLine($"{chessboard.BoardPieces[row, col]?.GetType()} " +
-                                      $"{chessboard.BoardPieces[row, col]?.GetValidMoveList()}");
-            }
+            if (piece.GetValidMoveList().Count > 0)
+                hasMoves = true;
+            TestContext.Write($"{Methods.ConvertIndexToPos(piece.Position)}: \t");
+            TestContext.WriteLine($"{piece.GetType()} " +
+                                  $"{piece.GetValidMoveList().Count}");
         }
+        
+        // for (var row = 0; row < 8; row++)
+        // {
+        //     for (var col = 0; col < 8; col++)
+        //     {
+        //         if (chessboard.BoardPieces[row, col]?.GetValidMoveList().Count > 0)
+        //             hasMoves = true;
+        //         TestContext.Write($"{row}, {col}: \t");
+        //         TestContext.WriteLine($"{chessboard.BoardPieces[row, col]?.GetType()} " +
+        //                               $"{chessboard.BoardPieces[row, col]?.GetValidMoveList()}");
+        //     }
+        // }
         Assert.That(hasMoves, Is.True);
         
     }
@@ -174,7 +184,8 @@ public class ChessboardTests
     public void ClearValidMoves_AllPiecesHaveNoValidMoves()
     {
         var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
+        chessboard.PopulateBoardPieces();
         chessboard.GeneratePieceMoves();
         
         
@@ -383,11 +394,44 @@ public class ChessboardTests
         }
     }
     
-    // [Test]
-    // public void ClearThreats_ThreatsAreRemovedFromTables()
-    // {
-    //     
-    // }
+    [Test]
+    public void ClearThreats_ThreatsAreRemovedFromBoard()
+    {
+        //TODO
+        var chessboard = new ChessBoard();
+        
+        chessboard.PlacePieces();
+        chessboard.GeneratePieceMoves();
+        chessboard.AddThreats();
+        for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
+        for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+        {
+            var piece = chessboard.BoardPieces[row, col];
+            if (piece is null) continue;
+            
+            TestContext.Write($"{piece.IsThreatened}\t");
+            TestContext.WriteLine($"{piece.Type}");
+            foreach (var move in piece.GetValidMoveList())
+            {
+                TestContext.WriteLine($"{Methods.ConvertIndexToPos(move)}\n---");
+            }
+        }
+        
+        chessboard.ClearThreats();
+        for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
+        for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+        {
+            var piece = chessboard.BoardPieces[row, col];
+            if (piece is null) continue;
+            
+            TestContext.Write($"{piece.IsThreatened}\t");
+            TestContext.WriteLine($"{piece.Type}");
+            foreach (var move in piece.GetValidMoveList())
+            {
+                TestContext.WriteLine($"{Methods.ConvertIndexToPos(move)}\n---");
+            }
+        }
+    }
 
     [Test]
     public void GetPieceByIndex_GetsReferenceToPieceByIndex()

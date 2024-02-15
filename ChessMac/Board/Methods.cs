@@ -55,11 +55,15 @@ public static class Methods
         return pieceMove;
     }
 
-    public static string ConvertIndexToPos((int row, int col) inIndex)
+    public static string ConvertIndexToPos((int row, int col)? inIndex)
     {
-        string? row = null;
-        string? column = null;
-        row = inIndex.row switch
+        if (!inIndex.HasValue)
+            return "null";
+        var index = inIndex.Value;
+        
+        string row = "";
+        string column = "";
+        row = index.row switch
         {
             0 => "8",
             1 => "7",
@@ -71,7 +75,7 @@ public static class Methods
             7 => "1",
             _ => row
         };
-        column = inIndex.Item2 switch
+        column = index.Item2 switch
         {
             0 => "A",
             1 => "B",

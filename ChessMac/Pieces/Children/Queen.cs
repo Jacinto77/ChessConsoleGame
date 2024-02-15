@@ -16,10 +16,11 @@ public class Queen : Piece
     
     public Queen(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
+        AssignIconByColor(inColor, PieceType.Queen);
     }
     
     public Queen(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col)? inPosition) : 
+        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
         base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition) {}
 
     public override Piece Clone()
@@ -29,12 +30,12 @@ public class Queen : Piece
     }
 
     // TODO make methods into extensions
-    public override void GenerateValidMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public override void GenerateValidMoves(Board.ChessBoard inBoard)
     {
         ClearValidMoves();
-        GenerateRookMoves(inBoard, currentRow, currentCol);
+        GenerateRookMoves(inBoard, this.Position.row, Position.col);
         // TODO: rook moves are being cleared from the list of valid moves or GenBishopMoves is overwriting them?
         // TODO: perhaps the deepcopy isn't working properly for the pieces?
-        GenerateBishopMoves(inBoard, currentRow, currentCol);
+        GenerateBishopMoves(inBoard, Position.row, Position.col);
     }
 }
