@@ -36,11 +36,9 @@ using static Methods;
  * 
  */
 // TODO: visualization and debugging, testing methods to output board states and data
-
 // TODO: validate all current working methods and functions
 // TODO: refactor everything as needed
-// TODO: turn all Tuple<int, int> into ValueTuples<int row, int col>
-// TODO: test all methods
+
 internal static class Program
 {
     private static void Main()
@@ -48,7 +46,6 @@ internal static class Program
         var board = new ChessBoard();
         
         board.InitializeActivePieces();
-        board.PopulateBoardPieces();
 
         var moveCounter = 1;
         while (true)
@@ -59,27 +56,27 @@ internal static class Program
                 return;
             }
             board.PopulateBoardPieces();
+            board.AddAllPiecesToPositionDictionary();
             board.OutputBoard();
 
             board.ClearValidMoves();
-            board.ClearThreats();
+            board.ClearAllPositionThreats(); // TODO replace with dictionary check
 
             board.GeneratePieceMoves();
-            board.AddThreats();
+            board.AddAllPositionThreats(); // TODO replace with dictionary
 
             var tempBoard = board.DeepCopy();
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
-            // TODO change user input logic and validation to handle different methods of piece choice
-            // and move selection. will need to also handle help prompts among others
+            // TODO change user input logic and validation to handle different methods of piece choice and move selection. will need to also handle help prompts among others
             
             var parsedInput = GetPlayerMove();
-            // TODO add validation for destinationPiece separate from pieceChoice
+            // TODO add validation for destinationPiece separate from pieceChoice when going to promote a piece
             var startPiecePos = ConvertPosToIndex(parsedInput.pieceToMove);
             var destPiecePos = ConvertPosToIndex(parsedInput.moveDestination);
 
-            var activePiece = board.GetPieceByIndex(startPiecePos);
-            //activePiece.PrintValidMoves();
+            var activePiece = board.GetPieceByPosition(startPiecePos);
+            
             if (activePiece is null) continue;
             
             Piece? takenPiece;
@@ -91,12 +88,10 @@ internal static class Program
             }
             else
             {
+                // TODO error checking here
                 continue;
             }
-            // activePiece?.GenerateValidMoves(board, destPiecePos.row, destPiecePos.col);
-            // activePiece?.PrintValidMoves();
             moveCounter++;
-            //board.OutputBoard();
         }
     }
 }

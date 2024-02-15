@@ -92,27 +92,27 @@ public class ChessboardTests
         }
     }
 
-    [Test]
-    public void PlacePiece_PieceIsPlacedAndSaved()
-    {
-        var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
-        
-        var piece = PieceFactory.CreatePiece(Piece.PieceType.Pawn.ToString(), Piece.PieceColor.Black);
-        (int row, int col) piecePos = (4, 4);
-        
-        chessboard.PlacePiece(piece, piecePos);
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Type, Is.EqualTo(piece.Type));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Icon, Is.EqualTo(piece.Icon));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Color, Is.EqualTo(piece.Color));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.IsThreatened, Is.EqualTo(piece.IsThreatened));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.MoveCounter, Is.EqualTo(piece.MoveCounter));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.HasMoved, Is.EqualTo(piece.HasMoved));
-        Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.IsPinned, Is.EqualTo(piece.IsPinned));
-        
-        TestContext.WriteLine($"{chessboard.BoardPieces[piecePos.row, piecePos.col]?.GetType()} | {piece.GetType()}");
-
-    }
+    // [Test]
+    // public void PlacePiece_PieceIsPlacedAndSaved()
+    // {
+    //     var chessboard = new ChessBoard();
+    //     chessboard.PlacePieces();
+    //     
+    //     var piece = PieceFactory.CreatePiece(Piece.PieceType.Pawn.ToString(), Piece.PieceColor.Black);
+    //     (int row, int col) piecePos = (4, 4);
+    //     
+    //     chessboard.PlacePiece(piece, piecePos);
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Type, Is.EqualTo(piece.Type));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Icon, Is.EqualTo(piece.Icon));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.Color, Is.EqualTo(piece.Color));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.IsThreatened, Is.EqualTo(piece.IsThreatened));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.MoveCounter, Is.EqualTo(piece.MoveCounter));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.HasMoved, Is.EqualTo(piece.HasMoved));
+    //     Assert.That(chessboard.BoardPieces[piecePos.row, piecePos.col]?.IsPinned, Is.EqualTo(piece.IsPinned));
+    //     
+    //     TestContext.WriteLine($"{chessboard.BoardPieces[piecePos.row, piecePos.col]?.GetType()} | {piece.GetType()}");
+    //
+    // }
     
     [Test]
     public void DeepCopy_AllPiecesAreCopied()
@@ -190,7 +190,7 @@ public class ChessboardTests
         
         
         bool hasMoves = false;
-        chessboard.AddThreats();
+        chessboard.AddAllPositionThreats();
         chessboard.ClearValidMoves();
         
         for (var row = 0; row < 8; row++)
@@ -261,51 +261,51 @@ public class ChessboardTests
         Assert.That(IsWithinBoard(testInputs[7]), Is.False);
     }
 
-    [Test]
-    public void PlacePiece_PieceIsPlacedAtPos()
-    {
-        var chessboard = new ChessBoard();
-        var testPos = new List<(int row, int col)>
-        {
-            (0, 2),
-            (3, 3),
-            (5, 2)
-        };
-        var testPieces = new List<Piece>
-        {
-            PieceFactory.CreatePiece("Pawn", Piece.PieceColor.Black),
-            PieceFactory.CreatePiece("Rook", Piece.PieceColor.White),
-            PieceFactory.CreatePiece("Queen", Piece.PieceColor.Black)
-        };
-        for (int i = 0; i < testPos.Count; i++)
-        {
-            chessboard.PlacePiece(testPieces[i], testPos[i]);
-        }
-
-        int countPieces = 0;
-        for (int row = 0; row < 8; row++)
-        {
-            for (int col = 0; col < 8; col++)
-            {
-                try
-                {
-                    if (chessboard.BoardPieces[row, col] is not null)
-                        countPieces++;
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    continue;
-                }
-            }
-        }
-        
-        Assert.That(countPieces, Is.EqualTo(testPos.Count));
-
-        for (int i = 0; i < testPos.Count; i++)
-        {
-            Assert.That(chessboard.BoardPieces[testPos[i].row, testPos[i].col], Is.EqualTo(testPieces[i]));
-        }
-    }
+    // [Test]
+    // public void PlacePiece_PieceIsPlacedAtPos()
+    // {
+    //     var chessboard = new ChessBoard();
+    //     var testPos = new List<(int row, int col)>
+    //     {
+    //         (0, 2),
+    //         (3, 3),
+    //         (5, 2)
+    //     };
+    //     var testPieces = new List<Piece>
+    //     {
+    //         PieceFactory.CreatePiece("Pawn", Piece.PieceColor.Black),
+    //         PieceFactory.CreatePiece("Rook", Piece.PieceColor.White),
+    //         PieceFactory.CreatePiece("Queen", Piece.PieceColor.Black)
+    //     };
+    //     for (int i = 0; i < testPos.Count; i++)
+    //     {
+    //         chessboard.PlacePiece(testPieces[i], testPos[i]);
+    //     }
+    //
+    //     int countPieces = 0;
+    //     for (int row = 0; row < 8; row++)
+    //     {
+    //         for (int col = 0; col < 8; col++)
+    //         {
+    //             try
+    //             {
+    //                 if (chessboard.BoardPieces[row, col] is not null)
+    //                     countPieces++;
+    //             }
+    //             catch (IndexOutOfRangeException)
+    //             {
+    //                 continue;
+    //             }
+    //         }
+    //     }
+    //     
+    //     Assert.That(countPieces, Is.EqualTo(testPos.Count));
+    //
+    //     for (int i = 0; i < testPos.Count; i++)
+    //     {
+    //         Assert.That(chessboard.BoardPieces[testPos[i].row, testPos[i].col], Is.EqualTo(testPieces[i]));
+    //     }
+    // }
 
     [Test]
     public void MovePiece_PieceIsMovedPriorSpaceIsNull()
@@ -402,7 +402,7 @@ public class ChessboardTests
         
         chessboard.PlacePieces();
         chessboard.GeneratePieceMoves();
-        chessboard.AddThreats();
+        chessboard.AddAllPositionThreats();
         for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
         for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
         {
@@ -417,7 +417,7 @@ public class ChessboardTests
             }
         }
         
-        chessboard.ClearThreats();
+        chessboard.ClearAllPositionThreats();
         for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
         for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
         {
