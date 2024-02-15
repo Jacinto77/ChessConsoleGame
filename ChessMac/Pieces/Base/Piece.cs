@@ -191,6 +191,18 @@ public abstract class Piece
         return _validMoves;
     }
 
+    public void PrintValidMoveList()
+    {
+        Console.WriteLine($"{this.Type} at {ChessBoard.ConvertIndexToPos(this.Position)} valid moves:");
+        if (_validMoves.Count == 0)
+            Console.WriteLine("\t--No moves in valid moves list--");
+        foreach (var move in _validMoves)
+        {
+            Console.WriteLine($"\t\t- {ConvertIndexToPos(move)}");
+        }
+        Console.WriteLine();
+    }
+
     protected static List<T> CreateList<T>(params T[] values)
     {
         return new List<T>(values);

@@ -16,6 +16,7 @@ public class Knight : Piece
     public Knight(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
         AssignIconByColor(inColor, PieceType.Knight);
+        Type = PieceType.Knight;
     }
     
     public Knight(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,

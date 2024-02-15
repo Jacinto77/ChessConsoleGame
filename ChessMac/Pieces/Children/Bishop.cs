@@ -14,6 +14,7 @@ public class Bishop : Piece
     public Bishop(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
         AssignIconByColor(inColor, PieceType.Bishop);
+        Type = PieceType.Bishop;
     }
 
     public Bishop(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,

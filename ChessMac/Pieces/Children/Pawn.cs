@@ -23,6 +23,7 @@ public class Pawn : Piece
     {
         SetPawnDirection(inColor);
         AssignIconByColor(inColor, PieceType.Pawn);
+        Type = PieceType.Pawn;
     }
 
     public Pawn(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,

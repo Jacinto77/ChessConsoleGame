@@ -17,6 +17,7 @@ public class Queen : Piece
     public Queen(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
         AssignIconByColor(inColor, PieceType.Queen);
+        Type = PieceType.Queen;
     }
     
     public Queen(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,

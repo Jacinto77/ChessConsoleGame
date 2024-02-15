@@ -16,7 +16,8 @@ public class Rook : Piece
     
     public Rook(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
     {
-        AssignIconByColor(inColor, PieceType.Rook);   
+        AssignIconByColor(inColor, PieceType.Rook);
+        Type = PieceType.Rook;
     }
     
     public Rook(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,

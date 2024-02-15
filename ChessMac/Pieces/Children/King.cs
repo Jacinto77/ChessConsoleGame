@@ -23,6 +23,7 @@ public class King : Piece
     {
         SetCastlePositions(inColor);
         AssignIconByColor(inColor, PieceType.King);
+        this.Type = PieceType.King;
     }
 
     public King(PieceColor inColor, PieceType inType) : base(inColor, inType)
@@ -212,9 +213,10 @@ public class King : Piece
             AddValidMove(move);
         }
 
-        (bool kingSide, bool QueenSide) canCastle = CheckCastle(Color, inBoard);
+        // TODO finish castling
+        //(bool kingSide, bool QueenSide) canCastle = CheckCastle(Color, inBoard);
 
-        if (canCastle.kingSide) AddValidMove(_kingSideCastlePos);
-        if (canCastle.QueenSide) AddValidMove(_queenSideCastlePos);
+        //if (canCastle.kingSide) AddValidMove(_kingSideCastlePos);
+        //if (canCastle.QueenSide) AddValidMove(_queenSideCastlePos);
     }
 }

@@ -57,6 +57,11 @@ public class ChessBoard
         {
             PositionsOfPieces[piece.Position] = piece;
         }
+        // foreach (var kvp in ActivePieces)
+        // {
+        //     //Console.WriteLine($"{ChessBoard.ConvertIndexToPos(kvp.Key)}\t{kvp.Value.Type}\t{kvp.Value.Icon}\t{kvp.Value.Color}");
+        //     Console.WriteLine($"{kvp.Type}");
+        // }
     }
 
     public void RemovePieceByPosition((int row, int col) inPosition)
@@ -135,6 +140,8 @@ public class ChessBoard
         ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 5)));
         ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 6)));
         ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 7)));
+        
+        
     }
 
     public void PopulateBoardPieces()

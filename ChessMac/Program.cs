@@ -4,6 +4,12 @@ using ChessMac.Pieces.Base;
 namespace ChessMac;
 
 using static Methods;
+// TODO: verify all piece generation moves before finishing castling and pawn promotion
+// TODO: then finish pawn promotion and verify
+// TODO: then finish castling and verify
+// TODO: finally, finish unit testing and begin improving and expanding
+// TODO: "simple" chess engine
+
 // TODO: take care of input
 // will handle the following input options
 /*
@@ -58,13 +64,16 @@ internal static class Program
             board.PopulateBoardPieces();
             board.AddAllPiecesToPositionDictionary();
             board.OutputBoard();
+            
 
             board.ClearValidMoves();
-            board.ClearAllPositionThreats(); // TODO replace with dictionary check
-
             board.GeneratePieceMoves();
-            board.AddAllPositionThreats(); // TODO replace with dictionary
 
+            foreach (var piece in board.ActivePieces)
+            {
+                piece.PrintValidMoveList();
+            }
+            
             var tempBoard = board.DeepCopy();
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
             Console.WriteLine($"{colorToMove.ToString().ToUpper()} to move");
