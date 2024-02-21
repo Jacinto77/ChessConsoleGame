@@ -61,11 +61,10 @@ internal static class Program
                 Console.WriteLine("Move limit reached");
                 return;
             }
-            board.PopulateBoardPieces();
-            board.AddAllPiecesToPositionDictionary();
+            board.UpdatePiecePositions();
+            board.PopulateBoard();
             board.OutputBoard();
             
-
             board.ClearValidMoves();
             board.GeneratePieceMoves();
 

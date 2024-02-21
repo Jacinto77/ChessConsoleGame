@@ -1,9 +1,9 @@
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
 
-namespace TestProject2;
+namespace TestProject2.PiecesTesting.Children;
 
-[TestFixture]
+
 public class KnightTests
 {
     [Test]

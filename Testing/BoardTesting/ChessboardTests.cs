@@ -1,13 +1,11 @@
-using ChessMac;
 using ChessMac.Board;
-using ChessMac.Pieces;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
 using static ChessMac.Board.ChessBoard;
 
-namespace TestProject2;
+namespace TestProject2.BoardTesting;
 
-[TestFixture]
+
 public class ChessboardTests
 {
     // [Test]
@@ -118,7 +116,9 @@ public class ChessboardTests
     public void DeepCopy_AllPiecesAreCopied()
     {
         var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
+        chessboard.UpdatePiecePositions();
+        chessboard.PopulateBoard();
         
         var chessboardCopy = chessboard.DeepCopy();
         
@@ -142,6 +142,35 @@ public class ChessboardTests
 
             }
         }
+
+        for (var i = 0; i < chessboard.ActivePieces.Count; i++)
+        {
+            var piece = chessboard.ActivePieces[i];
+            var pieceCopy = chessboardCopy.ActivePieces[i];
+            TestContext.WriteLine($"{piece.Type} {pieceCopy.Type}");
+            TestContext.WriteLine($"{piece.Position} {pieceCopy.Position}");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(piece.Type, Is.EqualTo(pieceCopy.Type));
+                Assert.That(piece.Position, Is.EqualTo(pieceCopy.Position));
+            });
+        }
+        
+        foreach (var kvp in chessboard.PiecePositions)
+        {
+            Piece? valueInDict2;
+            bool dictionariesAreEqual = 
+                !chessboardCopy.PiecePositions.TryGetValue(kvp.Key, out valueInDict2) 
+                || Equals(kvp.Value.Type, valueInDict2.Type);
+            // If the key is not found in dict2, or the values for the same key are not equal, return false
+            TestContext.WriteLine($"kvp key: {kvp.Key} | kvp value: {kvp.Value} | valueInDict2: {valueInDict2}");
+            Assert.That(dictionariesAreEqual, Is.True);
+        }
+
+        // Assert.That(chessboard.PiecePositions, Is.EquivalentTo(chessboardCopy.PiecePositions));
+        // Assert.That(chessboard.ActivePieces, Is.EquivalentTo(chessboardCopy.ActivePieces));
+        // Assert.That(chessboard.InactivePieces, Is.EquivalentTo(chessboardCopy.InactivePieces));
     }
 
     [Test]
@@ -149,7 +178,7 @@ public class ChessboardTests
     {
         var chessboard = new ChessBoard();
         chessboard.InitializeActivePieces();
-        chessboard.PopulateBoardPieces();
+        chessboard.PopulateBoard();
         
         //TODO add a testing board with pieces in various other positions
         chessboard.GeneratePieceMoves();
@@ -185,7 +214,7 @@ public class ChessboardTests
     {
         var chessboard = new ChessBoard();
         chessboard.InitializeActivePieces();
-        chessboard.PopulateBoardPieces();
+        chessboard.PopulateBoard();
         chessboard.GeneratePieceMoves();
         
         
@@ -313,11 +342,13 @@ public class ChessboardTests
         const int limit = 50;
         var rand = new Random();
         var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
 
         int counter = 0;
         while (counter < limit)
         {
+            chessboard.PopulateBoard();
+            chessboard.UpdatePiecePositions();
             (int row, int col) startPos = (rand.Next(0, 8), rand.Next(0, 8));
             (int row, int col) destPos = (rand.Next(0, 8), rand.Next(0, 8));
 
@@ -328,18 +359,68 @@ public class ChessboardTests
 
             if (startPiece is null) { continue; }
             
-            var destPosNullFlag = chessboard.GetPieceByIndex(destPos) is null;
-            TestContext.WriteLine($"--Iteration--: {counter + 1}: ");
+            TestContext.WriteLine($"\t--Iteration--: {counter + 1}: ");
+            
             TestContext.WriteLine($"Start piece: {startPiece.GetType()}");
             TestContext.WriteLine($"Dest is null: {destPiece?.GetType() is null}");
-            
-            chessboard.MovePiece(startPos, destPos, out var discardPiece);
-            
+            TestContext.WriteLine($"Destination Piece: {destPiece?.GetType()}");
+
+            TestContext.WriteLine("BEFORE Piece is Moved");
             TestContext.WriteLine($"{startPos} : {destPos}");
-            TestContext.WriteLine($"{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
-            TestContext.WriteLine($"{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            
+            TestContext.WriteLine($"chessboard start position: \t{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard dest position: \t{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            
+            TestContext.WriteLine($"chessboard.GetPieceByIndex start: \t{chessboard.GetPieceByIndex(startPos)}");
+            TestContext.WriteLine($"chessboard.GetPieceByIndex dest: \t{chessboard.GetPieceByIndex(destPos)}");
+            
+            TestContext.WriteLine($"chessboard.GetPieceByPosition start: {chessboard.GetPieceByPosition(startPos)}");
+            TestContext.WriteLine($"chessboard.GetPieceByPosition dest: {chessboard.GetPieceByPosition(destPos)}");
+            try
+            {
+                TestContext.WriteLine($"PiecePositions start piece: \t{chessboard.PiecePositions[startPos]}");
+                TestContext.WriteLine($"PiecePositions dest piece: \t{chessboard.PiecePositions[destPos]}");
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.GetType());
+            }
+            
+            // --
+            chessboard.MovePiece(startPos, destPos, out var discardPiece);
+            // --
+            
+            chessboard.UpdatePiecePositions();
+            chessboard.PopulateBoard();
+            
+            TestContext.WriteLine("AFTER Piece is Moved");
+            TestContext.WriteLine($"{startPos} : {destPos}");
+            
+            TestContext.WriteLine($"chessboard.BoardPieces[] start: \t{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard.BoardPieces[] dest: \t{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            
+            TestContext.WriteLine($"chessboard.GetPieceByIndex start: \t{chessboard.GetPieceByIndex(startPos)}");
+            TestContext.WriteLine($"chessboard.GetPieceByIndex dest: \t{chessboard.GetPieceByIndex(destPos)}");
+            
+            TestContext.WriteLine($"chessboard.GetPieceByPosition start: {chessboard.GetPieceByPosition(startPos)}");
+            TestContext.WriteLine($"chessboard.GetPieceByPosition dest: {chessboard.GetPieceByPosition(destPos)}");
+            
+            try
+            {
+                TestContext.WriteLine($"PiecePositions[] start piece: \t{chessboard.PiecePositions[startPos]}");
+                TestContext.WriteLine($"PiecePositions[] dest piece: \t{chessboard.PiecePositions[destPos]}");
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.GetType());
+            }
             TestContext.WriteLine($"Taken Piece: {discardPiece?.GetType()}");
             TestContext.WriteLine("----");
+            
+            // startPiece = chessboard.GetPieceByIndex(startPos);
+            // destPiece = chessboard.GetPieceByIndex(destPos);
             
             Assert.That(discardPiece, Is.EqualTo(destPiece));
             Assert.That(chessboard.BoardPieces[startPos.row, startPos.col], Is.Null);
@@ -381,7 +462,7 @@ public class ChessboardTests
         var chessboard = new ChessBoard();
         chessboard.InitializeActivePieces();
         
-        chessboard.PopulateBoardPieces();
+        chessboard.PopulateBoard();
         
         for (int row = 0; row < chessboard.BoardPieces.GetLength(0); row++)
         {
