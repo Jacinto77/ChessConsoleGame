@@ -45,12 +45,49 @@ using static Methods;
 // TODO: validate all current working methods and functions
 // TODO: refactor everything as needed
 
+// The data structures that need to be updated when a piece is moved are:
+// ChessBoard.ActivePieces, ChessBoard.InactivePieces, ChessBoard.PiecePositions, Piece.Position
+/*
+ * Start of program
+ *  Prompt for choice at main menu
+ * For game start
+ * -- begin
+ *  create chessboard
+ *  initialize pieces (place pieces in ActivePieces list)
+ * -- each game loop iteration
+ *  update piece positions dictionary
+ *  populate board based on piece positions
+ *  generate valid moves for each piece
+ *  calculate threats and pins
+ *  output board to console
+ * User Input
+ *  prompt for user input
+ *      "A2 A3" or "pawn H3" or "PxH3"
+ *  process input, determine format and parse for usable values
+ *  pass to move piece functions
+ * Move Validating
+ *  move is temporarily given to a copy of the board to test if move is valid
+ *  checks that:
+ *      piece is correct color
+ *      destination is a valid move in the piece's list of valid moves
+ *      king is not in check after the move
+ *      destination does not have a friendly piece
+ *  if all checks pass, perform the same move on the "real" chessboard
+ *  otherwise, print reason why move wasn't valid
+ *  retry loop iteration
+ *
+ * color to move is controlled by the move counter, which is incremented at the end of
+ * the loop, continuing prior to that statement skips the color change from white to black, or
+ * vice versa
+ * 
+ */
+//
+
 internal static class Program
 {
     private static void Main()
     {
         var board = new ChessBoard();
-        
         board.InitializeActivePieces();
 
         var moveCounter = 1;
@@ -68,10 +105,10 @@ internal static class Program
             board.ClearValidMoves();
             board.GeneratePieceMoves();
 
-            foreach (var piece in board.ActivePieces)
-            {
-                piece.PrintValidMoveList();
-            }
+            // foreach (var piece in board.ActivePieces)
+            // {
+            //     piece.PrintValidMoveList();
+            // }
             
             var tempBoard = board.DeepCopy();
             var colorToMove = moveCounter % 2 != 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
@@ -91,8 +128,8 @@ internal static class Program
             if (tempBoard.ValidateAndMovePiece(colorToMove, startPiecePos, destPiecePos))
             {
                 board.MovePiece(startPiecePos, destPiecePos, out takenPiece);
-                activePiece?.SetHasMoved();
-                activePiece?.IncrementMoveCounter();
+                // activePiece?.SetHasMoved();
+                // activePiece?.IncrementMoveCounter();
             }
             else
             {

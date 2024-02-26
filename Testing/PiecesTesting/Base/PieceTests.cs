@@ -69,4 +69,39 @@ public class PieceTests
             Assert.That(testPiece.HasMove(invalidTestMoves[i]), Is.False);
         }
     }
+
+    [Test]
+    public void Piece_ConstructorCreatesProperDefaultValues()
+    {
+        var chessboard = new ChessBoard();
+        
+        var piece = PieceFactory.CreatePiece("King", Piece.PieceColor.Black);
+        piece.Move((4, 4));
+        chessboard.ActivePieces.Add(piece);
+        chessboard.UpdatePiecePositions();
+        chessboard.PopulateBoard();
+        chessboard.GeneratePieceMoves();
+        chessboard.ActivePieces.Clear();
+        piece.PrintAttributes();
+        
+        piece = new Pawn(Piece.PieceColor.Black, (-1, -1), default, new List<(int row, int col)>(), null, true, true, 4,
+            false);
+        piece.PrintAttributes();
+        piece = new Pawn(Piece.PieceColor.White, (4, 4));
+        chessboard.ActivePieces.Add(piece);
+        chessboard.UpdatePiecePositions();
+        chessboard.PopulateBoard();
+        chessboard.GeneratePieceMoves();
+        chessboard.ActivePieces.Clear();
+        piece.PrintAttributes();
+
+        piece = new Rook(Piece.PieceColor.Black, (0, 0));
+        chessboard.ActivePieces.Add(piece);
+        chessboard.UpdatePiecePositions();
+        chessboard.PopulateBoard();
+        chessboard.GeneratePieceMoves();
+        chessboard.ActivePieces.Clear();
+        piece.PrintAttributes();
+
+    }
 }

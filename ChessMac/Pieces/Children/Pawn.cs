@@ -3,32 +3,42 @@ using ChessMac.Pieces.Base;
 
 namespace ChessMac.Pieces.Children;
 
-using static Board.ChessBoard;
+using static ChessBoard;
 
 public class Pawn : Piece
 {
-    public Pawn(PieceColor inColor) : base(inColor)
-    {
-        Type = PieceType.Pawn;
-        Icon = GetColorPieceIcon(inColor);
-        SetPawnDirection(inColor);
-    }
-
-    public Pawn(PieceColor inColor, PieceType inType) : base(inColor, inType)
-    {
-        SetPawnDirection(inColor);
-    }
+    // public Pawn(PieceColor inColor) : base(inColor)
+    // {
+    //     Type = PieceType.Pawn;
+    //     SetIconByColorAndType(inColor);
+    //     SetPawnDirection(inColor);
+    // }
     
-    public Pawn(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
-    {
-        SetPawnDirection(inColor);
-        AssignIconByColor(inColor, PieceType.Pawn);
-        Type = PieceType.Pawn;
-    }
+    // public Pawn(PieceColor inColor, PieceType inType) : base(inColor, inType)
+    // {
+    //     Type = PieceType.Pawn;
+    //     SetIconByColorAndType(inColor);
+    //     SetPawnDirection(inColor);
+    // }
+    
+    // public Pawn(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
+    // {
+    //     Type = PieceType.Pawn;
+    //     SetIconByColorAndType(inColor);
+    //     SetPawnDirection(inColor);
+    // }
 
-    public Pawn(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
-        base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
+    public Pawn(
+        PieceColor inColor = default,
+        (int row, int col) inPosition = default,
+        PieceType inType = PieceType.Pawn,
+        List<(int row, int col)>? inValidMoves = default,
+        char? inIcon = default,
+        bool inHasMoved = default,
+        bool inIsPinned = default,
+        int inMoveCounter = default,
+        bool inIsThreatened = default) 
+        : base(inColor, inPosition, inType, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened)
     {
         SetPawnDirection(inColor);
     }
@@ -37,28 +47,19 @@ public class Pawn : Piece
 
     public override Piece Clone()
     {
-        var clonedPawn = new Pawn(
-            this.Type, 
-            this.Color, 
-            this.GetValidMoveList(), 
-            this.Icon, 
-            this.HasMoved,
-            this.IsPinned,
-            this.MoveCounter, 
-            this.IsThreatened, 
-            this.Position);
+        var clonedPawn = new Pawn(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned, MoveCounter, IsThreatened);
 
-        clonedPawn.Direction = this.Direction;
+        clonedPawn.Direction = Direction;
         return clonedPawn;
     }
     
-    public override Piece DeepCopy()
-    {
-        Pawn pawnCopy = new Pawn(Color, Type);
-        pawnCopy.Direction = this.Direction;
-
-        return pawnCopy;
-    }
+    // public override Piece DeepCopy()
+    // {
+    //     Pawn pawnCopy = new Pawn(Color, Type);
+    //     pawnCopy.Direction = Direction;
+    //
+    //     return pawnCopy;
+    // }
 
     private void SetPawnDirection(PieceColor inColor)
     {
@@ -67,34 +68,37 @@ public class Pawn : Piece
     }
 
 
-    private void CheckAndAddDiagonal((int row, int col) diagonal, Board.ChessBoard inBoard)
+    private void CheckAndAddDiagonal((int row, int col) diagonal, ChessBoard inBoard)
     {
         if (IsWithinBoard(diagonal)
-            && inBoard.BoardPieces[diagonal.row, diagonal.col] is not null
-            && inBoard.BoardPieces[diagonal.row, diagonal.col]?.Color != Color)
+            && inBoard.BoardSpaces[diagonal.row, diagonal.col] is not null
+            && inBoard.BoardSpaces[diagonal.row, diagonal.col]?.Color != Color)
         {
             AddValidMove(diagonal);
             //inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
         }
     }
 
-    private void CheckEnPassant((int row, int col) horizontal, (int row, int col) diagonal, Board.ChessBoard inBoard)
+    // TODO checks for a space like in this function should have the arguments verified to be within bounds prior to calling
+    private void CheckEnPassant((int row, int col) horizontalSpace, (int row, int col) diagonalSpace, ChessBoard inBoard)
     {
-        if (!IsWithinBoard(horizontal)) return;
-
-        var horizPiece = inBoard.BoardPieces[horizontal.row, horizontal.col];
-        var diagPiece = inBoard.BoardPieces[diagonal.row, diagonal.col];
+        if (!IsWithinBoard(horizontalSpace) || !IsWithinBoard(diagonalSpace)) return;
+        
+        var horizPiece = inBoard.GetPieceByIndex(horizontalSpace);
+        var diagPiece = inBoard.GetPieceByIndex(diagonalSpace);
+        // var horizPiece = inBoard.BoardPieces[horizontalSpace.row, horizontalSpace.col];
+        // var diagPiece = inBoard.BoardPieces[diagonalSpace.row, diagonalSpace.col];
 
         if (horizPiece is null || horizPiece.Type != PieceType.Pawn)
             return;
         if (horizPiece.MoveCounter != 1 || diagPiece is not null)
             return;
 
-        AddValidMove(diagonal);
+        AddValidMove(diagonalSpace);
         //inBoard.BoardPieces[diagonal.row, diagonal.col]?.SetThreat();
     }
 
-    public override void GenerateValidMoves(Board.ChessBoard inBoard)
+    public override void GenerateValidMoves(ChessBoard inBoard)
     {
         base.GenerateValidMoves(inBoard);
 
@@ -106,12 +110,12 @@ public class Pawn : Piece
         (int row, int col) horizNeg =   new (Position.row, Position.col - 1);
 
         if (IsWithinBoard(forwardOne)
-            && inBoard.BoardPieces[forwardOne.row, forwardOne.col] is null)
+            && inBoard.BoardSpaces[forwardOne.row, forwardOne.col] is null)
         {
             AddValidMove(forwardOne);
 
             if (IsWithinBoard(forwardTwo)
-                && inBoard.BoardPieces[forwardTwo.row, forwardTwo.col] is null
+                && inBoard.BoardSpaces[forwardTwo.row, forwardTwo.col] is null
                 && HasMoved == false)
                 AddValidMove(forwardTwo);
         }
@@ -121,5 +125,11 @@ public class Pawn : Piece
         CheckAndAddDiagonal(diagNeg, inBoard);
         CheckEnPassant(horizPos, diagPos, inBoard);
         CheckEnPassant(horizNeg, diagNeg, inBoard);
+    }
+
+    public override void PrintAttributes()
+    {
+        base.PrintAttributes();
+        Console.WriteLine($"Pawn Direction: {Direction}");
     }
 }

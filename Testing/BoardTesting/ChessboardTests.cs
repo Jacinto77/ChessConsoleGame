@@ -76,15 +76,15 @@ public class ChessboardTests
         {
             for (var col = 0; col < 8; col++)
             {
-                Assert.That(boardPieces[row, col]?.Type, Is.EqualTo(chessboard.BoardPieces[row, col]?.Type));
-                Assert.That(boardPieces[row, col]?.Icon, Is.EqualTo(chessboard.BoardPieces[row, col]?.Icon));
-                Assert.That(boardPieces[row, col]?.Color, Is.EqualTo(chessboard.BoardPieces[row, col]?.Color));
-                Assert.That(boardPieces[row, col]?.IsThreatened, Is.EqualTo(chessboard.BoardPieces[row, col]?.IsThreatened));
-                Assert.That(boardPieces[row, col]?.MoveCounter, Is.EqualTo(chessboard.BoardPieces[row, col]?.MoveCounter));
-                Assert.That(boardPieces[row, col]?.HasMoved, Is.EqualTo(chessboard.BoardPieces[row, col]?.HasMoved));
-                Assert.That(boardPieces[row, col]?.IsPinned, Is.EqualTo(chessboard.BoardPieces[row, col]?.IsPinned));
+                Assert.That(boardPieces[row, col]?.Type, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Type));
+                Assert.That(boardPieces[row, col]?.Icon, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Icon));
+                Assert.That(boardPieces[row, col]?.Color, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Color));
+                Assert.That(boardPieces[row, col]?.IsThreatened, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsThreatened));
+                Assert.That(boardPieces[row, col]?.MoveCounter, Is.EqualTo(chessboard.BoardSpaces[row, col]?.MoveCounter));
+                Assert.That(boardPieces[row, col]?.HasMoved, Is.EqualTo(chessboard.BoardSpaces[row, col]?.HasMoved));
+                Assert.That(boardPieces[row, col]?.IsPinned, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsPinned));
                 
-                TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardPieces[row, col]?.GetType()}");
+                TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardSpaces[row, col]?.GetType()}");
 
             }
         }
@@ -126,8 +126,8 @@ public class ChessboardTests
         {
             for (var col = 0; col < 8; col++)
             {
-                var piece = chessboard.BoardPieces[row, col];
-                var pieceCopy = chessboardCopy.BoardPieces[row, col];
+                var piece = chessboard.BoardSpaces[row, col];
+                var pieceCopy = chessboardCopy.BoardSpaces[row, col];
                 
                 Assert.That(piece?.Type, Is.EqualTo(pieceCopy?.Type));
                 Assert.That(piece?.Icon, Is.EqualTo(pieceCopy?.Icon));
@@ -137,8 +137,8 @@ public class ChessboardTests
                 Assert.That(piece?.HasMoved, Is.EqualTo(pieceCopy?.HasMoved));
                 Assert.That(piece?.IsPinned, Is.EqualTo(pieceCopy?.IsPinned));
                 
-                TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardPieces[row, col]?.GetType()} | " +
-                                      $"{chessboardCopy.BoardPieces[row, col]?.GetType()}");
+                TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardSpaces[row, col]?.GetType()} | " +
+                                      $"{chessboardCopy.BoardSpaces[row, col]?.GetType()}");
 
             }
         }
@@ -226,11 +226,11 @@ public class ChessboardTests
         {
             for (var col = 0; col < 8; col++)
             {
-                if (chessboard.BoardPieces[row, col]?.GetValidMoveList().Count > 0)
+                if (chessboard.BoardSpaces[row, col]?.GetValidMoveList().Count > 0)
                     hasMoves = true;
                 TestContext.Write($"{row}, {col}: \t");
-                TestContext.WriteLine($"{chessboard.BoardPieces[row, col]?.GetType()} " +
-                                      $"{chessboard.BoardPieces[row, col]?.GetValidMoveList()}");
+                TestContext.WriteLine($"{chessboard.BoardSpaces[row, col]?.GetType()} " +
+                                      $"{chessboard.BoardSpaces[row, col]?.GetValidMoveList()}");
             }
         }
         Assert.That(hasMoves, Is.False);
@@ -368,8 +368,8 @@ public class ChessboardTests
             TestContext.WriteLine("BEFORE Piece is Moved");
             TestContext.WriteLine($"{startPos} : {destPos}");
             
-            TestContext.WriteLine($"chessboard start position: \t{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
-            TestContext.WriteLine($"chessboard dest position: \t{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard start position: \t{chessboard.BoardSpaces[startPos.row, startPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard dest position: \t{chessboard.BoardSpaces[destPos.row, destPos.col]?.GetType()}");
             
             TestContext.WriteLine($"chessboard.GetPieceByIndex start: \t{chessboard.GetPieceByIndex(startPos)}");
             TestContext.WriteLine($"chessboard.GetPieceByIndex dest: \t{chessboard.GetPieceByIndex(destPos)}");
@@ -397,8 +397,8 @@ public class ChessboardTests
             TestContext.WriteLine("AFTER Piece is Moved");
             TestContext.WriteLine($"{startPos} : {destPos}");
             
-            TestContext.WriteLine($"chessboard.BoardPieces[] start: \t{chessboard.BoardPieces[startPos.row, startPos.col]?.GetType()}");
-            TestContext.WriteLine($"chessboard.BoardPieces[] dest: \t{chessboard.BoardPieces[destPos.row, destPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard.BoardPieces[] start: \t{chessboard.BoardSpaces[startPos.row, startPos.col]?.GetType()}");
+            TestContext.WriteLine($"chessboard.BoardPieces[] dest: \t{chessboard.BoardSpaces[destPos.row, destPos.col]?.GetType()}");
             
             TestContext.WriteLine($"chessboard.GetPieceByIndex start: \t{chessboard.GetPieceByIndex(startPos)}");
             TestContext.WriteLine($"chessboard.GetPieceByIndex dest: \t{chessboard.GetPieceByIndex(destPos)}");
@@ -423,8 +423,8 @@ public class ChessboardTests
             // destPiece = chessboard.GetPieceByIndex(destPos);
             
             Assert.That(discardPiece, Is.EqualTo(destPiece));
-            Assert.That(chessboard.BoardPieces[startPos.row, startPos.col], Is.Null);
-            Assert.That(chessboard.BoardPieces[destPos.row, destPos.col], !Is.Null);
+            Assert.That(chessboard.BoardSpaces[startPos.row, startPos.col], Is.Null);
+            Assert.That(chessboard.BoardSpaces[destPos.row, destPos.col], !Is.Null);
             counter++;
         }
     }
@@ -464,13 +464,13 @@ public class ChessboardTests
         
         chessboard.PopulateBoard();
         
-        for (int row = 0; row < chessboard.BoardPieces.GetLength(0); row++)
+        for (int row = 0; row < chessboard.BoardSpaces.GetLength(0); row++)
         {
-            for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+            for (int col = 0; col < chessboard.BoardSpaces.GetLength(0); col++)
             {
-                if (chessboard.BoardPieces[row, col] is null) continue;
-                Assert.Contains(chessboard.BoardPieces[row, col], chessboard.ActivePieces);
-                TestContext.WriteLine($"{chessboard.BoardPieces[row, col]}");
+                if (chessboard.BoardSpaces[row, col] is null) continue;
+                Assert.Contains(chessboard.BoardSpaces[row, col], chessboard.ActivePieces);
+                TestContext.WriteLine($"{chessboard.BoardSpaces[row, col]}");
             }
         }
     }
@@ -484,10 +484,10 @@ public class ChessboardTests
         chessboard.PlacePieces();
         chessboard.GeneratePieceMoves();
         chessboard.AddAllPositionThreats();
-        for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
-        for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+        for(int row = 0; row < chessboard.BoardSpaces.GetLength(0); row ++)
+        for (int col = 0; col < chessboard.BoardSpaces.GetLength(0); col++)
         {
-            var piece = chessboard.BoardPieces[row, col];
+            var piece = chessboard.BoardSpaces[row, col];
             if (piece is null) continue;
             
             TestContext.Write($"{piece.IsThreatened}\t");
@@ -499,10 +499,10 @@ public class ChessboardTests
         }
         
         chessboard.ClearAllPositionThreats();
-        for(int row = 0; row < chessboard.BoardPieces.GetLength(0); row ++)
-        for (int col = 0; col < chessboard.BoardPieces.GetLength(0); col++)
+        for(int row = 0; row < chessboard.BoardSpaces.GetLength(0); row ++)
+        for (int col = 0; col < chessboard.BoardSpaces.GetLength(0); col++)
         {
-            var piece = chessboard.BoardPieces[row, col];
+            var piece = chessboard.BoardSpaces[row, col];
             if (piece is null) continue;
             
             TestContext.Write($"{piece.IsThreatened}\t");
@@ -532,7 +532,7 @@ public class ChessboardTests
         foreach (var index in validTestInputs)
         {
             Piece? testPiece = chessboard.GetPieceByIndex(index);
-            Piece? validationPiece = chessboard.BoardPieces[index.row, index.col];
+            Piece? validationPiece = chessboard.BoardSpaces[index.row, index.col];
             TestContext.WriteLine($"Test Piece: \t\t{testPiece!.GetType()} {testPiece!.Color} {index}");
             TestContext.WriteLine($"Validation Piece: \t{validationPiece!.GetType()} {validationPiece!.Color} {index}\n");
             Assert.That(testPiece, Is.EqualTo(validationPiece));

@@ -16,13 +16,16 @@ public class ChessBoard
     //     //InitBoardPieces();
     // }
     
-    public Piece?[,] BoardPieces = new Piece[8, 8];
+    public Piece?[,] BoardSpaces = new Piece[8, 8];
     public List<Piece> ActivePieces = new List<Piece>();
     public List<Piece> InactivePieces = new List<Piece>();
 
     public Dictionary<(int row, int col), Piece> PiecePositions = new();
-    public Dictionary<(int row, int col), List<Piece>> PositionThreats = new();
-
+    public Dictionary<(int row, int col), List<Piece>> ThreatenedSpaces = new();
+    
+    public Dictionary<(int row, int col), List<Piece>> WhiteThreats = new();
+    public Dictionary<(int row, int col), List<Piece>> BlackThreats = new();
+    
     public ChessBoard DeepCopy()
     {
         var tempBoard = new ChessBoard();
@@ -36,6 +39,10 @@ public class ChessBoard
             tempBoard.InactivePieces.Add(piece.Clone());
         }
 
+        // UpdatePiecePositions();
+        // PopulateBoard();
+        // ClearValidMoves();
+        // GeneratePieceMoves();
         
         tempBoard.UpdatePiecePositions();
         tempBoard.AddPositionThreats();
@@ -59,7 +66,7 @@ public class ChessBoard
             InactivePieces.Add(takenPiece);
         }
         
-        activePiece.UpdatePosition(destPos);
+        activePiece.Move(destPos);
         
         // uncomment if testing alone
         // UpdatePiecePositions();
@@ -88,7 +95,7 @@ public class ChessBoard
     {
         try
         { 
-            return BoardPieces[inIndex.row, inIndex.col];
+            return BoardSpaces[inIndex.row, inIndex.col];
         }
         catch (IndexOutOfRangeException)
         {
@@ -97,6 +104,7 @@ public class ChessBoard
         }
     }
     
+    // Dictionary of positions and the piece that is at that position
     public void UpdatePiecePositions()
     {
         PiecePositions.Clear();
@@ -120,24 +128,36 @@ public class ChessBoard
         {
             foreach (var validMove in piece.GetValidMoveList())
             {
-                if (PositionThreats.TryGetValue(validMove, out var pieces))
+                if (ThreatenedSpaces.TryGetValue(validMove, out var pieces))
                 {
                     pieces.Add(piece);
                 }
                 else
                 {
-                    PositionThreats[validMove] = new List<Piece> { piece };
+                    ThreatenedSpaces[validMove] = new List<Piece> { piece };
                 }
             }
         }
     }
 
+    // public void AddColorSpecificThreats()
+    // {
+    //     WhiteThreats.Clear();
+    //     BlackThreats.Clear();
+    //     foreach (var kvp in ThreatenedSpaces)
+    //     {
+    //         foreach (var piece in kvp.Value)
+    //         {
+    //             if (piece.Color == Piece.PieceColor.Black)
+    //                 WhiteThreats.Add(kvp.Key, piece);
+    //         }
+    //     }
+    // }
+    
     public void ClearPositionThreats()
     {
-        PositionThreats.Clear();
+        ThreatenedSpaces.Clear();
     }
-
-    
 
     public void RemovePieceByPosition((int row, int col) inPosition)
     {
@@ -206,16 +226,16 @@ public class ChessBoard
         foreach (var piece in ActivePieces)
         {
             var position = piece.Position;
-            BoardPieces[position.row, position.col] = piece;
+            BoardSpaces[position.row, position.col] = piece;
         }
     }
 
     private void ClearBoardPieces()
     {
-        for (var row = 0; row < BoardPieces.GetLength(0); row++)
-        for (var col = 0; col < BoardPieces.GetLength(0); col++)
+        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
+        for (var col = 0; col < BoardSpaces.GetLength(0); col++)
         {
-            BoardPieces[row, col] = null;
+            BoardSpaces[row, col] = null;
         }
     }
 
@@ -295,13 +315,13 @@ public class ChessBoard
             // Place pawns
             for (int col = 0; col < 8; col++)
             {
-                BoardPieces[pawnRow, col] = new Pawn(color);
+                BoardSpaces[pawnRow, col] = new Pawn(color);
             }
    
             // Place other pieces based on the pieceOrder array
             for (int col = 0; col < 8; col++)
             {
-                BoardPieces[pieceRow, col] = (Piece?)Activator.CreateInstance(pieceOrder[col], color);
+                BoardSpaces[pieceRow, col] = (Piece?)Activator.CreateInstance(pieceOrder[col], color);
             }
         }
     }
@@ -329,12 +349,12 @@ public class ChessBoard
     // Output Board Display in ASCII to console
     public void OutputBoard()
     {
-        List<(int row, int col)> piecePositions = new List<(int row, int col)>();
-        foreach (var piece in ActivePieces)
-        {
-            var pos = piece.Position;
-            piecePositions.Add(pos);
-        }
+        // List<(int row, int col)> piecePositions = new List<(int row, int col)>();
+        // foreach (var piece in ActivePieces)
+        // {
+        //     var pos = piece.Position;
+        //     piecePositions.Add(pos);
+        // }
         
         // Black side label
         Console.WriteLine("\t\t\t\t BLACK\n");
@@ -495,25 +515,25 @@ public class ChessBoard
 
     public void AddAllPositionThreats()
     {
-        for (var row = 0; row < BoardPieces.GetLength(0); row++)
+        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
         {
-            for (var col = 0; col < BoardPieces.GetLength(0); col++)
+            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
             {
-                var piece = BoardPieces[row, col];
+                var piece = BoardSpaces[row, col];
                 if (piece is null) continue;
                 foreach (var move in piece.GetValidMoveList())
-                    BoardPieces[move.row, move.col]?.SetThreat();
+                    BoardSpaces[move.row, move.col]?.SetThreat();
             }
         }
     }
 
     public void ClearAllPositionThreats()
     {
-        for (var row = 0; row < BoardPieces.GetLength(0); row++)
+        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
         {
-            for (var col = 0; col < BoardPieces.GetLength(0); col++)
+            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
             {
-                var piece = BoardPieces[row, col];
+                var piece = BoardSpaces[row, col];
                 if (piece is null) continue;
                 piece.ClearThreat();
             }
@@ -544,4 +564,25 @@ public class ChessBoard
             Console.WriteLine($"{kvpPiecePosition.Key} {kvpPiecePosition.Value}");
         }
     }
+    
+    public void ExecuteCastleMove()
+    {
+        // if a king is moved, and the destination is found to be
+        //  equal to its castle position, and the king hasn't moved yet
+        //  move king to castlePos and that side rook to rookCastlePos
+    }
+
+    public void UpdateBoardAndPieces()
+    {
+        UpdatePiecePositions();
+        PopulateBoard();
+        ClearValidMoves();
+        GeneratePieceMoves();
+        // Add Threats
+        // Calculate Pins
+        
+        // FOR TESTING
+        //OutputBoard();
+    }
+    
 }

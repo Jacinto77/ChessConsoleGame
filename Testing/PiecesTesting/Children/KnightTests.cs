@@ -1,3 +1,4 @@
+using System.Data;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
 
@@ -9,9 +10,7 @@ public class KnightTests
     [Test]
     public void KnightConstructor_ValidMovesArePopulated()
     {
-        Piece knight = new Knight(Piece.PieceType.Knight, Piece.PieceColor.White, 
-            new List<(int row, int col)>(),
-        Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false, (-1, -1));
+        Piece knight = new Knight( Piece.PieceColor.White, (-1, -1), Piece.PieceType.Knight, null, Piece.WhiteIcons[Piece.PieceType.Knight], false, false, 0, false);
         
         List<(int row, int col)> validMoveInitialization = new List<(int row, int col)>
         {

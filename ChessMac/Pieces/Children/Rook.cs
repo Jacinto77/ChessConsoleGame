@@ -8,42 +8,81 @@ public class Rook : Piece
 {
     public (int row, int col) CastlePos;
 
-    public Rook(PieceColor inColor) : base(inColor)
+    // public Rook(PieceColor inColor) : base(inColor)
+    // {
+    //     Type = PieceType.Rook;
+    //     SetIconByColorAndType(inColor);
+    // }
+    //
+    // public Rook(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
+    // {
+    //     Type = PieceType.Rook;
+    //     SetIconByColorAndType(inColor);
+    // }
+    public Rook(
+        PieceColor inColor = default,
+        (int row, int col) inPosition = default,
+        PieceType inType = PieceType.Rook,
+        List<(int row, int col)>? inValidMoves = default,
+        char? inIcon = default,
+        bool inHasMoved = default,
+        bool inIsPinned = default,
+        int inMoveCounter = default,
+        bool inIsThreatened = default) 
+        : base(inColor, inPosition, inType, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened)
     {
-        Type = PieceType.Rook;
-        Icon = GetColorPieceIcon(inColor);
+        if (inPosition != (-1, -1)) AssignCastlePos();
     }
     
-    public Rook(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
-    {
-        AssignIconByColor(inColor, PieceType.Rook);
-        Type = PieceType.Rook;
-    }
-    
-    public Rook(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
-        base(inType, inColor, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
-    {
-    }
+    // public Rook(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
+    //     bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
+    //     base(inColor, inType, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
+    // {
+    // }
 
     public override Piece Clone()
     {
-        return new Rook(this.Type, this.Color, this.GetValidMoveList(), this.Icon, this.HasMoved, this.IsPinned,
-            this.MoveCounter, this.IsThreatened, this.Position);
+        return new Rook(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned,
+            MoveCounter, IsThreatened);
     }
 
-    public void AssignCastlePos((int row, int col) rookPos)
+    public void AssignCastlePos()
     {
-        CastlePos = rookPos;
+        switch (this.Position)
+        {
+            case (0, 0): 
+                CastlePos = (0, 3);
+                break;
+            case (0, 7): 
+                CastlePos = (0, 5);
+                break;
+            case (7, 0): 
+                CastlePos = (7, 3);
+                break;
+            case (7, 7):
+                CastlePos = (7, 5);
+                break;
+            default:
+                CastlePos = (-1, -1);
+                break;
+
+        }
     }
 
-    public bool CanCastle(PieceColor inColor, Board.ChessBoard inBoard)
+    public bool CanCastle()
     {
         return !HasMoved;
     }
 
-    public override void GenerateValidMoves(Board.ChessBoard inBoard)
+    public override void GenerateValidMoves(ChessBoard inBoard)
     {
         GenerateRookMoves(inBoard, Position.row, Position.col);
+    }
+
+    public override void PrintAttributes()
+    {
+        base.PrintAttributes();
+        Console.WriteLine($"Castling Move Position: {CastlePos}");
+        Console.WriteLine($"Can Castle: {CanCastle()}");
     }
 }

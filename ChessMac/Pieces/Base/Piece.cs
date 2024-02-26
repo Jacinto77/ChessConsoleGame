@@ -1,3 +1,4 @@
+using System.Data;
 using ChessMac.Board;
 using static ChessMac.Board.Methods;
 
@@ -37,23 +38,41 @@ public abstract class Piece
         King
     }
     
-    protected Piece(PieceColor inColor)
-    {
-        Color = inColor;
-    }
-
-    protected Piece(PieceColor inColor, (int row, int col) inPosition)
-    {
-        Color = inColor;
-        Position = inPosition;
-    }
-
-    public Piece(PieceColor inColor, PieceType inType)
-    {
-        Color = inColor;
-        Type = inType;
-        AssignIconByColor(inColor, inType);
-    }
+    // protected Piece(PieceColor inColor)
+    // {
+    //     Color = inColor;
+    //     Position = new();
+    //     
+    //     HasMoved = false;
+    //     IsPinned = false;
+    //     MoveCounter = 0;
+    //     IsThreatened = false;
+    //     
+    // }
+    //
+    // protected Piece(PieceColor inColor, (int row, int col) inPosition)
+    // {
+    //     Color = inColor;
+    //     Position = inPosition;
+    //     
+    //     HasMoved = false;
+    //     IsPinned = false;
+    //     MoveCounter = 0;
+    //     IsThreatened = false;
+    // }
+    //
+    // public Piece(PieceColor inColor, PieceType inType)
+    // {
+    //     Color = inColor;
+    //     Type = inType;
+    //     Position = new ValueTuple<int, int>();
+    //     
+    //     HasMoved = false;
+    //     IsPinned = false;
+    //     MoveCounter = 0;
+    //     IsThreatened = false;
+    //     
+    // }
 
     // public Piece()
     // {
@@ -65,13 +84,22 @@ public abstract class Piece
     //     MoveCounter = 0;
     // }
     
-    public Piece(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-        bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition)
+    public Piece(
+        PieceColor inColor = default,
+        (int row, int col) inPosition = default,
+        PieceType inType = default,
+        List<(int row, int col)>? inValidMoves = default,
+        char? inIcon = default,
+        bool inHasMoved = false,
+        bool inIsPinned = false,
+        int inMoveCounter = 0,
+        bool inIsThreatened = false)
     {
         Type = inType;
         Color = inColor;
         SetValidMoveList(inValidMoves);
         Icon = inIcon;
+        if (Icon == null) SetIconByColorAndType(inColor);
         HasMoved = inHasMoved;
         IsPinned = inIsPinned;
         MoveCounter = inMoveCounter;
@@ -102,7 +130,7 @@ public abstract class Piece
         { PieceType.King, '\u265A' }
     };
 
-    public (int row, int col) Position { get; private set; }
+    public (int row, int col) Position { get; protected set; }
     
     public const char EmptySpaceIcon = '\u2610';
 
@@ -117,13 +145,17 @@ public abstract class Piece
     public int MoveCounter { get; protected set; }
     public bool IsThreatened { get; protected set; }
 
-    public void UpdatePosition((int row, int col) inPosition)
+    public virtual void Move((int row, int col) inPosition)
     {
-        this.Position = inPosition;
+        Position = inPosition;
+        IncrementMoveCounter();
+        HasMoved = true;
     }
     
     public void SetHasMoved()
     {
+        if (MoveCounter > 0)
+            HasMoved = true;
         HasMoved = true;
     }
 
@@ -157,13 +189,13 @@ public abstract class Piece
         MoveCounter = inCount;
     }
     
-    protected void AssignIconByColor(PieceColor inColor, PieceType inType)
-    {
-        Dictionary<PieceType, char> iconDict;
-        iconDict = inColor is PieceColor.White ? WhiteIcons : BlackIcons;
-
-        Icon = iconDict[inType];
-    }   
+    // protected void AssignIconByColor(PieceColor inColor, PieceType inType)
+    // {
+    //     Dictionary<PieceType, char> iconDict;
+    //     iconDict = inColor is PieceColor.White ? WhiteIcons : BlackIcons;
+    //
+    //     Icon = iconDict[inType];
+    // }   
     
     public void SetThreat()
     {
@@ -180,9 +212,14 @@ public abstract class Piece
         IsThreatened = false;
     }
 
-    public void SetValidMoveList(List<(int row, int col)> inValidMoves)
+    public void SetValidMoveList(List<(int row, int col)>? inValidMoves)
     {
         _validMoves.Clear();
+        if (inValidMoves is null)
+        {
+            Console.Error.WriteLine("SetValidMoveList() argument was null, valid moves list cleared.");
+            return;
+        }
         foreach (var move in inValidMoves) _validMoves.Add(move);
     }
     
@@ -203,29 +240,29 @@ public abstract class Piece
         Console.WriteLine();
     }
 
-    protected static List<T> CreateList<T>(params T[] values)
-    {
-        return new List<T>(values);
-    }
-
-    public virtual Piece DeepCopy()
-    {
-        Piece pieceCopy = PieceFactory.CreatePiece(Type.ToString(), Color);
-        
-        pieceCopy.SetHasMoved(this.HasMoved);
-        pieceCopy.SetThreat(this.IsThreatened);
-        pieceCopy.SetIsPinned(this.IsPinned);
-        pieceCopy.SetMoveCounter(this.MoveCounter);
-        
-        pieceCopy.UpdatePosition(this.Position);
-        
-        _validMoves = new List<(int row, int col)>();
-        
-        foreach (var move in _validMoves) 
-            pieceCopy.AddValidMove(move);
-        
-        return pieceCopy;
-    }
+    // protected static List<T> CreateList<T>(params T[] values)
+    // {
+    //     return new List<T>(values);
+    // }
+    //
+    // public virtual Piece DeepCopy()
+    // {
+    //     Piece pieceCopy = PieceFactory.CreatePiece(Type.ToString(), Color);
+    //     
+    //     pieceCopy.SetHasMoved(this.HasMoved);
+    //     pieceCopy.SetThreat(this.IsThreatened);
+    //     pieceCopy.SetIsPinned(this.IsPinned);
+    //     pieceCopy.SetMoveCounter(this.MoveCounter);
+    //     
+    //     pieceCopy.Move(this.Position);
+    //     
+    //     _validMoves = new List<(int row, int col)>();
+    //     
+    //     foreach (var move in _validMoves) 
+    //         pieceCopy.AddValidMove(move);
+    //     
+    //     return pieceCopy;
+    // }
 
     public static PieceType ConvertIntToPieceType(int? input)
     {
@@ -241,11 +278,9 @@ public abstract class Piece
         return pieceType;
     }
 
-    public char GetColorPieceIcon(PieceColor inColor)
+    public void SetIconByColorAndType(PieceColor inColor)
     {
-        if (inColor == PieceColor.Black)
-            return BlackIcons[Type];
-        return WhiteIcons[Type];
+        Icon = inColor == PieceColor.Black ? BlackIcons[Type] : WhiteIcons[Type];
     }
 
     protected void AddValidMove((int row, int col) validMove)
@@ -298,7 +333,7 @@ public abstract class Piece
                 if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8)
                     break;
 
-                var tempPiece = inBoard.BoardPieces[newRow, newCol];
+                var tempPiece = inBoard.BoardSpaces[newRow, newCol];
 
                 if (tempPiece is not null && tempPiece.Color == Color)
                     break;
@@ -334,7 +369,7 @@ public abstract class Piece
                 if (newRow < 0 || newRow >= 8 || newCol < 0 || newCol >= 8) // Check boundary conditions
                     break;
 
-                var tempSpace = inBoard.BoardPieces[newRow, newCol];
+                var tempSpace = inBoard.BoardSpaces[newRow, newCol];
 
                 if (tempSpace is not null && tempSpace.Color == Color)
                     break;
@@ -387,5 +422,17 @@ public abstract class Piece
         if (this.Color == colorToMove) return true;
         Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
         return false;
+    }
+    
+    public virtual void PrintAttributes()
+    {
+        Console.WriteLine($"Type:           {Type}");
+        Console.WriteLine($"Color:          {Color}");
+        Console.WriteLine($"Position:       {Position}");
+        Console.WriteLine($"Move Counter:   {MoveCounter}");
+        Console.WriteLine($"Is Threatened:  {IsThreatened}");
+        Console.WriteLine($"Has Moved:      {HasMoved}");
+        Console.WriteLine($"Icon:           {Icon}");
+        PrintValidMoves();
     }
 }
