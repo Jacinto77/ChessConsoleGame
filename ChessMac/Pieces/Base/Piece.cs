@@ -1,6 +1,7 @@
 using System.Data;
 using ChessMac.Board;
 using static ChessMac.Board.Methods;
+using static ChessMac.Board.ChessBoard;
 
 namespace ChessMac.Pieces.Base;
 
@@ -151,6 +152,12 @@ public abstract class Piece
         IncrementMoveCounter();
         HasMoved = true;
     }
+
+    public virtual (int row, int col) GetCastlePos()
+    {
+        return (-1, -1);
+    }
+    
     
     public void SetHasMoved()
     {
@@ -230,7 +237,7 @@ public abstract class Piece
 
     public void PrintValidMoveList()
     {
-        Console.WriteLine($"{this.Type} at {ChessBoard.ConvertIndexToPos(this.Position)} valid moves:");
+        Console.WriteLine($"{Type} at {ConvertIndexToPos(Position)} valid moves:");
         if (_validMoves.Count == 0)
             Console.WriteLine("\t--No moves in valid moves list--");
         foreach (var move in _validMoves)
@@ -311,7 +318,7 @@ public abstract class Piece
     {
     }
 
-    public void GenerateRookMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public void GenerateRookMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         //ClearValidMoves();
 
@@ -345,7 +352,7 @@ public abstract class Piece
             }
     }
 
-    public void GenerateBishopMoves(Board.ChessBoard inBoard, int currentRow, int currentCol)
+    public void GenerateBishopMoves(ChessBoard inBoard, int currentRow, int currentCol)
     {
         // Define the possible diagonal directions for movement as (rowChange, colChange)
         Tuple<int, int>[] directions =
@@ -395,7 +402,7 @@ public abstract class Piece
         return false;
     }
 
-    public void PromotePawn(Board.ChessBoard inBoard)
+    public void PromotePawn(ChessBoard inBoard)
     {
         PromptForPromotion();
         var pieceType = ConvertIntToPieceType(GetPlayerTypeInt());
@@ -419,7 +426,7 @@ public abstract class Piece
 
     public bool IsColorToMove(PieceColor colorToMove)
     {
-        if (this.Color == colorToMove) return true;
+        if (Color == colorToMove) return true;
         Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
         return false;
     }
@@ -434,5 +441,10 @@ public abstract class Piece
         Console.WriteLine($"Has Moved:      {HasMoved}");
         Console.WriteLine($"Icon:           {Icon}");
         PrintValidMoves();
+    }
+
+    public virtual (int row, int col) GetRookPos(PieceType inType)
+    {
+        return (-1, -1);
     }
 }

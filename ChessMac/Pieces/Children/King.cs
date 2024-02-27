@@ -12,9 +12,9 @@ public class King : Piece
 {
     private (int row, int col) _kingSideCastlePos;
     private (int row, int col) _queenSideCastlePos;
-    
-    private (int row, int col) _kingSideRookPos;
-    private (int row, int col) _queenSideRookPos;
+
+    public (int row, int col) KingSideRookPos { get; private set; }
+    public (int row, int col) QueenSideRookPos { get; private set; }
 
     private List<(int row, int col)> _kingSpacesCheckToCastle = new();
     private List<(int row, int col)> _queenSpacesCheckToCastle = new();
@@ -61,7 +61,7 @@ public class King : Piece
     //     SetCastlePositions(inColor);
     // }
 
-    public override Piece Clone()
+    public override King Clone()
     {
         var tempPiece = new King(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned,
             MoveCounter, IsThreatened)
@@ -72,8 +72,8 @@ public class King : Piece
             _canCastleQueenSide = _canCastleQueenSide,
             _kingSpacesCheckToCastle = _kingSpacesCheckToCastle,
             _queenSpacesCheckToCastle = _queenSpacesCheckToCastle,
-            _kingSideRookPos = _kingSideRookPos,
-            _queenSideRookPos = _queenSideRookPos
+            KingSideRookPos = KingSideRookPos,
+            QueenSideRookPos = QueenSideRookPos
         };
 
         return tempPiece;
@@ -97,13 +97,13 @@ public class King : Piece
     {
         if (Color == PieceColor.White)
         {
-            _kingSideRookPos = (7, 7);
-            _queenSideRookPos = (7, 0);
+            KingSideRookPos = (7, 7);
+            QueenSideRookPos = (7, 0);
         }
         else
         {
-            _kingSideRookPos = (0, 7);
-            _queenSideRookPos = (0, 0);
+            KingSideRookPos = (0, 7);
+            QueenSideRookPos = (0, 0);
         }
     }
 
@@ -207,25 +207,24 @@ public class King : Piece
         
         if (pieceType == PieceType.King)
         {
-            rook = inBoard.GetPieceByIndex(_kingSideRookPos);
+            rook = inBoard.GetPieceByIndex(KingSideRookPos);
             spacesToCheck = _kingSpacesCheckToCastle;
         }
         else
         {
-            rook = inBoard.GetPieceByIndex(_queenSideRookPos);
+            rook = inBoard.GetPieceByIndex(QueenSideRookPos);
             spacesToCheck = _kingSpacesCheckToCastle;
         }
         
         if (rook?.Type != PieceType.Rook || rook.HasMoved) 
             return false;
-        
-        var threats = Color == PieceColor.Black ? inBoard.WhiteThreats : inBoard.BlackThreats;
+
+        var threats = inBoard.ThreatenedSpaces;
+        //var threats = Color == PieceColor.Black ? inBoard.WhiteThreats : inBoard.BlackThreats;
         foreach (var space in spacesToCheck)
         {
             //var tempPiece = inBoard.GetPieceByIndex(space);
-            if (threats.TryGetValue(space, out List<Piece>? tempPiece))
-                return false;
-            if (tempPiece is not null)
+            if (threats.TryGetValue(space, out List<Piece>? tempPiece) || tempPiece is not null)
                 return false;
         }
 
@@ -325,8 +324,8 @@ public class King : Piece
         base.PrintAttributes();
         Console.WriteLine($"Castle Position king side: {_kingSideCastlePos}");
         Console.WriteLine($"Castle Position queen side: {_queenSideCastlePos}");
-        Console.WriteLine($"Rook king side Position: {_kingSideRookPos}");
-        Console.WriteLine($"Rook queen side Position: {_queenSideRookPos}");
+        Console.WriteLine($"Rook king side Position: {KingSideRookPos}");
+        Console.WriteLine($"Rook queen side Position: {QueenSideRookPos}");
         Console.WriteLine($"Can castle king side: {_canCastleKingSide}");
         Console.WriteLine($"Can castle queen side: {_canCastleQueenSide}");
         Console.WriteLine($"King side spaces to check: ");
@@ -347,5 +346,18 @@ public class King : Piece
         base.Move(inPosition);
         _canCastleKingSide = false;
         _canCastleQueenSide = false;
+    }
+
+    public override (int row, int col) GetRookPos(PieceType inType)
+    {
+        switch (inType)
+        {
+            case PieceType.King:
+                return KingSideRookPos;
+            case PieceType.Queen:
+                return QueenSideRookPos;
+            default:
+                return (-1, -1);
+        }
     }
 }

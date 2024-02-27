@@ -6,7 +6,7 @@ namespace ChessMac.Pieces.Children;
 // TODO implement castling
 public class Rook : Piece
 {
-    public (int row, int col) CastlePos;
+    private (int row, int col) _castlePos;
 
     // public Rook(PieceColor inColor) : base(inColor)
     // {
@@ -42,8 +42,11 @@ public class Rook : Piece
 
     public override Piece Clone()
     {
-        return new Rook(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned,
+        var tempRook = new Rook(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned,
             MoveCounter, IsThreatened);
+        tempRook._castlePos = _castlePos;
+
+        return tempRook;
     }
 
     public void AssignCastlePos()
@@ -51,19 +54,19 @@ public class Rook : Piece
         switch (this.Position)
         {
             case (0, 0): 
-                CastlePos = (0, 3);
+                _castlePos = (0, 3);
                 break;
             case (0, 7): 
-                CastlePos = (0, 5);
+                _castlePos = (0, 5);
                 break;
             case (7, 0): 
-                CastlePos = (7, 3);
+                _castlePos = (7, 3);
                 break;
             case (7, 7):
-                CastlePos = (7, 5);
+                _castlePos = (7, 5);
                 break;
             default:
-                CastlePos = (-1, -1);
+                _castlePos = (-1, -1);
                 break;
 
         }
@@ -79,10 +82,15 @@ public class Rook : Piece
         GenerateRookMoves(inBoard, Position.row, Position.col);
     }
 
+    public override (int row, int col) GetCastlePos()
+    {
+        return _castlePos;
+    }
+
     public override void PrintAttributes()
     {
         base.PrintAttributes();
-        Console.WriteLine($"Castling Move Position: {CastlePos}");
+        Console.WriteLine($"Castling Move Position: {_castlePos}");
         Console.WriteLine($"Can Castle: {CanCastle()}");
     }
 }

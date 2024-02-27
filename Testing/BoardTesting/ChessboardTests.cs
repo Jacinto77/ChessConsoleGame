@@ -25,70 +25,70 @@ public class ChessboardTests
     //     }
     // }
 
-    [Test]
-    public void PlacePieces_AllPiecesAreCorrect()
-    {
-        var chessboard = new ChessBoard();
-        //chessboard.InitBoardPieces();
-        chessboard.PlacePieces();
-        
-        var boardPieces = new Piece?[8, 8];
-
-        // black pieces
-        boardPieces[0, 0] = new Rook(Piece.PieceColor.Black);
-        boardPieces[0, 1] = new Knight(Piece.PieceColor.Black);
-        boardPieces[0, 2] = new Bishop(Piece.PieceColor.Black);
-        boardPieces[0, 3] = new Queen(Piece.PieceColor.Black);
-        boardPieces[0, 4] = new King(Piece.PieceColor.Black);
-        boardPieces[0, 5] = new Bishop(Piece.PieceColor.Black);
-        boardPieces[0, 6] = new Knight(Piece.PieceColor.Black);
-        boardPieces[0, 7] = new Rook(Piece.PieceColor.Black);
-
-        boardPieces[1, 0] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 1] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 2] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 3] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 4] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 5] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 6] = new Pawn(Piece.PieceColor.Black);
-        boardPieces[1, 7] = new Pawn(Piece.PieceColor.Black);
-
-        // white pieces
-        boardPieces[7, 0] = new Rook(Piece.PieceColor.White);
-        boardPieces[7, 1] = new Knight(Piece.PieceColor.White);
-        boardPieces[7, 2] = new Bishop(Piece.PieceColor.White);
-        boardPieces[7, 3] = new Queen(Piece.PieceColor.White);
-        boardPieces[7, 4] = new King(Piece.PieceColor.White);
-        boardPieces[7, 5] = new Bishop(Piece.PieceColor.White);
-        boardPieces[7, 6] = new Knight(Piece.PieceColor.White);
-        boardPieces[7, 7] = new Rook(Piece.PieceColor.White);
-
-        boardPieces[6, 0] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 1] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 2] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 3] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 4] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 5] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 6] = new Pawn(Piece.PieceColor.White);
-        boardPieces[6, 7] = new Pawn(Piece.PieceColor.White);
-
-        for (var row = 0; row < 8; row++)
-        {
-            for (var col = 0; col < 8; col++)
-            {
-                Assert.That(boardPieces[row, col]?.Type, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Type));
-                Assert.That(boardPieces[row, col]?.Icon, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Icon));
-                Assert.That(boardPieces[row, col]?.Color, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Color));
-                Assert.That(boardPieces[row, col]?.IsThreatened, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsThreatened));
-                Assert.That(boardPieces[row, col]?.MoveCounter, Is.EqualTo(chessboard.BoardSpaces[row, col]?.MoveCounter));
-                Assert.That(boardPieces[row, col]?.HasMoved, Is.EqualTo(chessboard.BoardSpaces[row, col]?.HasMoved));
-                Assert.That(boardPieces[row, col]?.IsPinned, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsPinned));
-                
-                TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardSpaces[row, col]?.GetType()}");
-
-            }
-        }
-    }
+    // [Test]
+    // public void PlacePieces_AllPiecesAreCorrect()
+    // {
+    //     var chessboard = new ChessBoard();
+    //     //chessboard.InitBoardPieces();
+    //     chessboard.PlacePieces();
+    //     
+    //     var boardPieces = new Piece?[8, 8];
+    //
+    //     // black pieces
+    //     boardPieces[0, 0] = new Rook(Piece.PieceColor.Black);
+    //     boardPieces[0, 1] = new Knight(Piece.PieceColor.Black);
+    //     boardPieces[0, 2] = new Bishop(Piece.PieceColor.Black);
+    //     boardPieces[0, 3] = new Queen(Piece.PieceColor.Black);
+    //     boardPieces[0, 4] = new King(Piece.PieceColor.Black);
+    //     boardPieces[0, 5] = new Bishop(Piece.PieceColor.Black);
+    //     boardPieces[0, 6] = new Knight(Piece.PieceColor.Black);
+    //     boardPieces[0, 7] = new Rook(Piece.PieceColor.Black);
+    //
+    //     boardPieces[1, 0] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 1] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 2] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 3] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 4] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 5] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 6] = new Pawn(Piece.PieceColor.Black);
+    //     boardPieces[1, 7] = new Pawn(Piece.PieceColor.Black);
+    //
+    //     // white pieces
+    //     boardPieces[7, 0] = new Rook(Piece.PieceColor.White);
+    //     boardPieces[7, 1] = new Knight(Piece.PieceColor.White);
+    //     boardPieces[7, 2] = new Bishop(Piece.PieceColor.White);
+    //     boardPieces[7, 3] = new Queen(Piece.PieceColor.White);
+    //     boardPieces[7, 4] = new King(Piece.PieceColor.White);
+    //     boardPieces[7, 5] = new Bishop(Piece.PieceColor.White);
+    //     boardPieces[7, 6] = new Knight(Piece.PieceColor.White);
+    //     boardPieces[7, 7] = new Rook(Piece.PieceColor.White);
+    //
+    //     boardPieces[6, 0] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 1] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 2] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 3] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 4] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 5] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 6] = new Pawn(Piece.PieceColor.White);
+    //     boardPieces[6, 7] = new Pawn(Piece.PieceColor.White);
+    //
+    //     for (var row = 0; row < 8; row++)
+    //     {
+    //         for (var col = 0; col < 8; col++)
+    //         {
+    //             Assert.That(boardPieces[row, col]?.Type, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Type));
+    //             Assert.That(boardPieces[row, col]?.Icon, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Icon));
+    //             Assert.That(boardPieces[row, col]?.Color, Is.EqualTo(chessboard.BoardSpaces[row, col]?.Color));
+    //             Assert.That(boardPieces[row, col]?.IsThreatened, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsThreatened));
+    //             Assert.That(boardPieces[row, col]?.MoveCounter, Is.EqualTo(chessboard.BoardSpaces[row, col]?.MoveCounter));
+    //             Assert.That(boardPieces[row, col]?.HasMoved, Is.EqualTo(chessboard.BoardSpaces[row, col]?.HasMoved));
+    //             Assert.That(boardPieces[row, col]?.IsPinned, Is.EqualTo(chessboard.BoardSpaces[row, col]?.IsPinned));
+    //             
+    //             TestContext.WriteLine($"Row: {row} | Col: {col} {chessboard.BoardSpaces[row, col]?.GetType()}");
+    //
+    //         }
+    //     }
+    // }
 
     // [Test]
     // public void PlacePiece_PieceIsPlacedAndSaved()
@@ -481,9 +481,11 @@ public class ChessboardTests
         //TODO
         var chessboard = new ChessBoard();
         
-        chessboard.PlacePieces();
-        chessboard.GeneratePieceMoves();
-        chessboard.AddAllPositionThreats();
+        // chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
+        chessboard.UpdateBoardAndPieces();
+        // chessboard.GeneratePieceMoves();
+        // chessboard.AddAllPositionThreats();
         for(int row = 0; row < chessboard.BoardSpaces.GetLength(0); row ++)
         for (int col = 0; col < chessboard.BoardSpaces.GetLength(0); col++)
         {
@@ -518,7 +520,9 @@ public class ChessboardTests
     public void GetPieceByIndex_GetsReferenceToPieceByIndex()
     {
         var chessboard = new ChessBoard();
-        chessboard.PlacePieces();
+        chessboard.InitializeActivePieces();
+        chessboard.UpdateBoardAndPieces();
+        // chessboard.PlacePieces();
 
         List<(int row, int col)> validTestInputs = new List<(int row, int col)>
         {
@@ -555,5 +559,53 @@ public class ChessboardTests
             TestContext.WriteLine($"Validation Piece: \t{validationPiece?.GetType()} {validationPiece?.Color} {index}\n");
             Assert.That(testPiece, Is.Null);
         }
+    }
+
+    [Test]
+    public void GetKingPosition_ReturnsValueTupleOfKingPosition()
+    {
+        var chessboard = new ChessBoard();
+        chessboard.InitializeActivePieces();
+        chessboard.UpdateBoardAndPieces();
+        
+        var blackKingPos = chessboard.GetKingPosition(Piece.PieceColor.Black);
+        var whiteKingPos = chessboard.GetKingPosition(Piece.PieceColor.White);
+        
+        TestContext.WriteLine($"Black king position: {blackKingPos}");
+        TestContext.WriteLine($"White king position: {whiteKingPos}");
+    }
+
+    
+
+    [Test]
+    public void ExecuteCastleMove_KingRookAreMovedToTheirCastlePositions()
+    {
+        TestExecuteCastleMove((7, 4), (7, 6), (7, 0), (7, 7), Piece.PieceColor.White);
+        TestExecuteCastleMove((7, 4), (7, 2), (7, 0), (7, 7), Piece.PieceColor.White);
+        TestExecuteCastleMove((0, 4), (0, 6), (0, 0), (0, 7), Piece.PieceColor.Black);
+        TestExecuteCastleMove((0, 4), (0, 2), (0, 0), (0, 7), Piece.PieceColor.Black);
+    }
+    
+    private void TestExecuteCastleMove((int row, int col) kingPos, (int row, int col) destSpace, 
+        (int row, int col) queenRookPos, (int row, int col) kingRookPos, Piece.PieceColor inColor)
+    {
+        var chessboard = new ChessBoard();
+        
+        var king = new King(inColor, kingPos);
+        var kingRook = new Rook(inColor, kingRookPos);
+        var queenRook = new Rook(inColor, queenRookPos);
+        
+        TestContext.WriteLine("--BEFORE CASTLE--");
+        
+        chessboard.ActivePieces.Add(king);
+        chessboard.ActivePieces.Add(kingRook);
+        chessboard.ActivePieces.Add(queenRook);
+        
+        chessboard.UpdateBoardAndPieces();
+        chessboard.OutputBoard();
+        chessboard.ExecuteCastleMove(king.Position, destSpace);
+        TestContext.WriteLine("--AFTER CASTLE--");
+        chessboard.UpdateBoardAndPieces();
+        chessboard.OutputBoard();
     }
 }

@@ -6,15 +6,18 @@ using ChessMac.Pieces.Children;
 namespace ChessMac.Board;
 
 using static Methods;
+using static Piece;
 
 public class ChessBoard
 {
-    
-    // initializes board with all spaces set to []
-    // public ChessBoard()
-    // {
-    //     //InitBoardPieces();
-    // }
+
+    public ChessBoard(bool initialize = false)
+    {
+        if (!initialize) return;
+        
+        InitializeActivePieces();
+        UpdateBoardAndPieces();
+    }
     
     public Piece?[,] BoardSpaces = new Piece[8, 8];
     public List<Piece> ActivePieces = new List<Piece>();
@@ -22,9 +25,20 @@ public class ChessBoard
 
     public Dictionary<(int row, int col), Piece> PiecePositions = new();
     public Dictionary<(int row, int col), List<Piece>> ThreatenedSpaces = new();
-    
-    public Dictionary<(int row, int col), List<Piece>> WhiteThreats = new();
-    public Dictionary<(int row, int col), List<Piece>> BlackThreats = new();
+
+    private (int row, int col) blackKingPosition;
+    private (int row, int col) whiteKingPosition;
+
+    public (int row, int col) GetKingPosition(PieceColor inColor)
+    {
+        foreach (var piece in ActivePieces)
+        {
+            if (piece.Color == inColor && piece.Type == PieceType.King)
+                return piece.Position;
+        }
+
+        throw new Exception($"GetKingPosition() could not find a king of color: {inColor}");
+    }
     
     public ChessBoard DeepCopy()
     {
@@ -179,42 +193,42 @@ public class ChessBoard
         ActivePieces.Clear();
         
         // black pieces
-        ActivePieces.Add( new Rook  (Piece.PieceColor.Black, (0, 0)));
-        ActivePieces.Add( new Knight(Piece.PieceColor.Black, (0, 1)));
-        ActivePieces.Add( new Bishop(Piece.PieceColor.Black, (0, 2)));
-        ActivePieces.Add( new Queen (Piece.PieceColor.Black, (0, 3)));
-        ActivePieces.Add( new King  (Piece.PieceColor.Black, (0, 4)));
-        ActivePieces.Add( new Bishop(Piece.PieceColor.Black, (0, 5)));
-        ActivePieces.Add( new Knight(Piece.PieceColor.Black, (0, 6)));
-        ActivePieces.Add( new Rook  (Piece.PieceColor.Black, (0, 7)));
+        ActivePieces.Add( new Rook  (PieceColor.Black, (0, 0)));
+        ActivePieces.Add( new Knight(PieceColor.Black, (0, 1)));
+        ActivePieces.Add( new Bishop(PieceColor.Black, (0, 2)));
+        ActivePieces.Add( new Queen (PieceColor.Black, (0, 3)));
+        ActivePieces.Add( new King  (PieceColor.Black, (0, 4)));
+        ActivePieces.Add( new Bishop(PieceColor.Black, (0, 5)));
+        ActivePieces.Add( new Knight(PieceColor.Black, (0, 6)));
+        ActivePieces.Add( new Rook  (PieceColor.Black, (0, 7)));
         
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 0)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 1)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 2)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 3)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 4)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 5)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 6)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.Black, (1, 7)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 0)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 1)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 2)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 3)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 4)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 5)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 6)));
+        ActivePieces.Add( new Pawn(PieceColor.Black, (1, 7)));
 
         // white pieces
-        ActivePieces.Add( new Rook  (Piece.PieceColor.White, (7, 0)));
-        ActivePieces.Add( new Knight(Piece.PieceColor.White, (7, 1)));
-        ActivePieces.Add( new Bishop(Piece.PieceColor.White, (7, 2)));
-        ActivePieces.Add( new Queen (Piece.PieceColor.White, (7, 3)));
-        ActivePieces.Add( new King  (Piece.PieceColor.White, (7, 4)));
-        ActivePieces.Add( new Bishop(Piece.PieceColor.White, (7, 5)));
-        ActivePieces.Add( new Knight(Piece.PieceColor.White, (7, 6)));
-        ActivePieces.Add( new Rook  (Piece.PieceColor.White, (7, 7)));
+        ActivePieces.Add( new Rook  (PieceColor.White, (7, 0)));
+        ActivePieces.Add( new Knight(PieceColor.White, (7, 1)));
+        ActivePieces.Add( new Bishop(PieceColor.White, (7, 2)));
+        ActivePieces.Add( new Queen (PieceColor.White, (7, 3)));
+        ActivePieces.Add( new King  (PieceColor.White, (7, 4)));
+        ActivePieces.Add( new Bishop(PieceColor.White, (7, 5)));
+        ActivePieces.Add( new Knight(PieceColor.White, (7, 6)));
+        ActivePieces.Add( new Rook  (PieceColor.White, (7, 7)));
         
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 0)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 1)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 2)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 3)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 4)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 5)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 6)));
-        ActivePieces.Add( new Pawn(Piece.PieceColor.White, (6, 7)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 0)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 1)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 2)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 3)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 4)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 5)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 6)));
+        ActivePieces.Add( new Pawn(PieceColor.White, (6, 7)));
         
         
     }
@@ -249,82 +263,7 @@ public class ChessBoard
         }
     }
 
-    // public void PlacePieces()
-    // {
-    //     // black pieces
-    //     BoardPieces[0, 0] = new Rook(Piece.PieceColor.Black);
-    //     BoardPieces[0, 1] = new Knight(Piece.PieceColor.Black);
-    //     BoardPieces[0, 2] = new Bishop(Piece.PieceColor.Black);
-    //     BoardPieces[0, 3] = new Queen(Piece.PieceColor.Black);
-    //     BoardPieces[0, 4] = new King(Piece.PieceColor.Black);
-    //     BoardPieces[0, 5] = new Bishop(Piece.PieceColor.Black);
-    //     BoardPieces[0, 6] = new Knight(Piece.PieceColor.Black);
-    //     BoardPieces[0, 7] = new Rook(Piece.PieceColor.Black);
-    //
-    //     BoardPieces[1, 0] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 1] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 2] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 3] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 4] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 5] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 6] = new Pawn(Piece.PieceColor.Black);
-    //     BoardPieces[1, 7] = new Pawn(Piece.PieceColor.Black);
-    //
-    //     // white pieces
-    //     BoardPieces[7, 0] = new Rook(Piece.PieceColor.White);
-    //     BoardPieces[7, 1] = new Knight(Piece.PieceColor.White);
-    //     BoardPieces[7, 2] = new Bishop(Piece.PieceColor.White);
-    //     BoardPieces[7, 3] = new Queen(Piece.PieceColor.White);
-    //     BoardPieces[7, 4] = new King(Piece.PieceColor.White);
-    //     BoardPieces[7, 5] = new Bishop(Piece.PieceColor.White);
-    //     BoardPieces[7, 6] = new Knight(Piece.PieceColor.White);
-    //     BoardPieces[7, 7] = new Rook(Piece.PieceColor.White);
-    //
-    //     BoardPieces[6, 0] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 1] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 2] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 3] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 4] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 5] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 6] = new Pawn(Piece.PieceColor.White);
-    //     BoardPieces[6, 7] = new Pawn(Piece.PieceColor.White);
-    // }
     
-    public void PlacePieces()
-    {
-        Piece.PieceColor[] colors = {
-            Piece.PieceColor.Black, 
-            Piece.PieceColor.White
-        };
-        Type[] pieceOrder = { 
-            typeof(Rook), 
-            typeof(Knight), 
-            typeof(Bishop), 
-            typeof(Queen), 
-            typeof(King), 
-            typeof(Bishop), 
-            typeof(Knight), 
-            typeof(Rook) 
-        };
-   
-        foreach (var color in colors)
-        {
-            int pawnRow = (color == Piece.PieceColor.Black) ? 1 : 6;
-            int pieceRow = (color == Piece.PieceColor.Black) ? 0 : 7;
-   
-            // Place pawns
-            for (int col = 0; col < 8; col++)
-            {
-                BoardSpaces[pawnRow, col] = new Pawn(color);
-            }
-   
-            // Place other pieces based on the pieceOrder array
-            for (int col = 0; col < 8; col++)
-            {
-                BoardSpaces[pieceRow, col] = (Piece?)Activator.CreateInstance(pieceOrder[col], color);
-            }
-        }
-    }
 
 
     public void ClearValidMoves()
@@ -375,7 +314,7 @@ public class ChessBoard
                 }
                 else
                 {
-                    Console.Write(Piece.EmptySpaceIcon);
+                    Console.Write(EmptySpaceIcon);
                 }
                 
                 if (col < 7) Console.Write("\t");
@@ -405,6 +344,183 @@ public class ChessBoard
         Console.WriteLine("\t\t\t\t WHITE");
     }
 
+    public static bool IsWithinBoard((int row, int col) position)
+    {
+        return position.row is <= 7 and >= 0 && position.col is <= 7 and >= 0;
+    }
+
+    // public void PlacePiece(Piece? inPiece, (int row, int col) position)
+    // {
+    //     if (!IsWithinBoard(position)) throw new Exception("PlacePiece() arguments are not within bounds of ChessBoard");
+    //     BoardPieces[position.row, position.col] = inPiece;
+    // }
+
+    
+    
+    // should receive non-null starting position
+    public bool ValidateAndMovePiece(PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
+    {
+        Piece? activePiece = GetPieceByPosition(startPos);
+        if (activePiece is null)
+            return false;
+        if (activePiece.IsColorToMove(colorToMove) && activePiece.HasMove(destPos) == false)
+            return false;
+        
+        Piece? takenPiece;
+        MovePiece(startPos, destPos, out takenPiece);
+
+        if (activePiece?.Type == PieceType.Pawn)
+            CheckAndPromotePawn(activePiece, this, destPos.row);
+
+        ClearAllPositionThreats();
+        GeneratePieceMoves();
+        AddAllPositionThreats();
+
+        //TODO king in check validation
+        // if (IsKingInCheck(isMoveValid.Color))
+        // {
+        //     Console.WriteLine("Your king is in check!");
+        //     return false;
+        // }
+
+        return true;
+    }
+
+    public void AddAllPositionThreats()
+    {
+        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
+        {
+            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
+            {
+                var piece = BoardSpaces[row, col];
+                if (piece is null) continue;
+                foreach (var move in piece.GetValidMoveList())
+                    BoardSpaces[move.row, move.col]?.SetThreat();
+            }
+        }
+    }
+
+    public void ClearAllPositionThreats()
+    {
+        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
+        {
+            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
+            {
+                var piece = BoardSpaces[row, col];
+                if (piece is null) continue;
+                piece.ClearThreat();
+            }
+        }
+    }
+
+    private bool IsKingInCheck()
+    {
+        // get location of kings
+        // how to get their location? each time a king moves, update a tracker
+        // variable?
+        foreach (var kvp in ThreatenedSpaces)
+        {
+            //if (kvp.Key == )
+            foreach (var piece in kvp.Value)
+            {
+                
+            }
+        }
+        return false;
+    }
+    
+    public void PrintPiecesByPositions()
+    {
+        foreach (var piece in ActivePieces)
+        {
+            Console.WriteLine($"{piece.Type} {piece.Position}");
+        }
+    }
+
+    public void PrintPieceLocationDictionary()
+    {
+        foreach (var kvpPiecePosition in PiecePositions)
+        {
+            Console.WriteLine($"{kvpPiecePosition.Key} {kvpPiecePosition.Value}");
+        }
+    }
+    
+    public void ExecuteCastleMove((int row, int col) startSpace, (int row, int col) destSpace)
+    {
+        if (!PiecePositions.TryGetValue(startSpace, out var king)) return;
+       
+        Piece? rook;
+        if (destSpace.col > king.Position.col)
+            rook = GetPieceByPosition(king.GetRookPos(PieceType.King));
+        else if (destSpace.col < king.Position.col)
+            rook = GetPieceByPosition(king.GetRookPos(PieceType.Queen));
+        else
+        {
+            throw new Exception(
+                "ExecuteCastleMoves() was passed an invalid value. Value of destSpace.col was " +
+                "equal to king.Position.col");
+        }
+        if (rook is null) throw new Exception("ExecuteCastleMoves() rook is null");
+        
+        MovePiece(king.Position, destSpace, out var throwaway);
+        MovePiece(rook.Position, rook.GetCastlePos(), out var throwaway2);
+    }
+
+    public void UpdateBoardAndPieces()
+    {
+        UpdatePiecePositions();
+        PopulateBoard();
+        ClearValidMoves();
+        GeneratePieceMoves();
+        // Add Threats
+        // Calculate Pins
+        
+        // FOR TESTING
+        //OutputBoard();
+    }
+    
+    
+    
+    //    
+    // -- Not used below --
+    //
+    
+    public void PlacePieces()
+    {
+        PieceColor[] colors = {
+            PieceColor.Black, 
+            PieceColor.White
+        };
+        Type[] pieceOrder = { 
+            typeof(Rook), 
+            typeof(Knight), 
+            typeof(Bishop), 
+            typeof(Queen), 
+            typeof(King), 
+            typeof(Bishop), 
+            typeof(Knight), 
+            typeof(Rook) 
+        };
+    
+        foreach (var color in colors)
+        {
+            int pawnRow = (color == PieceColor.Black) ? 1 : 6;
+            int pieceRow = (color == PieceColor.Black) ? 0 : 7;
+    
+            // Place pawns
+            for (int col = 0; col < 8; col++)
+            {
+                BoardSpaces[pawnRow, col] = new Pawn(color);
+            }
+    
+            // Place other pieces based on the pieceOrder array
+            for (int col = 0; col < 8; col++)
+            {
+                BoardSpaces[pieceRow, col] = (Piece?)Activator.CreateInstance(pieceOrder[col], color);
+            }
+        }
+    }
+    
     // not used switch method to convert H3 input to [2, 7] output
     public static (int row, int col) ConvertPosToIndices((char col, int row) position)
     {
@@ -468,121 +584,6 @@ public class ChessBoard
             _ => column
         };
         return column + row;
-    }
-    
-
-    public static bool IsWithinBoard((int row, int col) position)
-    {
-        return position.row is <= 7 and >= 0 && position.col is <= 7 and >= 0;
-    }
-
-    // public void PlacePiece(Piece? inPiece, (int row, int col) position)
-    // {
-    //     if (!IsWithinBoard(position)) throw new Exception("PlacePiece() arguments are not within bounds of ChessBoard");
-    //     BoardPieces[position.row, position.col] = inPiece;
-    // }
-
-    
-    
-    // should receive non-null starting position
-    public bool ValidateAndMovePiece(Piece.PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
-    {
-        Piece? activePiece = GetPieceByPosition(startPos);
-        if (activePiece is null)
-            return false;
-        if (activePiece.IsColorToMove(colorToMove) && activePiece.HasMove(destPos) == false)
-            return false;
-        
-        Piece? takenPiece;
-        MovePiece(startPos, destPos, out takenPiece);
-
-        if (activePiece?.Type == Piece.PieceType.Pawn)
-            CheckAndPromotePawn(activePiece, this, destPos.row);
-
-        ClearAllPositionThreats();
-        GeneratePieceMoves();
-        AddAllPositionThreats();
-
-        //TODO king in check validation
-        // if (IsKingInCheck(isMoveValid.Color))
-        // {
-        //     Console.WriteLine("Your king is in check!");
-        //     return false;
-        // }
-
-        return true;
-    }
-
-    public void AddAllPositionThreats()
-    {
-        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
-        {
-            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
-            {
-                var piece = BoardSpaces[row, col];
-                if (piece is null) continue;
-                foreach (var move in piece.GetValidMoveList())
-                    BoardSpaces[move.row, move.col]?.SetThreat();
-            }
-        }
-    }
-
-    public void ClearAllPositionThreats()
-    {
-        for (var row = 0; row < BoardSpaces.GetLength(0); row++)
-        {
-            for (var col = 0; col < BoardSpaces.GetLength(0); col++)
-            {
-                var piece = BoardSpaces[row, col];
-                if (piece is null) continue;
-                piece.ClearThreat();
-            }
-        }
-    }
-
-    // public bool IsKingInCheck(PieceColor inColor)
-    // {
-    //     if (inColor == PieceColor.Black)
-    //         return BoardPieces[blackKingPos.row, blackKingPos.col]!.IsThreatened;
-    //     return BoardPieces[whiteKingPos.row, whiteKingPos.col]!.IsThreatened;
-    // }
-
-    
-
-    public void PrintPiecesByPositions()
-    {
-        foreach (var piece in ActivePieces)
-        {
-            Console.WriteLine($"{piece.Type} {piece.Position}");
-        }
-    }
-
-    public void PrintPieceLocationDictionary()
-    {
-        foreach (var kvpPiecePosition in PiecePositions)
-        {
-            Console.WriteLine($"{kvpPiecePosition.Key} {kvpPiecePosition.Value}");
-        }
-    }
-    
-    public void ExecuteCastleMove()
-    {
-        // if a king is moved, and the destination is found to be
-        //  equal to its castle position, and the king hasn't moved yet
-        //  move king to castlePos and that side rook to rookCastlePos
-    }
-
-    public void UpdateBoardAndPieces()
-    {
-        UpdatePiecePositions();
-        PopulateBoard();
-        ClearValidMoves();
-        GeneratePieceMoves();
-        // Add Threats
-        // Calculate Pins
-        
-        // FOR TESTING
-        //OutputBoard();
     }
     
 }
