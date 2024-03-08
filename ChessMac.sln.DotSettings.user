@@ -6,14 +6,10 @@
       &lt;TestAncestor&gt;
         &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.GetPieceByIndex_GetsReferenceToPieceByIndex&lt;/TestId&gt;
       &lt;/TestAncestor&gt;
-      &lt;Or&gt;
-        &lt;Test&gt;
-          &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests&lt;/TestId&gt;
-          &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.GetPieceByIndex_GetsReferenceToPieceByIndex&lt;/TestId&gt;
-        &lt;/Test&gt;
-        &lt;Nothing /&gt;
-        &lt;Nothing /&gt;
-      &lt;/Or&gt;
+      &lt;Test&gt;
+        &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests&lt;/TestId&gt;
+        &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.ChessboardTests.GetPieceByIndex_GetsReferenceToPieceByIndex&lt;/TestId&gt;
+      &lt;/Test&gt;
     &lt;/And&gt;
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.KnightTests.KnightConstructor_ValidMovesArePopulated&lt;/TestId&gt;

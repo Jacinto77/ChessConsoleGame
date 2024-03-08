@@ -99,6 +99,7 @@ public class ChessBoard
         }
         catch (Exception error)
         {
+            
             // Console.WriteLine(error);
             // throw;
             return null;
@@ -286,7 +287,7 @@ public class ChessBoard
     //  will simplify output and allow for easier modifications later
     
     // Output Board Display in ASCII to console
-    public void OutputBoard()
+    public void OutputBoard(int inMoveCounter)
     {
         // List<(int row, int col)> piecePositions = new List<(int row, int col)>();
         // foreach (var piece in ActivePieces)
@@ -342,6 +343,7 @@ public class ChessBoard
         Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH\n");
         // White side label
         Console.WriteLine("\t\t\t\t WHITE");
+        Console.WriteLine($"Move Count: {inMoveCounter}");
     }
 
     public static bool IsWithinBoard((int row, int col) position)
@@ -358,31 +360,54 @@ public class ChessBoard
     
     
     // should receive non-null starting position
-    public bool ValidateAndMovePiece(PieceColor colorToMove, (int row, int col) startPos, (int row, int col) destPos)
+    public bool ValidateAndMovePiece(PieceColor colorToMove, (int row, int col) startIndex, (int row, int col) destIndex, out List<int> errorCodes)
     {
-        Piece? activePiece = GetPieceByPosition(startPos);
+        Piece? activePiece = GetPieceByPosition(startIndex);
+        errorCodes = new List<int>();
+        
         if (activePiece is null)
+        {
+            Console.WriteLine("activePiece was null");
+            errorCodes.Add(1);
             return false;
-        if (activePiece.IsColorToMove(colorToMove) && activePiece.HasMove(destPos) == false)
+        }
+
+        if (!activePiece.IsColorToMove(colorToMove))
+        {
+            Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
+            errorCodes.Add(2);
             return false;
+        }
+
+        if (!activePiece.HasMove(destIndex))
+        {
+            Console.WriteLine($"Move entered ({ConvertIndexToPos(destIndex)}) was not found as a valid move for " +
+                              $"{activePiece.Color} {activePiece.Type} at {ConvertIndexToPos(startIndex)} ");
+            errorCodes.Add(3);
+            return false;
+        }
         
         Piece? takenPiece;
-        MovePiece(startPos, destPos, out takenPiece);
+        MovePiece(startIndex, destIndex, out takenPiece);
 
         if (activePiece?.Type == PieceType.Pawn)
-            CheckAndPromotePawn(activePiece, this, destPos.row);
+            CheckAndPromotePawn(activePiece, this, destIndex.row);
 
         ClearAllPositionThreats();
         GeneratePieceMoves();
         AddAllPositionThreats();
 
-        //TODO king in check validation
-        // if (IsKingInCheck(isMoveValid.Color))
-        // {
-        //     Console.WriteLine("Your king is in check!");
-        //     return false;
-        // }
+        // TODO king in check validation
+        if (IsKingInCheck())
+        {
+            Console.WriteLine("Your king is in check!");
+            return false;
+        }
 
+        if (errorCodes.Count > 0)
+        {
+            return false;
+        }
         return true;
     }
 

@@ -602,10 +602,10 @@ public class ChessboardTests
         chessboard.ActivePieces.Add(queenRook);
         
         chessboard.UpdateBoardAndPieces();
-        chessboard.OutputBoard();
+        chessboard.OutputBoard(0);
         chessboard.ExecuteCastleMove(king.Position, destSpace);
         TestContext.WriteLine("--AFTER CASTLE--");
         chessboard.UpdateBoardAndPieces();
-        chessboard.OutputBoard();
+        chessboard.OutputBoard(0);
     }
 }

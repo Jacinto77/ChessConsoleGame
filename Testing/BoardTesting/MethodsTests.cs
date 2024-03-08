@@ -57,4 +57,24 @@ public class MethodsTests
             counter++;
         }
     }
+
+    [Test]
+    public void IsInputValid_CorrectlyValidatesStringInput()
+    {
+        string[] moves = { "a2 a4", "b1 c3", "h7 h8", "e2 e4", "a9 Z9" };
+        
+        foreach (string move in moves)
+        {
+            if (CheckIsInputValidRegex(move))
+            {
+                Console.WriteLine($"'{move}' is a valid chess move notation.");
+            }
+            else
+            {
+                Console.WriteLine($"'{move}' is NOT a valid chess move notation.");
+            }
+        }
+    }
+    
+    
 }

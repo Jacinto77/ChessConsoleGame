@@ -391,6 +391,8 @@ public abstract class Piece
 
     public bool HasMove((int row, int col) inMove)
     {
+        return _validMoves.Contains(inMove);
+        
         foreach (var validSpace in _validMoves)
         {
             if (validSpace.row == inMove.row && validSpace.col == inMove.col)
@@ -427,7 +429,7 @@ public abstract class Piece
     public bool IsColorToMove(PieceColor colorToMove)
     {
         if (Color == colorToMove) return true;
-        Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
+        //Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
         return false;
     }
     

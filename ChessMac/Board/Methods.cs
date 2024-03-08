@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using ChessMac.Pieces.Base;
 
 namespace ChessMac.Board;
@@ -6,53 +7,78 @@ namespace ChessMac.Board;
 
 public static class Methods
 {
-    public static string GetPlayerInput()
+    private static Dictionary<int, string> DictErrorCodeMessages = new Dictionary<int, string>()
+    {
+        {1, "activePiece was null"},
+        {2, "Invalid color"},
+        {3, "Move entered was not found as a valid move"},
+        {4, ""}
+        
+    };
+
+    private static List<string> Keywords = new List<string>()
+    {
+        "clear",
+        "restart",
+    };
+
+    public static void ExecuteKeyword(string inKeyword)
+    {
+        // TODO
+        // pass
+    }
+    
+    public static string GetAndValidatePlayerMove()
     {
         while (true)
         {
-            Console.Write(
-                @"Move input must be in format:
-                'A4 A5' or enter ! to see valid moves            
-                >  ");
+            Console.Write("> ");
             var playerInput = Console.ReadLine();
-            //Console.WriteLine(playerInput);
-            // adding move checking logic
-            // TODO
-            if (playerInput == "!")
+            if (playerInput is null)
             {
-                Console.WriteLine("Enter the piece you want to see the moves for:\n>  ");
-                playerInput = Console.ReadLine();
-                if (playerInput?.Length != 2) continue;
-                return playerInput;
+                Console.WriteLine("Input was null");
+                continue;
+            }
+            
+            var cleanedInput = playerInput.ToLower().Trim();
+            if (Keywords.Contains(cleanedInput))
+            {
+                ExecuteKeyword(cleanedInput);
+            }
+            if (!CheckIsInputValidRegex(cleanedInput))
+            {
+                Console.WriteLine("Input was not valid. Please use format 'A2 A4'");
+                continue;
             }
 
-            if (playerInput?.Length != 5) continue;
-
-            if (!playerInput.Contains(' ')) continue;
-
+            if (playerInput == "/h")
+            {
+                // TODO: help menu
+                
+                // Console.WriteLine("Enter the piece you want to see the moves for:\n>  ");
+                // playerInput = Console.ReadLine();
+                // if (playerInput?.Length != 2) continue;
+                // return playerInput;
+                Console.WriteLine("Not yet implemented");
+                continue;
+            }
+            
             return playerInput;
         }
-
-        return Console.ReadLine();
     }
-
-    // TODO: check input w/ regex and known words instead
-    public static (string pieceToMove, string moveDestination) ParseInput(string? input)
+    
+    public static string[] ConvertInputStringToValueTuple(string? input)
     {
-        (string pieceToMove, string moveDestination) pieceMove;
-        if (input != null)
+        if (input is null)
         {
-            pieceMove.pieceToMove = input[..2];
-            pieceMove.moveDestination = input[3..5];
+            throw new Exception();
+            // pieceMove.pieceToMove = input[..2];
+            // pieceMove.moveDestination = input[3..5];
         }
-        //TODO undetectable bug, nice
-        else
-        {
-            Console.WriteLine("Error in input validation in: ParseInput()");
-            return new ("A1", "A7");
-        }
-
-        return pieceMove;
+        string[] playerInput = input.Split();
+        // (string pieceToMove, string moveDestination) pieceMove = (playerInput[0], playerInput[1]);
+        
+        return input.Split();
     }
 
     public static string ConvertIndexToPos((int row, int col)? inIndex)
@@ -126,11 +152,40 @@ public static class Methods
         return (tempRow, tempCol);
     }
 
-    public static (string pieceToMove, string moveDestination) GetPlayerMove()
+    public static string[] GetPlayerMove()
     {
-        var playerInput = GetPlayerInput();
-        var pieceDest = ParseInput(playerInput);
-        return ParseInput(playerInput);
+        // TODO: take care of input
+        // will handle the following input options
+        /*
+         * A2 B3, conventional notation specifying space to space
+         * knight to pawn, piece to piece notation, will need to check for ambiguity and confirm if found
+         * knight g4, piece to space
+         * a2-b3
+         * a2 pawn
+         *
+         * for options/views:
+         *  a2 --options
+         *  a2 -o
+         *  a2 --piece
+         *  a2 -p
+         *  a2 --threat
+         *  a2 -t
+         *  a2 --moves
+         *  a2 -m
+         * 
+         * for stats:
+         *  --stats
+         *  -s
+         * 
+         *  for help:
+         *  a2 /?
+         *  a2?
+         *  /?
+         *  /help
+         *  /h
+         * 
+         */
+        return ConvertInputStringToValueTuple(GetAndValidatePlayerMove());
     }
 
     public static void CheckAndPromotePawn(Piece pieceBeingMoved, Board.ChessBoard inBoard, int currentRow)
@@ -156,5 +211,33 @@ public static class Methods
         if (activePiece?.Color == colorToMove) return true;
         Console.WriteLine("That ain't your piece");
         return false;
+    }
+
+    public static bool CheckIsInputValidRegex(string inInput)
+    {
+        const string pattern = @"^[a-h][1-8]\s[a-h][1-8]$";
+        return Regex.IsMatch(inInput, pattern);
+    }
+
+    public static Piece.PieceColor GetColorToMove(int inMoveCounter)
+    {
+        return inMoveCounter % 2 != 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
+    }
+
+    public static void UpdateScreen(ChessBoard inBoard, int inMoveCounter, Piece.PieceColor inColor, List<int> errorCodes)
+    {
+        inBoard.OutputBoard(inMoveCounter);
+        Console.WriteLine($"Turn: | {inColor.ToString().ToUpper()} | to move");
+        Console.WriteLine("/h for help");
+        PrintErrorMessages(errorCodes);
+    }
+
+    public static void PrintErrorMessages(List<int> inErrorCodes)
+    {
+        if (inErrorCodes.Count == 0) return;
+        foreach (var errorCode in inErrorCodes)
+        {
+            Console.WriteLine($"{DictErrorCodeMessages[errorCode]}");
+        }
     }
 }
