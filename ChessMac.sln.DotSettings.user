@@ -33,6 +33,11 @@
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PieceTests.Piece_ConstructorCreatesProperDefaultValues&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.KingTests.Clone_CastlePositionsAreProperlyCloned&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.KingTests.GenerateValidMoves_CastlingWorks&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.BishopTests.GenerateValidMoves_MovesGeneratedAreAllDiagonal&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.RookTests.GenerateValidMoves_MovesGeneratedAreAllHorizVert&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.QueenTests.GenerateValidMoves_MovesGeneratedAreAllHorizVertDiag&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.KingTests.GenerateValidMoves_MovesGeneratedAreCorrectlyLShaped&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::0AB403E9-C702-4739-925C-6F81D4168170::net7.0::TestProject2.PiecesTesting.Children.KingTests.GenerateValidMoves_KingDoesNotAttackOwnPieces&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>

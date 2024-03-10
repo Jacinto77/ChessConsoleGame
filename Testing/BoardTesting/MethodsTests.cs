@@ -25,7 +25,7 @@ public class MethodsTests
             var flip = rand.Next(0, 2);
             
             PieceColor colorOfPiece = flip == 0 ? PieceColor.Black : PieceColor.White;
-            activePiece = CreatePiece("Pawn", colorOfPiece);
+            activePiece = CreatePiece(PieceType.Pawn, colorOfPiece);
             
             colorToMove = PieceColor.Black;
             if (colorOfPiece == colorToMove)

@@ -8,7 +8,8 @@ using static Methods;
 // TODO: validate move generation methods
 // TODO: pawn promotion
 // TODO: chess engine
-// TODO: visualization and debugging, testing methods to output board states and data
+// TODO: visualization and testing
+
 internal static class Program
 {
     private static void Main()

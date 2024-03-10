@@ -87,6 +87,21 @@ public class ChessBoard
         // PopulateBoard();
     }
     
+    public void MovePieceNoTake((int row, int col) startPos, (int row, int col) destPos)
+    {
+        var activePiece = GetPieceByPosition(startPos);
+        if (activePiece == null)
+        {
+            return;
+        }
+
+        activePiece.Move(destPos);
+        
+        // uncomment if testing alone
+        // UpdatePiecePositions();
+        // PopulateBoard();
+    }
+    
     public Piece? GetPieceByPosition((int row, int col) inIndex)
     {
         // PrintPiecesByPositions();
@@ -264,9 +279,6 @@ public class ChessBoard
         }
     }
 
-    
-
-
     public void ClearValidMoves()
     {
         foreach (var piece in ActivePieces)
@@ -285,20 +297,10 @@ public class ChessBoard
 
     // TODO: change output logic to be based on a larger 2x2 array
     //  will simplify output and allow for easier modifications later
-    
-    // Output Board Display in ASCII to console
-    public void OutputBoard(int inMoveCounter)
+    public void OutputBoard(int inMoveCounter = 0, Dictionary<(int row, int col), char>? spacesIcons = null)
     {
-        // List<(int row, int col)> piecePositions = new List<(int row, int col)>();
-        // foreach (var piece in ActivePieces)
-        // {
-        //     var pos = piece.Position;
-        //     piecePositions.Add(pos);
-        // }
-        
-        // Black side label
         Console.WriteLine("\t\t\t\t BLACK\n");
-        // column letter labels
+        
         Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH");
         Console.WriteLine(@"      ______________________________________________________________");
 
@@ -309,15 +311,16 @@ public class ChessBoard
 
             for (var col = 0; col < 8; col++)
             {
-                if (PiecePositions.ContainsKey((row, col)))
+                if (spacesIcons is not null && spacesIcons.TryGetValue((row, col), out char charValue))
                 {
-                    Console.Write(PiecePositions[(row, col)].Icon);
+                    Console.Write(charValue);   
                 }
-                else
+                else if (PiecePositions.TryGetValue((row, col), out Piece? pieceValue))
                 {
-                    Console.Write(EmptySpaceIcon);
+                    Console.Write(pieceValue.Icon);
                 }
-                
+                else Console.Write(EmptySpaceIcon);
+
                 if (col < 7) Console.Write("\t");
                 // skip to next line after reaching last item in row
                 if (col == 7)
@@ -345,6 +348,58 @@ public class ChessBoard
         Console.WriteLine("\t\t\t\t WHITE");
         Console.WriteLine($"Move Count: {inMoveCounter}");
     }
+    
+    // // Output Board Display in ASCII to console
+    // public void OutputBoard(int inMoveCounter, Piece? visualizedMoves = null)
+    // {
+    //     Console.WriteLine("\t\t\t\t BLACK\n");
+    //     
+    //     Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH");
+    //     Console.WriteLine(@"      ______________________________________________________________");
+    //
+    //     for (var row = 0; row < 8; row++)
+    //     {
+    //         // row number labels
+    //         Console.Write(_rowNums[row] + @"     |" + "\t");
+    //
+    //         for (var col = 0; col < 8; col++)
+    //         {
+    //             if (PiecePositions.ContainsKey((row, col)))
+    //             {
+    //                 Console.Write(PiecePositions[(row, col)].Icon);
+    //             }
+    //             else
+    //             {
+    //                 Console.Write(EmptySpaceIcon);
+    //             }
+    //             
+    //             if (col < 7) Console.Write("\t");
+    //             // skip to next line after reaching last item in row
+    //             if (col == 7)
+    //             {
+    //                 // row number labels
+    //                 Console.Write(@"  |" + "\t");
+    //                 Console.Write(_rowNums[row]);
+    //                 Console.WriteLine();
+    //                 if (row < 7)
+    //                 {
+    //                     Console.Write(@"      |" + "\t\t\t\t\t\t\t\t" + @"   |");
+    //                     Console.WriteLine();
+    //                 }
+    //                 else
+    //                 {
+    //                     Console.WriteLine(@"      ______________________________________________________________");
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     // column letter labels
+    //     Console.WriteLine("\tA\tB\tC\tD\tE\tF\tG\tH\n");
+    //     // White side label
+    //     Console.WriteLine("\t\t\t\t WHITE");
+    //     Console.WriteLine($"Move Count: {inMoveCounter}");
+    // }
 
     public static bool IsWithinBoard((int row, int col) position)
     {
@@ -487,8 +542,8 @@ public class ChessBoard
         }
         if (rook is null) throw new Exception("ExecuteCastleMoves() rook is null");
         
-        MovePiece(king.Position, destSpace, out var throwaway);
-        MovePiece(rook.Position, rook.GetCastlePos(), out var throwaway2);
+        MovePieceNoTake(king.Position, destSpace);
+        MovePieceNoTake(rook.Position, rook.GetCastlePos());
     }
 
     public void UpdateBoardAndPieces()
@@ -610,5 +665,30 @@ public class ChessBoard
         };
         return column + row;
     }
-    
+
+    public void VisualizePieceMoves(Piece inPiece)
+    {
+        var tempDict = new Dictionary<(int row, int col), char>();
+        foreach (var validMove in inPiece.GetValidMoveList())
+        {
+            tempDict.Add(validMove, ThreatenedSpaceIcon);
+        }
+        OutputBoard(0, tempDict);
+    }
+
+    public Dictionary<(int row, int col), char> CreatePositionIconDict(List<(int row, int col)> inPositions, List<char> inIcons)
+    {
+        if (inPositions.Count != inIcons.Count)
+        {
+            throw new Exception("Arguments must be of equal length!");
+        }
+        Dictionary<(int row, int col), char> newDict = new();
+
+        for (int i = 0; i < inPositions.Count; i++)
+        {
+            newDict.Add(inPositions[i], inIcons[i]);
+        }
+
+        return newDict;
+    }
 }

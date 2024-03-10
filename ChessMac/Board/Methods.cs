@@ -7,17 +7,17 @@ namespace ChessMac.Board;
 
 public static class Methods
 {
-    private static Dictionary<int, string> DictErrorCodeMessages = new Dictionary<int, string>()
+    private static Dictionary<int, string> _dictErrorCodeMessages = new Dictionary<int, string>()
     {
         {1, "activePiece was null"},
         {2, "Invalid color"},
         {3, "Move entered was not found as a valid move"},
-        {4, ""}
-        
+        {4, "Not implemented yet -- TODO"}
     };
 
-    private static List<string> Keywords = new List<string>()
+    private static List<string> _keywords = new List<string>()
     {
+        // FINISH
         "clear",
         "restart",
     };
@@ -28,7 +28,7 @@ public static class Methods
         // pass
     }
     
-    public static string GetAndValidatePlayerMove()
+    public static string GetAndValidateFormatPlayerMove()
     {
         while (true)
         {
@@ -36,12 +36,12 @@ public static class Methods
             var playerInput = Console.ReadLine();
             if (playerInput is null)
             {
-                Console.WriteLine("Input was null");
+                Console.WriteLine("Input was null: GetAndValidateFormatPlayerMove()");
                 continue;
             }
             
             var cleanedInput = playerInput.ToLower().Trim();
-            if (Keywords.Contains(cleanedInput))
+            if (_keywords.Contains(cleanedInput) || false) // TODO
             {
                 ExecuteKeyword(cleanedInput);
             }
@@ -54,11 +54,6 @@ public static class Methods
             if (playerInput == "/h")
             {
                 // TODO: help menu
-                
-                // Console.WriteLine("Enter the piece you want to see the moves for:\n>  ");
-                // playerInput = Console.ReadLine();
-                // if (playerInput?.Length != 2) continue;
-                // return playerInput;
                 Console.WriteLine("Not yet implemented");
                 continue;
             }
@@ -72,12 +67,8 @@ public static class Methods
         if (input is null)
         {
             throw new Exception();
-            // pieceMove.pieceToMove = input[..2];
-            // pieceMove.moveDestination = input[3..5];
         }
-        string[] playerInput = input.Split();
-        // (string pieceToMove, string moveDestination) pieceMove = (playerInput[0], playerInput[1]);
-        
+
         return input.Split();
     }
 
@@ -185,7 +176,7 @@ public static class Methods
          *  /h
          * 
          */
-        return ConvertInputStringToValueTuple(GetAndValidatePlayerMove());
+        return ConvertInputStringToValueTuple(GetAndValidateFormatPlayerMove());
     }
 
     public static void CheckAndPromotePawn(Piece pieceBeingMoved, Board.ChessBoard inBoard, int currentRow)
@@ -200,9 +191,9 @@ public static class Methods
         while (true)
         {
             var choice = Console.Read();
+            Console.WriteLine($"Input: {choice}");
             if (choice is <= 4 and >= 1) return choice;
-
-            Console.WriteLine("Input must be 1-4");
+            else Console.WriteLine("Input must be 1-4");
         }
     }
     
@@ -227,7 +218,7 @@ public static class Methods
     public static void UpdateScreen(ChessBoard inBoard, int inMoveCounter, Piece.PieceColor inColor, List<int> errorCodes)
     {
         inBoard.OutputBoard(inMoveCounter);
-        Console.WriteLine($"Turn: | {inColor.ToString().ToUpper()} | to move");
+        Console.WriteLine($"Turn: {inColor.ToString().ToUpper()} to move");
         Console.WriteLine("/h for help");
         PrintErrorMessages(errorCodes);
     }
@@ -237,7 +228,7 @@ public static class Methods
         if (inErrorCodes.Count == 0) return;
         foreach (var errorCode in inErrorCodes)
         {
-            Console.WriteLine($"{DictErrorCodeMessages[errorCode]}");
+            Console.WriteLine($"{_dictErrorCodeMessages[errorCode]}");
         }
     }
 }

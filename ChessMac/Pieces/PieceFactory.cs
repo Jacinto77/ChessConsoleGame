@@ -6,21 +6,21 @@ namespace ChessMac.Pieces;
 
 public static class PieceFactory
 {
-    public static Piece CreatePiece(string pieceType, Piece.PieceColor color)
+    public static Piece CreatePiece(Piece.PieceType pieceType, Piece.PieceColor color)
     {
         switch (pieceType)
         {
-            case "Pawn":
+            case Piece.PieceType.Pawn:
                 return new Pawn(color);
-            case "Rook":
+            case Piece.PieceType.Rook:
                 return new Rook(color);
-            case "Knight":
+            case Piece.PieceType.Knight:
                 return new Knight(color);
-            case "Bishop":
+            case Piece.PieceType.Bishop:
                 return new Bishop(color);
-            case "Queen":
+            case Piece.PieceType.Queen:
                 return new Queen(color);
-            case "King":
+            case Piece.PieceType.King:
                 return new King(color);
             default:
                 throw new ArgumentException("Invalid piece type", nameof(pieceType));

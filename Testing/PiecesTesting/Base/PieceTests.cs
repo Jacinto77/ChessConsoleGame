@@ -1,10 +1,9 @@
-namespace TestProject2;
-using ChessMac;
 using ChessMac.Board;
 using ChessMac.Pieces;
 using ChessMac.Pieces.Base;
 using ChessMac.Pieces.Children;
-using static ChessMac.Board.ChessBoard;
+
+namespace TestProject2;
 
 [TestFixture]
 public class PieceTests
@@ -75,7 +74,7 @@ public class PieceTests
     {
         var chessboard = new ChessBoard();
         
-        var piece = PieceFactory.CreatePiece("King", Piece.PieceColor.Black);
+        var piece = PieceFactory.CreatePiece(Piece.PieceType.King, Piece.PieceColor.Black);
         piece.Move((4, 4));
         chessboard.ActivePieces.Add(piece);
         chessboard.UpdatePiecePositions();
@@ -84,8 +83,7 @@ public class PieceTests
         chessboard.ActivePieces.Clear();
         piece.PrintAttributes();
         
-        piece = new Pawn(Piece.PieceColor.Black, (-1, -1), default, new List<(int row, int col)>(), null, true, true, 4,
-            false);
+        piece = new Pawn(Piece.PieceColor.Black, (-1, -1), default, new List<(int row, int col)>(), null, true, true, 4);
         piece.PrintAttributes();
         piece = new Pawn(Piece.PieceColor.White, (4, 4));
         chessboard.ActivePieces.Add(piece);

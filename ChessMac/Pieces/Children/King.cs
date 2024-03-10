@@ -6,7 +6,8 @@ namespace ChessMac.Pieces.Children;
 
 using static ChessBoard;
 
-// TODO implement castling
+// TODO finish testing castling
+// TODO Add check for move generation for if the move is threatened or not (? maybe not though as it could get confusing to sync move generation with counting up threatened spaces pre-move)
 
 public class King : Piece
 {
@@ -19,22 +20,8 @@ public class King : Piece
     private List<(int row, int col)> _kingSpacesCheckToCastle = new();
     private List<(int row, int col)> _queenSpacesCheckToCastle = new();
 
-    private bool _canCastleKingSide;
-    private bool _canCastleQueenSide;
-
-    // public King(PieceColor inColor) : base(inColor)
-    // {
-    //     Type = PieceType.King;
-    //     SetIconByColorAndType(inColor);
-    //     SetCastlePositions(inColor);
-    // }
-    //
-    // public King(PieceColor inColor, (int row, int col) inPosition) : base(inColor, inPosition)
-    // {
-    //     Type = PieceType.King;
-    //     SetIconByColorAndType(inColor);
-    //     SetCastlePositions(inColor);
-    // }
+    private bool _canCastleKingSide = false;
+    private bool _canCastleQueenSide = false;
 
     public King(
         PieceColor inColor = default,
@@ -53,13 +40,6 @@ public class King : Piece
         SetRookPositions();
         AddSpacesToCheckForCastle();
     }
-    
-    // public King(PieceType inType, PieceColor inColor, List<(int row, int col)> inValidMoves, char? inIcon,
-    //     bool inHasMoved, bool inIsPinned, int inMoveCounter, bool inIsThreatened, (int row, int col) inPosition) : 
-    //     base(inColor, inType, inValidMoves, inIcon, inHasMoved, inIsPinned, inMoveCounter, inIsThreatened, inPosition)
-    // {
-    //     SetCastlePositions(inColor);
-    // }
 
     public override King Clone()
     {
@@ -112,13 +92,13 @@ public class King : Piece
     {
         if (Color == PieceColor.White)
         {
-            _kingSpacesCheckToCastle.Add((7, 1));
-            _kingSpacesCheckToCastle.Add((7, 2));
+            _kingSpacesCheckToCastle.Add((7, 5));
+            _kingSpacesCheckToCastle.Add((7, 6));
         }
         else
         {
-            _kingSpacesCheckToCastle.Add((0, 1));
-            _kingSpacesCheckToCastle.Add((0, 2));
+            _kingSpacesCheckToCastle.Add((0, 5));
+            _kingSpacesCheckToCastle.Add((0, 6));
         }
     }
 
@@ -127,15 +107,15 @@ public class King : Piece
     {
         if (Color == PieceColor.White)
         {
-            _queenSpacesCheckToCastle.Add((7, 4));
-            _queenSpacesCheckToCastle.Add((7, 5));
-            _queenSpacesCheckToCastle.Add((7, 6));
+            _queenSpacesCheckToCastle.Add((7, 1));
+            _queenSpacesCheckToCastle.Add((7, 2));
+            _queenSpacesCheckToCastle.Add((7, 3));
         }
         else
         {
-            _queenSpacesCheckToCastle.Add((0, 4));
-            _queenSpacesCheckToCastle.Add((0, 5));
-            _queenSpacesCheckToCastle.Add((0, 6));
+            _queenSpacesCheckToCastle.Add((0, 1));
+            _queenSpacesCheckToCastle.Add((0, 2));
+            _queenSpacesCheckToCastle.Add((0, 3));
         }
     }
 
@@ -148,63 +128,12 @@ public class King : Piece
         AddKingSideSpaces();
     }
 
-    // public void CheckAndAddCastle(ChessBoard inBoard)
-    // {
-    //     var threats = Color == PieceColor.Black ? inBoard.WhiteThreats : inBoard.BlackThreats;
-    //     if (HasMoved) _canCastleKingSide = false;
-    //     
-    //     var kingSideRook = inBoard.GetPieceByIndex(_kingSideRookPos);
-    //     var queenSideRook = inBoard.GetPieceByIndex(_queenSideRookPos);
-    //
-    //     if (kingSideRook is not null && kingSideRook is { Type: PieceType.Rook, HasMoved: false })
-    //     {
-    //         foreach (var space in _kingSpacesCheckToCastle)
-    //         {
-    //             if (threats[space].Count > 0 || inBoard.GetPieceByIndex(space) is not null)
-    //                 break;
-    //         }
-    //         
-    //     }
-    //         
-    //     
-    //     if (queenSideRook is not null && queenSideRook is { Type: PieceType.Rook, HasMoved: false })
-    //         foreach (var space in _queenSpacesCheckToCastle)
-    //         {
-    //             if (threats[space].Count > 0)
-    //                 _canCastleQueenSide = false;
-    //             if (inBoard.GetPieceByIndex(space) is not null)
-    //                 _canCastleQueenSide = false;
-    //         }
-    // }
-    
-    // checks if queen side rook is a valid castle
-    // returns bool
-    // used by main checkCastle function
-    // public bool CheckQueenSideCastle(ChessBoard inBoard)
-    // {
-    //     var threats = Color == PieceColor.Black ? inBoard.WhiteThreats : inBoard.BlackThreats;
-    //     var queenSideRook = inBoard.GetPieceByIndex(_queenSideRookPos);
-    //     if (queenSideRook?.Type != PieceType.Rook || queenSideRook.HasMoved) 
-    //         return false;
-    //     
-    //     foreach (var space in _queenSpacesCheckToCastle)
-    //     {
-    //         var tempPiece = inBoard.GetPieceByIndex(space);
-    //         if (threats[space].Count > 0)
-    //             return false;
-    //         if (tempPiece is not null)
-    //             return false;
-    //     }
-    //
-    //     return true;
-    // }
-
     private bool CheckCanCastle(PieceType pieceType, ChessBoard inBoard)
     {
         if (HasMoved == true || MoveCounter > 0) return false;
+        
         Piece? rook;
         List<(int row, int col)> spacesToCheck;
-        
         if (pieceType == PieceType.King)
         {
             rook = inBoard.GetPieceByIndex(KingSideRookPos);
@@ -213,7 +142,7 @@ public class King : Piece
         else
         {
             rook = inBoard.GetPieceByIndex(QueenSideRookPos);
-            spacesToCheck = _kingSpacesCheckToCastle;
+            spacesToCheck = _queenSpacesCheckToCastle;
         }
         
         if (rook?.Type != PieceType.Rook || rook.HasMoved) 
@@ -224,66 +153,14 @@ public class King : Piece
         foreach (var space in spacesToCheck)
         {
             //var tempPiece = inBoard.GetPieceByIndex(space);
-            if (threats.TryGetValue(space, out List<Piece>? tempPiece) || tempPiece is not null)
+            if (threats.TryGetValue(space, out List<Piece>? threateningPieces))
+                return false;
+            if (inBoard.PiecePositions.TryGetValue(space, out var blockingPiece))
                 return false;
         }
 
         return true;
     }
-
-
-    // checks if king side rook is a valid castle
-    // returns bool
-    // used by main checkCastle function
-    // public bool CheckKingSideCastle(PieceColor inColor, ChessBoard inBoard)
-    // {
-    //     var kingSideRookPos = GetRookPos(inColor, inBoard)[0];
-    //     var kingSideRook = inBoard.BoardPieces[kingSideRookPos.row, kingSideRookPos.col];
-    //     if (kingSideRook?.Type != PieceType.Rook || kingSideRook.HasMoved) return false;
-    //
-    //     var kingSpacesToCheck = GetKingSideSpaces();
-    //     foreach (var space in kingSpacesToCheck)
-    //     {
-    //         var tempPiece = inBoard.BoardPieces[space.row, space.col];
-    //         if (tempPiece?.Icon != EmptySpaceIcon || tempPiece.IsThreatened) return false;
-    //     }
-    //
-    //     return true;
-    // }
-
-    // gets k and q side rooks positions based on color
-    // used by k+q side castle checking
-    // public List<(int row, int col)> GetRookPos(PieceColor inColor, ChessBoard inBoard)
-    // {
-    //     (int row, int col) kingSideRookPos;
-    //     (int row, int col) queenSideRookPos;
-    //
-    //     if (inColor == PieceColor.White)
-    //     {
-    //         kingSideRookPos = (7, 7);
-    //         queenSideRookPos = (7, 0);
-    //     }
-    //     else
-    //     {
-    //         kingSideRookPos = (0, 7);
-    //         queenSideRookPos = (0, 0);
-    //     }
-    //
-    //     return new List<(int row, int col)> { kingSideRookPos, queenSideRookPos };
-    // }
-
-    // checks if king can castle both to king and queen side rooks
-    // returns pair of bools
-    // to be used by generate valid moves to add the castle movements
-    // public (bool king, bool queen) CheckCastle(PieceColor inColor, ChessBoard inBoard)
-    // {
-    //     if (HasMoved) return (false, false);
-    //     
-    //     var canKingCastle = CheckKingSideCastle(inColor, inBoard);
-    //     var canQueenCastle = CheckQueenSideCastle(inColor, inBoard);
-    //
-    //     return (canKingCastle, canQueenCastle);
-    // }
     
     public override void GenerateValidMoves(ChessBoard inBoard)
     {
@@ -338,7 +215,6 @@ public class King : Piece
         {
             Console.WriteLine(space);
         }
-        
     }
 
     public override void Move((int row, int col) inPosition)

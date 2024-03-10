@@ -134,6 +134,7 @@ public abstract class Piece
     public (int row, int col) Position { get; protected set; }
     
     public const char EmptySpaceIcon = '\u2610';
+    public static char ThreatenedSpaceIcon = '\u2606';
 
     private List<(int row, int col)> _validMoves = new();
     
@@ -148,9 +149,14 @@ public abstract class Piece
 
     public virtual void Move((int row, int col) inPosition)
     {
-        Position = inPosition;
+        SetPosition(inPosition);
         IncrementMoveCounter();
         HasMoved = true;
+    }
+
+    public void SetPosition((int row, int col) inPosition)
+    {
+        Position = inPosition;
     }
 
     public virtual (int row, int col) GetCastlePos()
@@ -224,7 +230,7 @@ public abstract class Piece
         _validMoves.Clear();
         if (inValidMoves is null)
         {
-            Console.Error.WriteLine("SetValidMoveList() argument was null, valid moves list cleared.");
+            // Console.Error.WriteLine("SetValidMoveList() argument was null, valid moves list cleared.");
             return;
         }
         foreach (var move in inValidMoves) _validMoves.Add(move);
@@ -239,37 +245,19 @@ public abstract class Piece
     {
         Console.WriteLine($"{Type} at {ConvertIndexToPos(Position)} valid moves:");
         if (_validMoves.Count == 0)
+        {
             Console.WriteLine("\t--No moves in valid moves list--");
+            return;
+        }
+
+        var counter = 1;
         foreach (var move in _validMoves)
         {
-            Console.WriteLine($"\t\t- {ConvertIndexToPos(move)}");
+            Console.WriteLine($"\t\t{counter}- {ConvertIndexToPos(move)}");
+            counter++;
         }
-        Console.WriteLine();
+        Console.WriteLine("");
     }
-
-    // protected static List<T> CreateList<T>(params T[] values)
-    // {
-    //     return new List<T>(values);
-    // }
-    //
-    // public virtual Piece DeepCopy()
-    // {
-    //     Piece pieceCopy = PieceFactory.CreatePiece(Type.ToString(), Color);
-    //     
-    //     pieceCopy.SetHasMoved(this.HasMoved);
-    //     pieceCopy.SetThreat(this.IsThreatened);
-    //     pieceCopy.SetIsPinned(this.IsPinned);
-    //     pieceCopy.SetMoveCounter(this.MoveCounter);
-    //     
-    //     pieceCopy.Move(this.Position);
-    //     
-    //     _validMoves = new List<(int row, int col)>();
-    //     
-    //     foreach (var move in _validMoves) 
-    //         pieceCopy.AddValidMove(move);
-    //     
-    //     return pieceCopy;
-    // }
 
     public static PieceType ConvertIntToPieceType(int? input)
     {
@@ -281,7 +269,6 @@ public abstract class Piece
             4 => PieceType.Queen,
             _ => PieceType.Pawn
         };
-
         return pieceType;
     }
 
@@ -298,19 +285,6 @@ public abstract class Piece
     public void ClearValidMoves()
     {
         _validMoves.Clear();
-    }
-
-    public void PrintValidMoves()
-    {
-        var counter = 1;
-        Console.Write("Valid Moves are:\n");
-        foreach (var move in _validMoves)
-        {
-            var validMove = ConvertIndexToPos(move);
-
-            Console.WriteLine($"{counter}: {validMove}");
-            counter++;
-        }
     }
 
     // generates all valid moves
@@ -392,16 +366,6 @@ public abstract class Piece
     public bool HasMove((int row, int col) inMove)
     {
         return _validMoves.Contains(inMove);
-        
-        foreach (var validSpace in _validMoves)
-        {
-            if (validSpace.row == inMove.row && validSpace.col == inMove.col)
-                return true;
-            if (validSpace == inMove)
-                Console.WriteLine("Can do simple equality ya dummy");
-        }
-
-        return false;
     }
 
     public void PromotePawn(ChessBoard inBoard)
@@ -423,7 +387,7 @@ public abstract class Piece
         Console.WriteLine("2)\tBishop");
         Console.WriteLine("3)\tRook");
         Console.WriteLine("4)\tQueen");
-        Console.Write(">");
+        Console.Write("> ");
     }
 
     public bool IsColorToMove(PieceColor colorToMove)
@@ -442,7 +406,7 @@ public abstract class Piece
         Console.WriteLine($"Is Threatened:  {IsThreatened}");
         Console.WriteLine($"Has Moved:      {HasMoved}");
         Console.WriteLine($"Icon:           {Icon}");
-        PrintValidMoves();
+        PrintValidMoveList();
     }
 
     public virtual (int row, int col) GetRookPos(PieceType inType)
