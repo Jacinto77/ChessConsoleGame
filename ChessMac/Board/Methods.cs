@@ -231,4 +231,20 @@ public static class Methods
             Console.WriteLine($"{_dictErrorCodeMessages[errorCode]}");
         }
     }
+
+    public static void TestMoveSequence()
+    {
+        Dictionary<int, string> moveSequence = new Dictionary<int, string>
+        {
+            { 1, "D2 D4" },
+            { 2, ""},
+            { 3, ""},
+            { 4, ""},
+            { 5, ""},
+            { 6, ""},
+            { 7, ""},
+            { 8, ""},
+            { 9, ""}
+        };
+    }
 }

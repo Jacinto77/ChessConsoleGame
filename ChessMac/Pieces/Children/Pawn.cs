@@ -47,9 +47,11 @@ public class Pawn : Piece
 
     public override Piece Clone()
     {
-        var clonedPawn = new Pawn(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned, MoveCounter, IsThreatened);
+        var clonedPawn = new Pawn(Color, Position, Type, GetValidMoveList(), Icon, HasMoved, IsPinned, MoveCounter, IsThreatened)
+            {
+                 Direction = Direction
+            };
 
-        clonedPawn.Direction = Direction;
         return clonedPawn;
     }
     

@@ -10,25 +10,32 @@ using static Piece;
 
 public class ChessBoard
 {
-
     public ChessBoard(bool initialize = false)
     {
         if (!initialize) return;
-        
         InitializeActivePieces();
         UpdateBoardAndPieces();
+        UpdateKingReferences();
     }
     
+    // TODO confirm that these structures are properly updated each iteration
     public Piece?[,] BoardSpaces = new Piece[8, 8];
     public List<Piece> ActivePieces = new List<Piece>();
     public List<Piece> InactivePieces = new List<Piece>();
 
     public Dictionary<(int row, int col), Piece> PiecePositions = new();
     public Dictionary<(int row, int col), List<Piece>> ThreatenedSpaces = new();
+    // todo --
 
-    private (int row, int col) blackKingPosition;
-    private (int row, int col) whiteKingPosition;
+    private Piece? blackKingRef;
+    private Piece? whiteKingRef;
+    
+    // private (int row, int col) blackKingPosition;
+    // private (int row, int col) whiteKingPosition;
 
+    
+    // -- KING MGMT --
+    // TODO take out, deprecated by UpdateKingPosition() and SetKingReferences()
     public (int row, int col) GetKingPosition(PieceColor inColor)
     {
         foreach (var piece in ActivePieces)
@@ -39,6 +46,44 @@ public class ChessBoard
 
         throw new Exception($"GetKingPosition() could not find a king of color: {inColor}");
     }
+    
+    // TODO maybe take out the fields for king's positions now that we are storing a direct reference to them
+    // public void UpdateKingPosition(Piece inKing)
+    // {
+    //     if (inKing.Color == PieceColor.Black)
+    //     {
+    //         blackKingPosition = inKing.Position;
+    //     }
+    //     else
+    //     {
+    //         whiteKingPosition = inKing.Position;
+    //     }
+    // }
+
+    public void SetKingReferencesByColor(Piece inKing)
+    {
+        if (inKing.Color == PieceColor.Black)
+        {
+            blackKingRef = inKing;
+        }
+        else
+        {
+            whiteKingRef = inKing;
+        }
+    }
+    
+
+    public void UpdateKingReferences()
+    {
+        foreach (var piece in ActivePieces)
+        {
+            if (piece.Type == PieceType.King)
+            {
+                SetKingReferencesByColor(piece);
+            }
+        }
+    }
+    // -- 
     
     public ChessBoard DeepCopy()
     {
@@ -52,7 +97,8 @@ public class ChessBoard
         {
             tempBoard.InactivePieces.Add(piece.Clone());
         }
-
+        
+        // commented here for reminder of what needs to be called on the board objects
         // UpdatePiecePositions();
         // PopulateBoard();
         // ClearValidMoves();
@@ -152,6 +198,11 @@ public class ChessBoard
     
     public void AddPositionThreats()
     {
+        
+        /*
+        for each piece, get list of their valid moves
+        
+        */
         ClearPositionThreats();
         
         foreach (var piece in ActivePieces)
@@ -168,8 +219,39 @@ public class ChessBoard
                 }
             }
         }
+
+        
+        
     }
 
+    public void PrintThreatenedSpaces()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                if (!ThreatenedSpaces.TryGetValue((row, col), out var threateningPieces)) continue;
+                Console.WriteLine($"Row: {row} Col: {col}");
+                foreach (var threateningPiece in threateningPieces)
+                {
+                    Console.WriteLine($"{threateningPiece.Color} {threateningPiece.Type}");
+                }
+            }
+        }
+    }
+
+    public bool IsSpaceThreatened((int row, int col) inSpace, PieceColor inColor)
+    {
+        var spaceIsThreatened = false;
+        if (! ThreatenedSpaces.TryGetValue(inSpace, out var threateningPieces)) return spaceIsThreatened;
+        foreach (var threateningPiece in threateningPieces)
+        {
+            if (threateningPiece.Color != inColor) spaceIsThreatened = true;
+        }
+
+        return spaceIsThreatened;
+    }
+    
     // public void AddColorSpecificThreats()
     // {
     //     WhiteThreats.Clear();
@@ -415,7 +497,7 @@ public class ChessBoard
     
     
     // should receive non-null starting position
-    public bool ValidateAndMovePiece(PieceColor colorToMove, (int row, int col) startIndex, (int row, int col) destIndex, out List<int> errorCodes)
+    public bool IsValidPieceMove(PieceColor colorToMove, (int row, int col) startIndex, (int row, int col) destIndex, out List<int> errorCodes)
     {
         Piece? activePiece = GetPieceByPosition(startIndex);
         errorCodes = new List<int>();
@@ -427,14 +509,14 @@ public class ChessBoard
             return false;
         }
 
-        if (!activePiece.IsColorToMove(colorToMove))
+        if (activePiece.IsColorToMove(colorToMove) == false)
         {
             Console.WriteLine($"Invalid Color: Only {colorToMove} pieces can be moved.");
             errorCodes.Add(2);
             return false;
         }
 
-        if (!activePiece.HasMove(destIndex))
+        if (activePiece.HasMove(destIndex) == false)
         {
             Console.WriteLine($"Move entered ({ConvertIndexToPos(destIndex)}) was not found as a valid move for " +
                               $"{activePiece.Color} {activePiece.Type} at {ConvertIndexToPos(startIndex)} ");
@@ -447,13 +529,14 @@ public class ChessBoard
 
         if (activePiece?.Type == PieceType.Pawn)
             CheckAndPromotePawn(activePiece, this, destIndex.row);
-
+        
+        UpdateKingReferences();
         ClearAllPositionThreats();
         GeneratePieceMoves();
         AddAllPositionThreats();
-
-        // TODO king in check validation
-        if (IsKingInCheck())
+        
+        
+        if (IsKingInCheck(colorToMove))
         {
             Console.WriteLine("Your king is in check!");
             return false;
@@ -493,20 +576,9 @@ public class ChessBoard
         }
     }
 
-    private bool IsKingInCheck()
+    private bool IsKingInCheck(PieceColor inColor)
     {
-        // get location of kings
-        // how to get their location? each time a king moves, update a tracker
-        // variable?
-        foreach (var kvp in ThreatenedSpaces)
-        {
-            //if (kvp.Key == )
-            foreach (var piece in kvp.Value)
-            {
-                
-            }
-        }
-        return false;
+        return IsSpaceThreatened(inColor == PieceColor.Black ? blackKingRef!.Position : whiteKingRef!.Position, inColor);
     }
     
     public void PrintPiecesByPositions()
@@ -558,9 +630,8 @@ public class ChessBoard
         // FOR TESTING
         //OutputBoard();
     }
-    
-    
-    
+
+
     //    
     // -- Not used below --
     //

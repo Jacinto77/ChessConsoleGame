@@ -1,7 +1,8 @@
-﻿using ChessMac.Board;
-using ChessMac.Pieces.Base;
+using Methods = ChessMac.Board.Methods;
 
 namespace ChessMac;
+using ChessMac.Board;
+using ChessMac.Pieces.Base;
 
 using static Methods;
 
@@ -10,7 +11,7 @@ using static Methods;
 // TODO: chess engine
 // TODO: visualization and testing
 
-internal static class Program
+internal static class ProgramTesting
 {
     private static void Main()
     {

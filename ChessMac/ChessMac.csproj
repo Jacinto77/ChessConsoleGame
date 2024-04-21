@@ -10,6 +10,7 @@
     <ItemGroup>
         <Compile Remove="BoardSpace.cs" />
         <Compile Remove="Space.cs" />
+        <Compile Remove="Program-Testing.cs" />
     </ItemGroup>
 
 </Project>
